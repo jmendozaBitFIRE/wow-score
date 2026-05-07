@@ -4,6 +4,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { signOutAction } from '@/lib/actions/auth'
 import { SidebarNav } from '@/components/dashboard/SidebarNav'
@@ -13,6 +14,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
+
+  const { data: profile } = await createAdminClient()
+    .from('profiles')
+    .select('is_admin, full_name')
+    .eq('id', user.id)
+    .single()
 
   return (
     <div className="flex min-h-screen bg-zinc-50 dark:bg-black">
@@ -30,7 +37,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </Link>
         </div>
 
-        <SidebarNav />
+        <SidebarNav isAdmin={profile?.is_admin ?? false} />
 
         <div className="p-4 border-t dark:border-zinc-800">
           <div className="flex items-center gap-3 px-3 py-2">
