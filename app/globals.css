@@ -154,6 +154,7 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
@@ -338,4 +339,84 @@
   animation: progress-advance 8s ease-out forwards;
   height: 100%;
   border-radius: 9999px;
+}
+
+/* ── Landing: hero card float ──────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px)    rotate(-1deg) }
+  50%       { transform: translateY(-12px) rotate(-1deg) }
+}
+
+.hero-card-float {
+  transform: rotate(-1deg);
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ── Landing: bounce arrow ─────────────────────────────── */
+@keyframes bounce-arrow {
+  0%, 100% { transform: translateY(0) }
+  50%       { transform: translateY(5px) }
+}
+
+.bounce-arrow {
+  display: inline-block;
+  animation: bounce-arrow 1.4s ease-in-out infinite;
+}
+
+/* ── Landing: ventaja cards (dark section) ─────────────── */
+.ventaja-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.25s ease;
+}
+.ventaja-card:hover {
+  border-color: rgba(246,101,2,0.4);
+  background: rgba(246,101,2,0.05);
+}
+
+/* ── Landing: medio pills ──────────────────────────────── */
+.medio-pill {
+  background: white;
+  border: 1.5px solid var(--color-mist);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-ink);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.medio-pill:hover {
+  border-color: var(--color-flame);
+  color: var(--color-flame);
+}
+
+/* ── Landing: CTA final button ─────────────────────────── */
+.cta-final-btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cta-final-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+}
+
+/* ── Landing: footer nav links ─────────────────────────── */
+.footer-nav-link {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+.footer-nav-link:hover {
+  opacity: 1;
+}
+
+/* ── Landing: footer legal links ───────────────────────── */
+.footer-legal-link {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+.footer-legal-link:hover {
+  opacity: 0.9;
 }

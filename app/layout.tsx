@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Syne, DM_Sans } from "next/font/google";
+import { Syne, DM_Sans, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 
 const syne = Syne({
@@ -16,6 +16,13 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-grotesque",
+  subsets: ["latin"],
+  weight: ["400", "800"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "WOW Score",
   description: "Analiza y puntúa tus creatividades publicitarias",
@@ -29,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
+      className={`${syne.variable} ${dmSans.variable} ${bricolage.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
