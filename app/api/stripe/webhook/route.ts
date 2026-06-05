@@ -120,7 +120,7 @@ export async function POST(request: Request) {
           : invoice.customer?.id
 
       if (customerId) {
-        const subId = invoice.subscription
+        const subId = (invoice as any).subscription
         let isAnnual = false
         let planKey = ''
         if (typeof subId === 'string') {
