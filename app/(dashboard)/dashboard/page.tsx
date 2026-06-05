@@ -23,6 +23,12 @@ export default async function DashboardPage() {
 
   if (!profile) redirect('/login')
 
+  const { data: company } = await createAdminClient()
+    .from('companies')
+    .select('subscription_plan, subscription_status')
+    .eq('id', profile.company_id)
+    .single()
+
   const { data: evaluations } = await createAdminClient()
     .from('evaluations')
     .select(`
@@ -91,10 +97,14 @@ export default async function DashboardPage() {
         <div className="rounded-2xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 flex flex-col justify-between shadow-sm">
           <div>
              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Plan Actual</h3>
-             <p className="text-sm text-zinc-500 mt-1">Plan Pro · Suscripción activa</p>
+             <p className="text-sm text-zinc-500 mt-1 capitalize">
+               {company?.subscription_status === 'active' && company?.subscription_plan
+                 ? `${company.subscription_plan.replace('_', ' ')} · Activo`
+                 : 'Gratuito · Inactivo'}
+             </p>
           </div>
           <div className="mt-4">
-            <Link href="/dashboard/pricing" className={cn(buttonVariants({ variant: 'outline' }), 'w-full rounded-full flex items-center justify-center gap-2 hover:border-orange-500 hover:text-orange-600')}>
+            <Link href="/dashboard/subscription" className={cn(buttonVariants({ variant: 'outline' }), 'w-full rounded-full flex items-center justify-center gap-2 hover:border-orange-500 hover:text-orange-600')}>
               Gestionar plan
               <ArrowRight size={16} />
             </Link>

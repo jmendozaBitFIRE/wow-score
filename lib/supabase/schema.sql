@@ -9,6 +9,10 @@ CREATE TABLE companies (
   stripe_customer_id   text,
   subscription_status  text        CHECK (subscription_status IN ('active','inactive','trialing','past_due')) DEFAULT 'inactive',
   subscription_plan    text        CHECK (subscription_plan IN ('solo_monthly','solo_annual','team_monthly','team_annual')),
+  trial_credits        int         NOT NULL DEFAULT 0,
+  monthly_credits      int         NOT NULL DEFAULT 0,
+  credits_reset_at     timestamptz,
+  trial_used           boolean     NOT NULL DEFAULT false,
   created_at           timestamptz DEFAULT now()
 );
 
@@ -52,16 +56,18 @@ CREATE TABLE plan_prices (
   currency        text          NOT NULL DEFAULT 'usd',
   stripe_price_id text          NOT NULL,
   max_members     int           NOT NULL,
+  monthly_credits int           NOT NULL DEFAULT 10,
+  trial_credits   int           NOT NULL DEFAULT 1,
   is_active       boolean       NOT NULL DEFAULT true,
   updated_at      timestamptz   DEFAULT now(),
   updated_by      uuid          REFERENCES profiles(id)
 );
 
-INSERT INTO plan_prices (plan_key, display_name, price_amount, currency, stripe_price_id, max_members, is_active) VALUES
-  ('solo_monthly', 'Solo Mensual', 0.00, 'usd', 'price_PLACEHOLDER', 1, true),
-  ('solo_annual',  'Solo Anual',   0.00, 'usd', 'price_PLACEHOLDER', 1, true),
-  ('team_monthly', 'Team Mensual', 0.00, 'usd', 'price_PLACEHOLDER', 5, true),
-  ('team_annual',  'Team Anual',   0.00, 'usd', 'price_PLACEHOLDER', 5, true);
+INSERT INTO plan_prices (plan_key, display_name, price_amount, currency, stripe_price_id, max_members, monthly_credits, trial_credits, is_active) VALUES
+  ('solo_monthly', 'Solo Mensual', 0.00, 'usd', 'price_PLACEHOLDER', 1, 10, 1, true),
+  ('solo_annual',  'Solo Anual',   0.00, 'usd', 'price_PLACEHOLDER', 1, 10, 1, true),
+  ('team_monthly', 'Team Mensual', 0.00, 'usd', 'price_PLACEHOLDER', 5, 10, 1, true),
+  ('team_annual',  'Team Anual',   0.00, 'usd', 'price_PLACEHOLDER', 5, 10, 1, true);
 
 -- ============================================================
 -- ÍNDICES
@@ -156,3 +162,15 @@ BEGIN
   UPDATE profiles SET is_admin = admin_value WHERE id = target_user_id;
 END;
 $$;
+
+-- ============================================================
+-- MIGRACIÓN PARA BD EXISTENTE
+-- Copia y pega esto en el SQL Editor si ya creaste las tablas antes:
+-- ============================================================
+-- ALTER TABLE companies ADD COLUMN trial_credits int NOT NULL DEFAULT 0;
+-- ALTER TABLE companies ADD COLUMN monthly_credits int NOT NULL DEFAULT 0;
+-- ALTER TABLE companies ADD COLUMN credits_reset_at timestamptz;
+-- ALTER TABLE companies ADD COLUMN trial_used boolean NOT NULL DEFAULT false;
+-- ALTER TABLE plan_prices ADD COLUMN monthly_credits int NOT NULL DEFAULT 10;
+-- ALTER TABLE plan_prices ADD COLUMN trial_credits int NOT NULL DEFAULT 1;
+

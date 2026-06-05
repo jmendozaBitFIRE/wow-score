@@ -9,9 +9,10 @@ export const dynamic = 'force-dynamic'
 async function updateCompanySubscription(
   customerId: string,
   status: string,
-  plan?: StripePlan
+  plan?: StripePlan,
+  extraUpdates?: Record<string, unknown>
 ) {
-  const update: Record<string, unknown> = { subscription_status: status }
+  const update: Record<string, unknown> = { subscription_status: status, ...extraUpdates }
   if (plan) {
     update.subscription_plan = plan
     update.max_members = maxMembersForPlan(plan)
@@ -74,7 +75,21 @@ export async function POST(request: Request) {
               ? 'past_due'
               : 'inactive'
 
-      await updateCompanySubscription(customerId, dbStatus, plan)
+      const extraUpdates: Record<string, unknown> = {}
+      if (event.type === 'customer.subscription.created' && dbStatus === 'trialing') {
+        let trialToAssign = 1
+        if (plan) {
+          const { data: planData } = await createAdminClient()
+            .from('plan_prices')
+            .select('trial_credits')
+            .eq('plan_key', plan)
+            .single()
+          if (planData) trialToAssign = planData.trial_credits
+        }
+        extraUpdates.trial_credits = trialToAssign
+      }
+
+      await updateCompanySubscription(customerId, dbStatus, plan, extraUpdates)
       break
     }
 
@@ -93,6 +108,56 @@ export async function POST(request: Request) {
 
       if (customerId) {
         await updateCompanySubscription(customerId, 'past_due')
+      }
+      break
+    }
+
+    case 'invoice.paid': {
+      const invoice = event.data.object as Stripe.Invoice
+      const customerId =
+        typeof invoice.customer === 'string'
+          ? invoice.customer
+          : invoice.customer?.id
+
+      if (customerId) {
+        const subId = invoice.subscription
+        let isAnnual = false
+        let planKey = ''
+        if (typeof subId === 'string') {
+          try {
+            const sub = await stripe.subscriptions.retrieve(subId)
+            const plan = resolvePlan(sub)
+            if (plan) {
+              planKey = plan
+              if (plan.includes('annual')) isAnnual = true
+            }
+          } catch (e) {
+            console.error('[webhook] Error retrieving subscription for invoice.paid:', e)
+          }
+        }
+
+        let creditsToAssign = 10
+        if (planKey) {
+          const { data: planData } = await createAdminClient()
+            .from('plan_prices')
+            .select('monthly_credits')
+            .eq('plan_key', planKey)
+            .single()
+          if (planData) creditsToAssign = planData.monthly_credits
+        }
+
+        const extraUpdates: Record<string, unknown> = { monthly_credits: creditsToAssign }
+        
+        if (isAnnual) {
+          const nextMonth = new Date()
+          nextMonth.setMonth(nextMonth.getMonth() + 1)
+          extraUpdates.credits_reset_at = nextMonth.toISOString()
+        } else {
+          extraUpdates.credits_reset_at = null
+        }
+
+        // We don't change the plan here, just update credits and ensure status is active
+        await updateCompanySubscription(customerId, 'active', undefined, extraUpdates)
       }
       break
     }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { stripe, type StripePlan } from '@/lib/stripe'
+import type Stripe from 'stripe'
 
 const VALID_PLANS: StripePlan[] = ['solo_monthly', 'solo_annual', 'team_monthly', 'team_annual']
 
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
 
   const { data: company, error: companyError } = await createAdminClient()
     .from('companies')
-    .select('id, stripe_customer_id')
+    .select('id, stripe_customer_id, trial_used')
     .eq('id', profile.company_id)
     .single()
 
@@ -76,18 +77,26 @@ export async function POST(request: Request) {
       .eq('id', company.id)
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-
-  const session = await stripe.checkout.sessions.create({
+  const rawBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const baseUrl = rawBaseUrl.replace(/\/$/, '')
+  
+  const sessionConfig: Stripe.Checkout.SessionCreateParams = {
     customer: customerId,
     mode: 'subscription',
     line_items: [{ price: priceId, quantity: 1 }],
     subscription_data: {
       metadata: { plan, company_id: company.id },
     },
-    success_url: `${baseUrl}/dashboard?subscribed=true`,
+    success_url: `${baseUrl}/dashboard/pricing?subscribed=true`,
     cancel_url: `${baseUrl}/dashboard/pricing`,
-  })
+  }
+
+  // Si no ha usado su prueba, damos 2 años de prueba (cobraremos después manualmente)
+  if (!company.trial_used) {
+    sessionConfig.subscription_data!.trial_period_days = 730
+  }
+
+  const session = await stripe.checkout.sessions.create(sessionConfig)
 
   return NextResponse.json({ url: session.url })
 }

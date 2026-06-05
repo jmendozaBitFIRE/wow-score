@@ -7,13 +7,15 @@ import {
   Upload,
   History,
   CreditCard,
+  Tag,
 } from 'lucide-react'
 
 const navItems = [
   { label: 'Inicio',      href: '/dashboard',         icon: LayoutDashboard, exact: true  },
   { label: 'Analizar',    href: '/dashboard/upload',  icon: Upload,          exact: false },
   { label: 'Historial',   href: '/dashboard/history', icon: History,         exact: false },
-  { label: 'Suscripción', href: '/dashboard/pricing', icon: CreditCard,      exact: false },
+  { label: 'Suscripción', href: '/dashboard/subscription', icon: CreditCard,      exact: false },
+  { label: 'Planes y Precios', href: '/dashboard/pricing', icon: Tag,         exact: false },
 ]
 
 interface SidebarNavProps {

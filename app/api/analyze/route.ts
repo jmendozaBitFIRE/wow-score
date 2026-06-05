@@ -90,7 +90,7 @@ export async function POST(request: Request) {
 
   const { data: company } = await createAdminClient()
     .from('companies')
-    .select('id, subscription_status')
+    .select('id, subscription_status, subscription_plan, trial_credits, monthly_credits, credits_reset_at')
     .eq('id', profile.company_id)
     .single()
 
@@ -98,9 +98,59 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Company not found' }, { status: 404 })
   }
 
-  if (company.subscription_status !== 'active') {
+  if (company.subscription_status !== 'active' && company.subscription_status !== 'trialing') {
     return NextResponse.json(
-      { error: 'Se requiere una suscripción activa para analizar imágenes.' },
+      { error: 'Se requiere una suscripción activa o en periodo de prueba para analizar imágenes.' },
+      { status: 403 }
+    )
+  }
+
+  // Lazy reset de créditos para planes anuales
+  let currentMonthlyCredits = company.monthly_credits
+  let currentResetAt = company.credits_reset_at
+
+  if (
+    company.subscription_status === 'active' &&
+    company.subscription_plan?.includes('annual') &&
+    currentResetAt
+  ) {
+    const resetDate = new Date(currentResetAt)
+    const now = new Date()
+
+    if (now >= resetDate) {
+      // Avanzar el mes
+      resetDate.setMonth(resetDate.getMonth() + 1)
+      currentResetAt = resetDate.toISOString()
+      
+      let creditsToReset = 10
+      if (company.subscription_plan) {
+        const { data: planData } = await createAdminClient()
+          .from('plan_prices')
+          .select('monthly_credits')
+          .eq('plan_key', company.subscription_plan)
+          .single()
+        if (planData) creditsToReset = planData.monthly_credits
+      }
+      currentMonthlyCredits = creditsToReset
+
+      await createAdminClient()
+        .from('companies')
+        .update({ monthly_credits: creditsToReset, credits_reset_at: currentResetAt })
+        .eq('id', company.id)
+    }
+  }
+
+  // Verificar si tiene créditos
+  let consumeType: 'trial' | 'monthly' | null = null
+  if (company.trial_credits > 0) {
+    consumeType = 'trial'
+  } else if (currentMonthlyCredits > 0) {
+    consumeType = 'monthly'
+  }
+
+  if (!consumeType) {
+    return NextResponse.json(
+      { error: 'No tienes créditos disponibles.' },
       { status: 403 }
     )
   }
@@ -211,6 +261,20 @@ export async function POST(request: Request) {
   if (dbError) {
     console.error('[analyze] db insert error:', dbError.message)
   }
+
+  // ── Descontar crédito ─────────────────────────────────────
+  const updateData: Record<string, unknown> = {}
+  if (consumeType === 'trial') {
+    updateData.trial_credits = company.trial_credits - 1
+    updateData.trial_used = true
+  } else {
+    updateData.monthly_credits = currentMonthlyCredits - 1
+  }
+
+  await createAdminClient()
+    .from('companies')
+    .update(updateData)
+    .eq('id', company.id)
 
   // ── 9. Responder (sin system prompt ni ponderaciones) ─────
   return NextResponse.json({
