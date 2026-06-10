@@ -76,6 +76,10 @@ export async function POST(request: Request) {
               : 'inactive'
 
       const extraUpdates: Record<string, unknown> = {}
+      if (stripeStatus === 'trialing' && sub.trial_end) {
+        extraUpdates.trial_end = new Date(sub.trial_end * 1000).toISOString()
+      }
+
       if (event.type === 'customer.subscription.created' && dbStatus === 'trialing') {
         let trialToAssign = 1
         if (plan) {
@@ -126,6 +130,12 @@ export async function POST(request: Request) {
         if (typeof subId === 'string') {
           try {
             const sub = await stripe.subscriptions.retrieve(subId)
+            
+            // Si la suscripción está en trial, esta es una factura de $0. No debemos asignar créditos mensuales aún.
+            if (sub.status === 'trialing') {
+              return NextResponse.json({ received: true, ignored: 'trial_invoice' })
+            }
+
             const plan = resolvePlan(sub)
             if (plan) {
               planKey = plan

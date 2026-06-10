@@ -13,6 +13,7 @@ CREATE TABLE companies (
   monthly_credits      int         NOT NULL DEFAULT 0,
   credits_reset_at     timestamptz,
   trial_used           boolean     NOT NULL DEFAULT false,
+  trial_end            timestamptz,
   created_at           timestamptz DEFAULT now()
 );
 
@@ -85,29 +86,33 @@ ALTER TABLE profiles    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE evaluations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE plan_prices ENABLE ROW LEVEL SECURITY;
 
+-- Función para obtener el company_id sin causar ciclos infinitos (SECURITY DEFINER)
+CREATE OR REPLACE FUNCTION get_my_company_id()
+RETURNS uuid LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
+  SELECT company_id FROM profiles WHERE id = auth.uid();
+$$;
+
+-- Función para saber si es admin sin causar ciclos infinitos
+CREATE OR REPLACE FUNCTION is_admin()
+RETURNS boolean LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
+  SELECT is_admin FROM profiles WHERE id = auth.uid();
+$$;
+
 -- companies: el usuario lee/actualiza solo su propia company
 CREATE POLICY "company_select" ON companies
-  FOR SELECT USING (
-    id IN (SELECT company_id FROM profiles WHERE id = auth.uid())
-  );
+  FOR SELECT USING (id = get_my_company_id());
 
 -- profiles: el usuario ve todos los miembros de su company
 CREATE POLICY "profiles_select" ON profiles
-  FOR SELECT USING (
-    company_id IN (SELECT company_id FROM profiles WHERE id = auth.uid())
-  );
+  FOR SELECT USING (company_id = get_my_company_id());
 
 -- evaluations: el usuario ve todas las evaluaciones de su company
 CREATE POLICY "evaluations_select" ON evaluations
-  FOR SELECT USING (
-    company_id IN (SELECT company_id FROM profiles WHERE id = auth.uid())
-  );
+  FOR SELECT USING (company_id = get_my_company_id());
 
 -- evaluations: el usuario solo inserta en su propia company
 CREATE POLICY "evaluations_insert" ON evaluations
-  FOR INSERT WITH CHECK (
-    company_id IN (SELECT company_id FROM profiles WHERE id = auth.uid())
-  );
+  FOR INSERT WITH CHECK (company_id = get_my_company_id());
 
 -- plan_prices: cualquier usuario autenticado puede leer
 CREATE POLICY "plan_prices_select" ON plan_prices
@@ -115,43 +120,26 @@ CREATE POLICY "plan_prices_select" ON plan_prices
 
 -- plan_prices: solo admins pueden escribir
 CREATE POLICY "plan_prices_insert" ON plan_prices
-  FOR INSERT WITH CHECK (
-    auth.uid() IN (SELECT id FROM profiles WHERE is_admin = true)
-  );
+  FOR INSERT WITH CHECK (is_admin());
 
 CREATE POLICY "plan_prices_update" ON plan_prices
-  FOR UPDATE WITH CHECK (
-    auth.uid() IN (SELECT id FROM profiles WHERE is_admin = true)
-  );
+  FOR UPDATE WITH CHECK (is_admin());
 
 CREATE POLICY "plan_prices_delete" ON plan_prices
-  FOR DELETE USING (
-    auth.uid() IN (SELECT id FROM profiles WHERE is_admin = true)
-  );
+  FOR DELETE USING (is_admin());
 
--- companies: admins pueden ver todas las companies
+-- admins policies
 CREATE POLICY "company_select_admin" ON companies
-  FOR SELECT USING (
-    auth.uid() IN (SELECT id FROM profiles WHERE is_admin = true)
-  );
+  FOR SELECT USING (is_admin());
 
--- companies: admins pueden actualizar cualquier company
 CREATE POLICY "company_update_admin" ON companies
-  FOR UPDATE WITH CHECK (
-    auth.uid() IN (SELECT id FROM profiles WHERE is_admin = true)
-  );
+  FOR UPDATE WITH CHECK (is_admin());
 
--- profiles: admins pueden ver todos los perfiles
 CREATE POLICY "profiles_select_admin" ON profiles
-  FOR SELECT USING (
-    auth.uid() IN (SELECT id FROM profiles WHERE is_admin = true)
-  );
+  FOR SELECT USING (is_admin());
 
--- profiles: admins pueden actualizar cualquier perfil
 CREATE POLICY "profiles_update_admin" ON profiles
-  FOR UPDATE WITH CHECK (
-    auth.uid() IN (SELECT id FROM profiles WHERE is_admin = true)
-  );
+  FOR UPDATE WITH CHECK (is_admin());
 
 -- ============================================================
 -- FUNCIÓN ADMIN (solo service_role)
@@ -173,4 +161,16 @@ $$;
 -- ALTER TABLE companies ADD COLUMN trial_used boolean NOT NULL DEFAULT false;
 -- ALTER TABLE plan_prices ADD COLUMN monthly_credits int NOT NULL DEFAULT 10;
 -- ALTER TABLE plan_prices ADD COLUMN trial_credits int NOT NULL DEFAULT 1;
+-- ALTER TABLE companies ADD COLUMN trial_end timestamptz;
 
+-- ============================================================
+-- STORAGE BUCKETS
+-- ============================================================
+-- Crear bucket privado para subir imágenes si no existe
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('ad-images', 'ad-images', false)
+ON CONFLICT (id) DO UPDATE SET public = false;
+
+-- Si tu bucket ya existía y estaba como público, corre esta línea en el SQL Editor
+-- para asegurarte de que sea privado:
+-- UPDATE storage.buckets SET public = false WHERE id = 'ad-images';

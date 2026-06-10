@@ -69,11 +69,13 @@ const DIM_LABELS: Record<string, string> = {
 export function UploadClient({ 
   subscriptionStatus, 
   trialCredits, 
-  monthlyCredits 
+  monthlyCredits,
+  trialEnd
 }: { 
   subscriptionStatus: string, 
   trialCredits: number, 
-  monthlyCredits: number 
+  monthlyCredits: number,
+  trialEnd: string | null
 }) {
   const router = useRouter()
   const [preview, setPreview] = useState<string | null>(null)
@@ -88,6 +90,12 @@ export function UploadClient({
   const isTrialExhausted = subscriptionStatus === 'trialing' && trialCredits === 0
   const isMonthlyExhausted = subscriptionStatus === 'active' && monthlyCredits === 0
   const hasNoCredits = isTrialExhausted || isMonthlyExhausted
+
+  let trialDaysLeft = 0
+  if (subscriptionStatus === 'trialing' && trialEnd) {
+    trialDaysLeft = Math.ceil((new Date(trialEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    if (trialDaysLeft < 0) trialDaysLeft = 0
+  }
 
   async function authorizeCharge() {
     setIsAuthorizing(true)
@@ -260,6 +268,17 @@ export function UploadClient({
         </div>
       )}
 
+      {/* ── Mensaje Días de Prueba ── */}
+      {subscriptionStatus === 'trialing' && trialCredits > 0 && (
+        <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-primary text-sm flex gap-3 items-start reveal reveal-1 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <p>
+            Te quedan <strong>{trialDaysLeft} {trialDaysLeft === 1 ? 'día' : 'días'}</strong> de tu periodo de prueba.
+            Si no utilizas tu crédito en este tiempo, se eliminará y se cobrará a tu tarjeta automáticamente.
+          </p>
+        </div>
+      )}
+
       {/* ── Contadores de Créditos ── */}
       {hasActiveOrTrial && !hasNoCredits && (
         <div className="flex justify-center mb-4 reveal reveal-1">
@@ -412,7 +431,7 @@ export function UploadClient({
           {/* Imagen + score */}
           <div className="rounded-xl border overflow-hidden bg-card reveal reveal-1">
             <div className="relative aspect-video bg-muted">
-              <Image src={state.result.image_url} alt="Pieza analizada" fill className="object-contain" unoptimized />
+              <Image src={preview || state.result.image_url} alt="Pieza analizada" fill className="object-contain" unoptimized />
             </div>
             <div className="p-4 flex items-center justify-between">
               <div>

@@ -51,7 +51,7 @@ export default async function SubscriptionPage() {
   // Obtener datos de la empresa
   const { data: company } = await createAdminClient()
     .from('companies')
-    .select('id, name, stripe_customer_id, subscription_status, subscription_plan, trial_credits, monthly_credits')
+    .select('id, name, stripe_customer_id, subscription_status, subscription_plan, trial_credits, monthly_credits, trial_end')
     .eq('id', profile.company_id)
     .single()
 
@@ -106,6 +106,13 @@ export default async function SubscriptionPage() {
                     stripeSubscription?.trialEnd ??
                     stripeSubscription?.period_end
 
+  let trialDaysLeft = 0
+  if (company.subscription_status === 'trialing') {
+    const end = company.trial_end ? new Date(company.trial_end) : (periodEnd ? new Date(periodEnd * 1000) : new Date())
+    trialDaysLeft = Math.ceil((end.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    if (trialDaysLeft < 0) trialDaysLeft = 0
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 space-y-8">
       {/* Volver */}
@@ -125,6 +132,16 @@ export default async function SubscriptionPage() {
         {/* Información del Plan */}
         <div className="md:col-span-2 rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 flex flex-col justify-between shadow-sm">
           <div className="space-y-4">
+            {company.subscription_status === 'trialing' && (
+              <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-primary text-sm flex gap-3 items-start shadow-sm">
+                <AlertTriangle size={20} className="shrink-0 mt-0.5" />
+                <p>
+                  Te quedan <strong>{trialDaysLeft} {trialDaysLeft === 1 ? 'día' : 'días'}</strong> de tu periodo de prueba.
+                  Si no utilizas tu crédito en este tiempo, se eliminará y se cobrará a tu tarjeta automáticamente.
+                </p>
+              </div>
+            )}
+
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Plan Actual</span>

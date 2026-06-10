@@ -23,7 +23,7 @@ export default async function UploadPage() {
   // Obtener datos de la empresa para ver el estado de la suscripción
   const { data: company } = await createAdminClient()
     .from('companies')
-    .select('subscription_status, trial_credits, monthly_credits')
+    .select('subscription_status, trial_credits, monthly_credits, trial_end')
     .eq('id', profile.company_id)
     .single()
 
@@ -31,5 +31,6 @@ export default async function UploadPage() {
     subscriptionStatus={company?.subscription_status || 'inactive'}
     trialCredits={company?.trial_credits || 0}
     monthlyCredits={company?.monthly_credits || 0}
+    trialEnd={company?.trial_end || null}
   />
 }

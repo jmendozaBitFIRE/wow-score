@@ -15,6 +15,16 @@ function slugify(text: string): string {
     .replace(/-+/g, '-')
 }
 
+function translateAuthError(errorMsg: string): string {
+  const msg = errorMsg.toLowerCase()
+  if (msg.includes('email not confirmed')) return 'Por favor, confirma tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada o spam.'
+  if (msg.includes('invalid login credentials')) return 'El correo o la contraseña son incorrectos.'
+  if (msg.includes('user already registered')) return 'Este correo electrónico ya está registrado. Intenta iniciar sesión.'
+  if (msg.includes('password should be at least')) return 'La contraseña es demasiado corta. Debe tener al menos 6 caracteres.'
+  if (msg.includes('rate limit')) return 'Demasiados intentos. Por favor espera un momento y vuelve a intentarlo.'
+  return errorMsg // Retorna el mensaje original si no coincide con ninguno
+}
+
 export async function registerAction(
   _prevState: AuthState,
   formData: FormData
@@ -35,8 +45,14 @@ export async function registerAction(
 
   // 1. Crear usuario en Supabase Auth
   const { data, error: signUpError } = await supabase.auth.signUp({ email, password })
-  if (signUpError) return { error: signUpError.message }
+  if (signUpError) return { error: translateAuthError(signUpError.message) }
   if (!data.user) return { error: 'No se pudo crear el usuario.' }
+
+  // Supabase devuelve un usuario falso (identities = []) si el correo ya existe
+  // Esto evita errores de "foreign key" al intentar insertar en perfiles con un ID irreal
+  if (data.user.identities && data.user.identities.length === 0) {
+    return { error: 'Este correo electrónico ya está registrado. Intenta iniciar sesión.' }
+  }
 
   // 2. Insertar company (con createAdminClient(), usuario aún sin sesión activa)
   const { data: company, error: companyError } = await createAdminClient()
@@ -75,7 +91,7 @@ export async function loginAction(
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error) return { error: error.message }
+  if (error) return { error: translateAuthError(error.message) }
 
   redirect('/dashboard')
 }

@@ -38,9 +38,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Company not found' }, { status: 404 })
   }
 
-  if (company.subscription_status !== 'active') {
+  if (company.subscription_status !== 'active' && company.subscription_status !== 'trialing') {
     return NextResponse.json(
-      { error: 'Se requiere una suscripción activa para subir imágenes.' },
+      { error: 'Se requiere una suscripción activa o un periodo de prueba para subir imágenes.' },
       { status: 403 }
     )
   }

@@ -91,9 +91,9 @@ export async function POST(request: Request) {
     cancel_url: `${baseUrl}/dashboard/pricing`,
   }
 
-  // Si no ha usado su prueba, damos 2 años de prueba (cobraremos después manualmente)
+  // Si no ha usado su prueba, damos 5 días de prueba
   if (!company.trial_used) {
-    sessionConfig.subscription_data!.trial_period_days = 730
+    sessionConfig.subscription_data!.trial_period_days = 5
   }
 
   const session = await stripe.checkout.sessions.create(sessionConfig)
