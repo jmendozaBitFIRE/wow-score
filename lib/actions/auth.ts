@@ -22,6 +22,8 @@ function translateAuthError(errorMsg: string): string {
   if (msg.includes('user already registered')) return 'Este correo electrónico ya está registrado. Intenta iniciar sesión.'
   if (msg.includes('password should be at least')) return 'La contraseña es demasiado corta. Debe tener al menos 6 caracteres.'
   if (msg.includes('rate limit')) return 'Demasiados intentos. Por favor espera un momento y vuelve a intentarlo.'
+  if (msg.includes('should be different from the old password')) return 'La nueva contraseña debe ser diferente a la actual.'
+  if (msg.includes('same password')) return 'La nueva contraseña debe ser diferente a la actual.'
   return errorMsg // Retorna el mensaje original si no coincide con ninguno
 }
 
@@ -100,4 +102,46 @@ export async function signOutAction() {
   const supabase = await createClient()
   await supabase.auth.signOut()
   redirect('/login')
+}
+
+export async function forgotPasswordAction(
+  _prevState: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const email = (formData.get('email') as string)?.trim()
+  if (!email) return { error: 'El email es requerido.' }
+
+  const supabase = await createClient()
+  // Generate the callback URL which handles PKCE. Need to determine origin.
+  // Next.js Server Actions don't have direct access to request URL easily without headers.
+  const { headers } = await import('next/headers')
+  const headersList = await headers()
+  const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+  })
+
+  if (error) return { error: translateAuthError(error.message) }
+
+  // Retornamos un "error" especial (o lo manejamos con otro type)
+  // Pero lo más limpio es redirigir a una página de éxito, o retornar un objeto
+  redirect('/forgot-password?success=true')
+}
+
+export async function updatePasswordAction(
+  _prevState: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const password = formData.get('password') as string
+  if (!password || password.length < 6) {
+    return { error: 'La contraseña debe tener al menos 6 caracteres.' }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({ password })
+
+  if (error) return { error: translateAuthError(error.message) }
+
+  redirect('/dashboard')
 }

@@ -56,14 +56,25 @@ export function LoginForm({ registered }: { registered: boolean }) {
           required
         />
 
-        <PasswordField
-          label="Contraseña"
-          name="password"
-          placeholder="········"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="space-y-1">
+          <PasswordField
+            label="Contraseña"
+            name="password"
+            placeholder="········"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <div className="flex justify-end">
+            <Link
+              href="/forgot-password"
+              className="text-xs font-medium hover:underline"
+              style={{ color: 'var(--color-flame)' }}
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
+        </div>
 
         {state?.error && (
           <p className="text-sm" style={{ color: 'var(--color-error)' }}>
