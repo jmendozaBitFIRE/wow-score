@@ -55,14 +55,8 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
   if (!evaluation) notFound()
 
-  // ── 4. Signed URL de la imagen (1 hora) ───────────────────
   const filePath = new URL(evaluation.image_url).pathname.split('/ad-images/')[1]
-  const { data: signedData } = await createAdminClient()
-    .storage
-    .from('ad-images')
-    .createSignedUrl(filePath, 3600)
-
-  const imageSrc = signedData?.signedUrl ?? evaluation.image_url
+  const imageSrc = `/api/image?path=${encodeURIComponent(filePath)}`
 
   const feedback = evaluation.feedback_json as {
     veredicto?: string

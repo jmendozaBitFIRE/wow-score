@@ -43,20 +43,14 @@ export default async function DashboardPage() {
     .order('created_at', { ascending: false })
     .limit(3)
 
-  const evaluationsWithImages = await Promise.all(
-    (evaluations ?? []).map(async (ev) => {
-      try {
-        const filePath = new URL(ev.image_url).pathname.split('/ad-images/')[1]
-        const { data } = await createAdminClient()
-          .storage
-          .from('ad-images')
-          .createSignedUrl(filePath, 3600)
-        return { ...ev, signedUrl: data?.signedUrl ?? null }
-      } catch {
-        return { ...ev, signedUrl: null }
-      }
-    })
-  )
+  const evaluationsWithImages = (evaluations ?? []).map((ev) => {
+    try {
+      const filePath = new URL(ev.image_url).pathname.split('/ad-images/')[1]
+      return { ...ev, signedUrl: `/api/image?path=${encodeURIComponent(filePath)}` }
+    } catch {
+      return { ...ev, signedUrl: null }
+    }
+  })
 
   const stats = [
     { label: 'Evaluaciones totales', value: '12', icon: History },
