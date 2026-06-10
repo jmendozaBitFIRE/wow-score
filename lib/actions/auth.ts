@@ -116,7 +116,12 @@ export async function forgotPasswordAction(
   // Next.js Server Actions don't have direct access to request URL easily without headers.
   const { headers } = await import('next/headers')
   const headersList = await headers()
-  const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  
+  const protocol = headersList.get('x-forwarded-proto') || 'https'
+  const host = headersList.get('x-forwarded-host') || headersList.get('host')
+  const derivedOrigin = host ? `${protocol}://${host}` : null
+
+  const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || derivedOrigin || 'http://localhost:3000'
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/callback?next=/reset-password`,
