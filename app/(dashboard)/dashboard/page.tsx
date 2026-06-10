@@ -131,6 +131,7 @@ export default async function DashboardPage() {
                       alt={ev.medio}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      unoptimized
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-muted-foreground">

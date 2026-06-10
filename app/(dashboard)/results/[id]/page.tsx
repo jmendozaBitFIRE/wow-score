@@ -55,8 +55,15 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
   if (!evaluation) notFound()
 
-  const filePath = new URL(evaluation.image_url).pathname.split('/ad-images/')[1]
-  const imageSrc = `/api/image?path=${encodeURIComponent(filePath)}`
+  let imageSrc = evaluation.image_url
+  try {
+    const filePath = new URL(evaluation.image_url).pathname.split('/ad-images/')[1]
+    if (filePath) {
+      imageSrc = `/api/image?path=${encodeURIComponent(filePath)}`
+    }
+  } catch {
+    // If invalid URL, fallback to original
+  }
 
   const feedback = evaluation.feedback_json as {
     veredicto?: string
@@ -90,6 +97,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
             alt="Pieza analizada"
             fill
             className="object-contain"
+            unoptimized
           />
         </div>
         <div className="p-4 flex items-center justify-between">
