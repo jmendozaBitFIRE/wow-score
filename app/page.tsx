@@ -1,11 +1,10 @@
-import { LandingHeader }       from '@/components/landing/LandingHeader'
-import { LandingFooter }       from '@/components/landing/LandingFooter'
 import { HeroSection }         from '@/components/landing/HeroSection'
 import { ComoFuncionaSection } from '@/components/landing/ComoFuncionaSection'
 import { VentajasSection }     from '@/components/landing/VentajasSection'
 import { MediosSection }       from '@/components/landing/MediosSection'
 import { PreciosSection }      from '@/components/landing/PreciosSection'
-import { CTAFinalSection }     from '@/components/landing/CTAFinalSection'
+import { ContactoSection }       from '@/components/landing/ContactoSection'
+import { LandingPageShell } from '@/components/landing/LandingPageShell'
 
 export const metadata = {
   title: '¿Tu publicidad realmente impacta? — WOW Score',
@@ -15,17 +14,13 @@ export const metadata = {
 
 export default function LandingPage() {
   return (
-    <>
-      <LandingHeader />
-      <main>
-        <HeroSection />
-        <ComoFuncionaSection />
-        <VentajasSection />
-        <MediosSection />
-        <PreciosSection />
-        <CTAFinalSection />
-      </main>
-      <LandingFooter />
-    </>
+    <LandingPageShell>
+      <HeroSection />
+      <ComoFuncionaSection />
+      <VentajasSection />
+      <MediosSection />
+      <PreciosSection />
+      <ContactoSection />
+    </LandingPageShell>
   )
 }
