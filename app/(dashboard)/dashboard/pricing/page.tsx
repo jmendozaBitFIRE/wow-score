@@ -128,7 +128,7 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
       {isSubscribedQuery && (
         <div className="mb-8 p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/30 dark:bg-emerald-950/10 dark:text-emerald-400 flex items-center gap-3">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -171,7 +171,7 @@ export default function PricingPage() {
         <div className="inline-flex items-center gap-2 mt-6 rounded-full border p-1 bg-muted">
           <button
             onClick={() => setBilling('monthly')}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            className={`min-h-11 sm:min-h-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
               billing === 'monthly'
                 ? 'bg-background shadow text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
@@ -181,7 +181,7 @@ export default function PricingPage() {
           </button>
           <button
             onClick={() => setBilling('annual')}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            className={`min-h-11 sm:min-h-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
               billing === 'annual'
                 ? 'bg-background shadow text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
@@ -248,7 +248,7 @@ export default function PricingPage() {
               <Button
                 onClick={() => handleSubscribe(option.plan)}
                 disabled={isPending || isCurrentActive}
-                className={`w-full ${
+                className={`w-full h-11 sm:h-8 ${
                   isCurrentActive
                     ? 'bg-zinc-100 text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400'
                     : ''

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { AnalyzingSkeleton } from '@/components/ui/AnalyzingSkeleton'
+import { RatingWidget } from '@/components/dashboard/RatingWidget'
 import type { Medio, Objetivo } from '@/lib/wow-formulas'
 
 // ── Opciones de los dropdowns ───────────────────────────────
@@ -225,7 +226,7 @@ export function UploadClient({
           </p>
           <div className="pt-4">
             <Link href="/dashboard/pricing">
-              <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-2 h-auto">
+              <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-3 sm:py-2 h-auto">
                 Ver planes y precios
               </Button>
             </Link>
@@ -247,7 +248,7 @@ export function UploadClient({
             <Button 
               onClick={authorizeCharge} 
               disabled={isAuthorizing}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-2 h-auto text-base font-semibold"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-3 sm:py-2 h-auto text-base font-semibold"
             >
               {isAuthorizing ? 'Autorizando...' : 'Autorizar Cobro'}
             </Button>
@@ -388,13 +389,13 @@ export function UploadClient({
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={reset} disabled={isBusy} className="shrink-0">
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button variant="outline" size="sm" onClick={reset} disabled={isBusy} className="h-11 sm:h-7 sm:shrink-0">
                 Cambiar imagen
               </Button>
               <Button
                 variant="brand"
-                className="flex-1"
+                className="flex-1 h-11 sm:h-8"
                 onClick={handleAnalyze}
                 disabled={!canAnalyze || isBusy}
               >
@@ -467,7 +468,7 @@ export function UploadClient({
           </div>
 
           {/* Fortalezas y oportunidades */}
-          <div className="grid grid-cols-2 gap-4 reveal reveal-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal reveal-3">
             <div className="rounded-xl border bg-card p-4 space-y-2">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fortalezas</p>
               <ul className="space-y-1.5">
@@ -497,6 +498,14 @@ export function UploadClient({
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Veredicto</p>
             <p className="text-sm leading-relaxed">{state.result.veredicto}</p>
           </div>
+
+          {/* Calificación */}
+          {state.result.id && (
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2 reveal reveal-4">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">¿Qué tan útil fue?</p>
+              <RatingWidget evaluationId={state.result.id} />
+            </div>
+          )}
 
           <div className="reveal reveal-5">
             <Button variant="outline" className="w-full" onClick={reset}>

@@ -134,7 +134,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
       {/* Fortalezas y oportunidades */}
       {(feedback?.fortalezas || feedback?.oportunidades) && (
-        <div className="grid grid-cols-2 gap-4 reveal reveal-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal reveal-4">
           {feedback.fortalezas && (
             <div className="rounded-xl border bg-card p-4 space-y-2">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fortalezas</p>
@@ -175,7 +175,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
       <div className="reveal reveal-5">
         <Link
           href="/dashboard/upload"
-          className="flex items-center justify-center w-full rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+          className="flex items-center justify-center w-full rounded-lg border px-4 py-3 sm:py-2 text-sm font-medium hover:bg-muted transition-colors"
         >
           Analizar otra pieza
         </Link>

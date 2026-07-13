@@ -8,6 +8,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { signOutAction } from '@/lib/actions/auth'
 import { SidebarNav } from '@/components/dashboard/SidebarNav'
+import { MobileNav } from '@/components/dashboard/MobileNav'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -22,9 +23,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .single()
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-black">
-      {/* Sidebar */}
-      <aside className="w-64 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex flex-col">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-zinc-50 dark:bg-black">
+      {/* Nav móvil/tablet — hamburguesa + drawer, oculto en desktop (lg:) */}
+      <MobileNav isAdmin={profile?.is_admin ?? false} userEmail={user.email ?? ''} />
+
+      {/* Sidebar — solo desktop (lg:) */}
+      <aside className="hidden lg:flex w-64 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex-col">
         <div className="p-6">
           <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl tracking-tight">
             <div 

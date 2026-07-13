@@ -43,7 +43,7 @@ export function SidebarNav({ isAdmin = false }: SidebarNavProps) {
               key={item.href}
               href={item.href}
               className={[
-                'nav-link flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg',
+                'nav-link flex items-center gap-3 px-3 py-2 min-h-11 lg:min-h-0 text-sm font-medium rounded-lg',
                 isActive
                   ? 'nav-link-active'
                   : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50',

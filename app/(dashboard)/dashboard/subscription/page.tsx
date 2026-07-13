@@ -114,7 +114,7 @@ export default async function SubscriptionPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
       {/* Volver */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Gestión de Suscripción</h1>
@@ -142,7 +142,7 @@ export default async function SubscriptionPage() {
               </div>
             )}
 
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Plan Actual</span>
                 <h2 className="text-xl font-bold capitalize text-zinc-900 dark:text-white mt-1">
@@ -218,7 +218,7 @@ export default async function SubscriptionPage() {
                 <div>
                   <Link
                     href="/dashboard/pricing"
-                    className={cn(buttonVariants({ variant: 'default' }), 'bg-orange-600 hover:bg-orange-700 text-white rounded-full px-5')}
+                    className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-8 bg-orange-600 hover:bg-orange-700 text-white rounded-full px-5')}
                   >
                     Ver planes disponibles
                   </Link>
@@ -343,7 +343,7 @@ export default async function SubscriptionPage() {
       <div className="flex justify-center pt-4">
         <Link
           href="/dashboard/pricing"
-          className={cn(buttonVariants({ variant: 'default' }), 'bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-2')}
+          className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-9 bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-2')}
         >
           Ver más planes y precios
         </Link>

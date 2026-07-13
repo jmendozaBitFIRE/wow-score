@@ -58,7 +58,7 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">¡Hola, {profile.full_name.split(' ')[0]}!</h1>
@@ -70,7 +70,7 @@ export default async function DashboardPage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div 
-          className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl p-8 text-white shadow-lg shadow-orange-500/20"
+          className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl p-6 sm:p-8 text-white shadow-lg shadow-orange-500/20"
           style={{ background: 'var(--gradient-brand)' }}
         >
           <div className="relative z-10 space-y-4">
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
             <p className="text-white/80 max-w-sm">
               Sube una imagen publicitaria y obtén un análisis detallado basado en la fórmula WOW Score en segundos.
             </p>
-            <Link href="/dashboard/upload" className={cn(buttonVariants(), 'bg-white text-orange-600 hover:bg-zinc-100 rounded-full px-6 flex items-center gap-2 shadow-sm')}>
+            <Link href="/dashboard/upload" className={cn(buttonVariants(), 'h-11 sm:h-8 bg-white text-orange-600 hover:bg-zinc-100 rounded-full px-6 flex items-center gap-2 shadow-sm')}>
               <Plus size={18} />
               Nuevo análisis
             </Link>
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
              </p>
           </div>
           <div className="mt-4">
-            <Link href="/dashboard/subscription" className={cn(buttonVariants({ variant: 'outline' }), 'w-full rounded-full flex items-center justify-center gap-2 hover:border-orange-500 hover:text-orange-600')}>
+            <Link href="/dashboard/subscription" className={cn(buttonVariants({ variant: 'outline' }), 'h-11 sm:h-8 w-full rounded-full flex items-center justify-center gap-2 hover:border-orange-500 hover:text-orange-600')}>
               Gestionar plan
               <ArrowRight size={16} />
             </Link>

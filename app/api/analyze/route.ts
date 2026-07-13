@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { WOW_FORMULAS, type Medio, type Objetivo } from '@/lib/wow-formulas'
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+import { callOpenAI, callClaude, InvalidModelResponseError, type AIProviderResult } from '@/lib/ai-providers'
 
 const MEDIOS: Medio[] = ['TV', 'Radio', 'OOH', 'DOOH', 'Digital', 'Impresos', 'Cine']
 const OBJETIVOS: Objetivo[] = ['Branding', 'Ventas', 'Lanzamiento', 'Promocion', 'Informativo', 'BrandLove']
@@ -13,27 +11,6 @@ interface AnalyzeBody {
   image_url: string
   medio: Medio
   objetivo: Objetivo
-}
-
-interface Dimensiones {
-  insight: number
-  claridad: number
-  stopping: number
-  simplicidad: number
-  pert: number
-  adapt: number
-  emocion: number
-  recordacion: number
-  estetica: number
-  relevancia: number
-}
-
-interface OpenAIResult {
-  wow_score: number
-  dimensiones: Dimensiones
-  fortalezas: [string, string, string]
-  oportunidades: [string, string, string]
-  veredicto: string
 }
 
 function buildSystemPrompt(medio: Medio, objetivo: Objetivo, formula: typeof WOW_FORMULAS[string]): string {
@@ -201,41 +178,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No se pudo generar signed URL para la imagen.' }, { status: 500 })
   }
 
-  // ── 6. Llamar a OpenAI ────────────────────────────────────
+  // ── 6. Llamar al proveedor de IA (A/B) ────────────────────
   const systemPrompt = buildSystemPrompt(medio, objetivo, formula)
+  const provider: 'openai' | 'claude' = Math.random() < 0.5 ? 'openai' : 'claude'
 
-  let rawContent: string
+  let result: AIProviderResult
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      max_tokens: 800,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        {
-          role: 'user',
-          content: [
-            { type: 'image_url', image_url: { url: signedData.signedUrl } },
-            { type: 'text', text: 'Evalúa este anuncio.' },
-          ],
-        },
-      ],
-    })
-    rawContent = completion.choices[0]?.message?.content ?? ''
+    result = provider === 'openai'
+      ? await callOpenAI(systemPrompt, signedData.signedUrl)
+      : await callClaude(systemPrompt, signedData.signedUrl)
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Error al llamar a OpenAI'
+    if (err instanceof InvalidModelResponseError) {
+      // evaluationId: aún no existe — el fallo ocurre antes del insert en `evaluations`.
+      console.error('[analyze] respuesta de IA no parseable como JSON tras reintentos', {
+        provider,
+        evaluationId: null,
+        rawText: err.rawText,
+      })
+      return NextResponse.json(
+        { error: 'El análisis falló, intenta de nuevo.' },
+        { status: 502 }
+      )
+    }
+    const message = err instanceof Error ? err.message : `Error al llamar a ${provider}`
     return NextResponse.json({ error: message }, { status: 502 })
-  }
-
-  // ── 7. Parsear respuesta ──────────────────────────────────
-  let result: OpenAIResult
-  try {
-    const clean = rawContent.replace(/```json|```/g, '').trim()
-    result = JSON.parse(clean)
-  } catch {
-    return NextResponse.json(
-      { error: 'La respuesta de OpenAI no es JSON válido.', raw: rawContent },
-      { status: 502 }
-    )
   }
 
   // ── 8. Guardar en evaluations ─────────────────────────────
@@ -247,12 +213,13 @@ export async function POST(request: Request) {
       image_url,
       medio,
       objetivo,
-      score_overall: Math.round(result.wow_score),
-      scores_detail: result.dimensiones,
+      provider,
+      score_overall: Math.round(result.score),
+      scores_detail: result.breakdown,
       feedback_json: {
-        veredicto: result.veredicto,
-        fortalezas: result.fortalezas,
-        oportunidades: result.oportunidades,
+        veredicto: result.raw.veredicto,
+        fortalezas: result.raw.fortalezas,
+        oportunidades: result.raw.oportunidades,
       },
     })
     .select('id, created_at')
@@ -281,11 +248,12 @@ export async function POST(request: Request) {
     id: evaluation?.id ?? null,
     medio,
     objetivo,
-    wow_score: result.wow_score,
-    dimensiones: result.dimensiones,
-    fortalezas: result.fortalezas,
-    oportunidades: result.oportunidades,
-    veredicto: result.veredicto,
+    provider,
+    wow_score: result.score,
+    dimensiones: result.breakdown,
+    fortalezas: result.raw.fortalezas,
+    oportunidades: result.raw.oportunidades,
+    veredicto: result.raw.veredicto,
     image_url,
     created_at: evaluation?.created_at ?? new Date().toISOString(),
   })

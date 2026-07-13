@@ -89,7 +89,7 @@ export default async function HistoryPage() {
 
   // ── 5. Render ─────────────────────────────────────────────
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
       <div className="mb-8 reveal reveal-1">
         <h1 className="text-2xl font-semibold mb-1">Historial de análisis</h1>
         <p className="text-sm text-muted-foreground">
@@ -110,10 +110,10 @@ export default async function HistoryPage() {
             <Link
               key={ev.id}
               href={`/results/${ev.id}`}
-              className="rounded-xl border bg-card flex gap-4 p-4 items-start cursor-pointer transition-all duration-200 hover:shadow-[0_4px_16px_rgba(29,29,27,0.10)] hover:-translate-y-0.5 hover:border-[var(--color-flame)] block"
+              className="rounded-xl border bg-card flex gap-3 sm:gap-4 p-3 sm:p-4 items-start cursor-pointer transition-all duration-200 hover:shadow-[0_4px_16px_rgba(29,29,27,0.10)] hover:-translate-y-0.5 hover:border-[var(--color-flame)] block"
             >
               {/* Thumbnail */}
-              <div className="relative h-16 w-24 shrink-0 rounded-md overflow-hidden bg-muted">
+              <div className="relative h-14 w-14 sm:h-16 sm:w-24 shrink-0 rounded-md overflow-hidden bg-muted">
                 {ev.signedUrl ? (
                   <Image
                     src={ev.signedUrl}
@@ -158,7 +158,7 @@ export default async function HistoryPage() {
 
               {/* Score */}
               <div className="shrink-0 text-right">
-                <p className={`text-2xl font-bold leading-none ${scoreColor(ev.score_overall)}`}>
+                <p className={`text-xl sm:text-2xl font-bold leading-none ${scoreColor(ev.score_overall)}`}>
                   {ev.score_overall ?? '—'}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">WOW Score</p>
