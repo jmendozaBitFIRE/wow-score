@@ -17,8 +17,11 @@ const ANALYSIS_JSON = {
     insight: 8, claridad: 8, stopping: 8, simplicidad: 8, pert: 8,
     adapt: 8, emocion: 8, recordacion: 8, estetica: 8, relevancia: 8,
   },
-  fortalezas: ['a', 'b', 'c'] as [string, string, string],
-  oportunidades: ['x', 'y', 'z'] as [string, string, string],
+  target_fit: {
+    tono: 8, codigo_visual: 8, legibilidad: 8, motivador_psicologico: 8, relevancia_cultural: 8,
+  },
+  fortalezas: ['a', 'b', 'c'],
+  oportunidades: ['x', 'y', 'z'],
   veredicto: 'Buen anuncio.',
 }
 

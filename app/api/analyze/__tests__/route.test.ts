@@ -20,12 +20,14 @@ const state = vi.hoisted(() => ({
   openaiResult: {
     score: 80,
     breakdown: { insight: 8, claridad: 8, stopping: 8, simplicidad: 8, pert: 8, adapt: 8, emocion: 8, recordacion: 8, estetica: 8, relevancia: 8 },
-    raw: { wow_score: 80, dimensiones: {}, fortalezas: ['a', 'b', 'c'], oportunidades: ['x', 'y', 'z'], veredicto: 'ok openai' },
+    targetFit: { tono: 10, codigo_visual: 10, legibilidad: 10, motivador_psicologico: 10, relevancia_cultural: 10 },
+    raw: { wow_score: 80, dimensiones: {}, target_fit: {}, fortalezas: ['a', 'b', 'c'], oportunidades: ['x', 'y', 'z'], veredicto: 'ok openai' },
   },
   claudeResult: {
     score: 90,
     breakdown: { insight: 9, claridad: 9, stopping: 9, simplicidad: 9, pert: 9, adapt: 9, emocion: 9, recordacion: 9, estetica: 9, relevancia: 9 },
-    raw: { wow_score: 90, dimensiones: {}, fortalezas: ['a', 'b', 'c'], oportunidades: ['x', 'y', 'z'], veredicto: 'ok claude' },
+    targetFit: { tono: 10, codigo_visual: 10, legibilidad: 10, motivador_psicologico: 10, relevancia_cultural: 10 },
+    raw: { wow_score: 90, dimensiones: {}, target_fit: {}, fortalezas: ['a', 'b', 'c'], oportunidades: ['x', 'y', 'z'], veredicto: 'ok claude' },
   },
   callOpenAICalls: 0,
   callClaudeCalls: 0,
@@ -143,6 +145,9 @@ const VALID_BODY = {
   image_url: 'https://x.supabase.co/storage/v1/object/sign/ad-images/company-1/user-1/123-test.png?token=abc',
   medio: 'TV',
   objetivo: 'Branding',
+  genero: 'Hombres',
+  edad: '35-44',
+  nse: 'ABC+',
 }
 
 beforeEach(() => {
@@ -179,7 +184,9 @@ describe('POST /api/analyze — selección de proveedor A/B', () => {
 
     const body = await res.json()
     expect(body.provider).toBe('openai')
-    expect(body.wow_score).toBe(80)
+    expect(body.wow_base_score).toBe(80)
+    expect(body.wow_score).toBe(84)
+    expect(body.target_fit.wtm).toBe(1.05)
     expect(state.insertedEvaluation?.provider).toBe('openai')
     expect(state.callOpenAICalls).toBe(1)
     expect(state.callClaudeCalls).toBe(0)
@@ -193,7 +200,8 @@ describe('POST /api/analyze — selección de proveedor A/B', () => {
 
     const body = await res.json()
     expect(body.provider).toBe('claude')
-    expect(body.wow_score).toBe(90)
+    expect(body.wow_base_score).toBe(90)
+    expect(body.wow_score).toBe(94.5)
     expect(state.insertedEvaluation?.provider).toBe('claude')
     expect(state.callClaudeCalls).toBe(1)
     expect(state.callOpenAICalls).toBe(0)

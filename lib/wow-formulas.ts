@@ -1,6 +1,11 @@
 export type Medio = 'TV' | 'Radio' | 'OOH' | 'DOOH' | 'Digital' | 'Impresos' | 'Cine'
 export type Objetivo = 'Branding' | 'Ventas' | 'Lanzamiento' | 'Promocion' | 'Informativo' | 'BrandLove'
 
+// ── Target (WTM 3.1) ─────────────────────────────────────────
+export type Genero = 'Mujeres' | 'Hombres'
+export type Edad = '18-24' | '25-34' | '35-44' | '45-54' | '55+'
+export type NSE = 'ABC+' | 'C/C-' | 'D+/D' | 'E'
+
 export interface Pesos {
   insight: number
   claridad: number
@@ -17,6 +22,59 @@ export interface Pesos {
 export interface Formula {
   bondad: string
   pesos: Pesos
+}
+
+// ── Glosario oficial de variables (Fórmula WOW 3.1 — Versión Definitiva) ──
+// Regla de estandarización: ninguna variable puede calificarse con un
+// criterio distinto al aquí establecido.
+export const GLOSARIO: Record<keyof Pesos, string> = {
+  insight: 'La idea parte de una verdad humana poderosa que explica por qué las personas sienten, piensan o actúan como lo hacen.',
+  claridad: 'La propuesta comunica una sola idea poderosa que cualquier persona puede comprender en pocos segundos.',
+  stopping: 'La experiencia rompe la inercia visual o mental de la audiencia, logrando detener su atención entre cientos de estímulos.',
+  simplicidad: 'Todo elemento de la experiencia tiene un propósito. Si algo no aporta valor, sobra.',
+  pert: 'La idea solo tiene sentido para esa marca; fortalece su personalidad y no podría intercambiarse fácilmente con otra.',
+  adapt: 'La experiencia mantiene su esencia y efectividad al implementarse en distintos medios, formatos y puntos de contacto.',
+  emocion: 'La idea logra que las personas sientan algo memorable, generando una conexión emocional con la marca.',
+  recordacion: 'La experiencia permanece en la mente de las personas y facilita que recuerden la marca, el mensaje y la vivencia.',
+  estetica: 'La calidad visual, sonora y narrativa potencia el impacto de la experiencia y refleja excelencia en la ejecución.',
+  relevancia: 'La idea responde a un momento, necesidad o interés genuino de la audiencia, haciendo que la experiencia sea valiosa y significativa.',
+}
+
+// ── Target Fit Multiplier (WTM 3.1 — Balanced Performance Model) ──────────
+export interface TargetFitScores {
+  tono: number             // Tono de Comunicación — 25%
+  codigoVisual: number     // Código Visual — 25%
+  legibilidad: number      // Legibilidad — 20%
+  motivador: number        // Motivador Psicológico — 20%
+  culturalRelevancia: number // Relevancia Cultural — 10%
+}
+
+const TARGET_FIT_WEIGHTS: Record<keyof TargetFitScores, number> = {
+  tono: 25, codigoVisual: 25, legibilidad: 20, motivador: 20, culturalRelevancia: 10,
+}
+
+// Cada variable se califica 1–10; el Target Fit Score resultante va de 0 a 100.
+export function calcTargetFitScore(scores: TargetFitScores): number {
+  const total = (Object.keys(TARGET_FIT_WEIGHTS) as (keyof TargetFitScores)[])
+    .reduce((sum, key) => sum + (scores[key] / 10) * TARGET_FIT_WEIGHTS[key], 0)
+  return Math.round(total * 10) / 10
+}
+
+// Conversión Target Fit Score → WTM, tabla oficial WOW 3.1.
+export function calcWTM(targetFitScore: number): number {
+  if (targetFitScore >= 95) return 1.05
+  if (targetFitScore >= 90) return 1.02
+  if (targetFitScore >= 80) return 0.97
+  if (targetFitScore >= 70) return 0.93
+  if (targetFitScore >= 60) return 0.88
+  if (targetFitScore >= 50) return 0.80
+  return 0.70
+}
+
+// WOW Final = WOW Base Score × WTM. Se limita a 100 para mantener la
+// escala consistente con el resto de los scores (0–100) que ve el usuario.
+export function calcWowFinal(wowBaseScore: number, wtm: number): number {
+  return Math.min(100, Math.round(wowBaseScore * wtm * 10) / 10)
 }
 
 export const WOW_FORMULAS: Record<string, Formula> = {

@@ -104,6 +104,20 @@ export async function signOutAction() {
   redirect('/login')
 }
 
+// Server Actions no tienen acceso directo a la URL del request; se deriva de
+// los headers de forwarding. Se usa para construir redirectTo de Supabase Auth
+// (reset de contraseña, invitación de miembros).
+export async function getOrigin(): Promise<string> {
+  const { headers } = await import('next/headers')
+  const headersList = await headers()
+
+  const protocol = headersList.get('x-forwarded-proto') || 'https'
+  const host = headersList.get('x-forwarded-host') || headersList.get('host')
+  const derivedOrigin = host ? `${protocol}://${host}` : null
+
+  return headersList.get('origin') || process.env.NEXT_PUBLIC_APP_URL || derivedOrigin || 'http://localhost:3000'
+}
+
 export async function forgotPasswordAction(
   _prevState: AuthState,
   formData: FormData
@@ -112,16 +126,7 @@ export async function forgotPasswordAction(
   if (!email) return { error: 'El email es requerido.' }
 
   const supabase = await createClient()
-  // Generate the callback URL which handles PKCE. Need to determine origin.
-  // Next.js Server Actions don't have direct access to request URL easily without headers.
-  const { headers } = await import('next/headers')
-  const headersList = await headers()
-  
-  const protocol = headersList.get('x-forwarded-proto') || 'https'
-  const host = headersList.get('x-forwarded-host') || headersList.get('host')
-  const derivedOrigin = host ? `${protocol}://${host}` : null
-
-  const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_APP_URL || derivedOrigin || 'http://localhost:3000'
+  const origin = await getOrigin()
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/callback?next=/reset-password`,

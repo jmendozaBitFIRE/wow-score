@@ -17,17 +17,27 @@ export interface Dimensiones {
   relevancia: number
 }
 
+export interface TargetFitDimensiones {
+  tono: number
+  codigo_visual: number
+  legibilidad: number
+  motivador_psicologico: number
+  relevancia_cultural: number
+}
+
 export interface ParsedAnalysis {
   wow_score: number
   dimensiones: Dimensiones
-  fortalezas: [string, string, string]
-  oportunidades: [string, string, string]
+  target_fit: TargetFitDimensiones
+  fortalezas: string[]
+  oportunidades: string[]
   veredicto: string
 }
 
 export interface AIProviderResult {
   score: number
   breakdown: Dimensiones
+  targetFit: TargetFitDimensiones
   raw: ParsedAnalysis
 }
 
@@ -122,7 +132,7 @@ export async function callOpenAI(systemPrompt: string, imageUrl: string): Promis
     })
     return completion.choices[0]?.message?.content ?? ''
   })
-  return { score: parsed.wow_score, breakdown: parsed.dimensiones, raw: parsed }
+  return { score: parsed.wow_score, breakdown: parsed.dimensiones, targetFit: parsed.target_fit, raw: parsed }
 }
 
 export async function callClaude(systemPrompt: string, imageUrl: string): Promise<AIProviderResult> {
@@ -144,5 +154,5 @@ export async function callClaude(systemPrompt: string, imageUrl: string): Promis
     const textBlock = response.content.find((b): b is Anthropic.TextBlock => b.type === 'text')
     return textBlock?.text ?? ''
   })
-  return { score: parsed.wow_score, breakdown: parsed.dimensiones, raw: parsed }
+  return { score: parsed.wow_score, breakdown: parsed.dimensiones, targetFit: parsed.target_fit, raw: parsed }
 }

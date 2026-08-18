@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, LogOut, Sparkles } from 'lucide-react'
+import Image from 'next/image'
+import { Menu, X, LogOut } from 'lucide-react'
 import { SidebarNav } from '@/components/dashboard/SidebarNav'
 import { signOutAction } from '@/lib/actions/auth'
 
@@ -17,12 +18,9 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
   return (
     <>
       {/* Top bar — solo móvil/tablet, oculta en desktop (lg:) donde vive el sidebar fijo */}
-      <header className="lg:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-white px-4 py-3 dark:bg-zinc-950 dark:border-zinc-800">
-        <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg tracking-tight">
-          <div className="p-1.5 rounded-lg text-white" style={{ background: 'var(--gradient-brand)' }}>
-            <Sparkles size={18} fill="currentColor" />
-          </div>
-          <span className="text-zinc-900 dark:text-white">WowScore</span>
+      <header className="no-print lg:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-white px-4 py-3 dark:bg-zinc-950 dark:border-zinc-800">
+        <Link href="/dashboard" className="flex items-center">
+          <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" priority />
         </Link>
         <button
           type="button"
@@ -47,12 +45,9 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 font-bold text-lg tracking-tight"
+                className="flex items-center"
               >
-                <div className="p-1.5 rounded-lg text-white" style={{ background: 'var(--gradient-brand)' }}>
-                  <Sparkles size={18} fill="currentColor" />
-                </div>
-                <span className="text-zinc-900 dark:text-white">WowScore</span>
+                <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
               </Link>
               <button
                 type="button"

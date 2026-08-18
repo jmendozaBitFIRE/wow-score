@@ -412,6 +412,16 @@
   opacity: 1;
 }
 
+/* ── Descargar resultado en PDF (window.print) ─────────── */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+}
+
 /* ── Landing: footer legal links ───────────────────────── */
 .footer-legal-link {
   opacity: 0.5;

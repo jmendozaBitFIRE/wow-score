@@ -7,7 +7,8 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { AnalyzingSkeleton } from '@/components/ui/AnalyzingSkeleton'
 import { RatingWidget } from '@/components/dashboard/RatingWidget'
-import type { Medio, Objetivo } from '@/lib/wow-formulas'
+import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
+import type { Medio, Objetivo, Genero, Edad, NSE } from '@/lib/wow-formulas'
 
 // ── Opciones de los dropdowns ───────────────────────────────
 const MEDIOS: { value: Medio; label: string }[] = [
@@ -29,13 +30,35 @@ const OBJETIVOS: { value: Objetivo; label: string }[] = [
   { value: 'BrandLove', label: 'BrandLove' },
 ]
 
+const GENEROS: { value: Genero; label: string }[] = [
+  { value: 'Mujeres', label: 'Mujeres' },
+  { value: 'Hombres', label: 'Hombres' },
+]
+
+const EDADES: { value: Edad; label: string }[] = [
+  { value: '18-24', label: '18–24' },
+  { value: '25-34', label: '25–34' },
+  { value: '35-44', label: '35–44' },
+  { value: '45-54', label: '45–54' },
+  { value: '55+', label: '55+' },
+]
+
+const NSES: { value: NSE; label: string }[] = [
+  { value: 'ABC+', label: 'ABC+' },
+  { value: 'C/C-', label: 'C / C-' },
+  { value: 'D+/D', label: 'D+ / D' },
+  { value: 'E', label: 'E' },
+]
+
 // ── Tipos ───────────────────────────────────────────────────
 interface AnalyzeResult {
   id: string | null
   wow_score: number
+  wow_base_score: number
   dimensiones: Record<string, number>
-  fortalezas: [string, string, string]
-  oportunidades: [string, string, string]
+  target_fit: { score: number; wtm: number }
+  fortalezas: string[]
+  oportunidades: string[]
   veredicto: string
   medio: Medio
   objetivo: Objetivo
@@ -85,6 +108,9 @@ export function UploadClient({
   const [isAuthorizing, setIsAuthorizing] = useState(false)
   const [medio, setMedio] = useState<Medio | ''>('')
   const [objetivo, setObjetivo] = useState<Objetivo | ''>('')
+  const [genero, setGenero] = useState<Genero | ''>('')
+  const [edad, setEdad] = useState<Edad | ''>('')
+  const [nse, setNse] = useState<NSE | ''>('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const hasActiveOrTrial = subscriptionStatus === 'active' || subscriptionStatus === 'trialing'
@@ -163,7 +189,7 @@ export function UploadClient({
 
   // ── Análisis ──────────────────────────────────────────────
   async function handleAnalyze() {
-    if (state.status !== 'uploaded' || !medio || !objetivo) return
+    if (state.status !== 'uploaded' || !medio || !objetivo || !genero || !edad || !nse) return
     const { imageUrl } = state
     setState({ status: 'analyzing' })
 
@@ -171,7 +197,7 @@ export function UploadClient({
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image_url: imageUrl, medio, objetivo }),
+        body: JSON.stringify({ image_url: imageUrl, medio, objetivo, genero, edad, nse }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -194,6 +220,9 @@ export function UploadClient({
     setPreview(null)
     setMedio('')
     setObjetivo('')
+    setGenero('')
+    setEdad('')
+    setNse('')
     setState({ status: 'idle' })
     if (inputRef.current) inputRef.current.value = ''
   }
@@ -202,7 +231,7 @@ export function UploadClient({
   const isUploading = state.status === 'uploading'
   const isAnalyzing = state.status === 'analyzing'
   const isBusy = isUploading || isAnalyzing
-  const canAnalyze = state.status === 'uploaded' && medio !== '' && objetivo !== ''
+  const canAnalyze = state.status === 'uploaded' && medio !== '' && objetivo !== '' && genero !== '' && edad !== '' && nse !== ''
 
   // ── Render ────────────────────────────────────────────────
   return (
@@ -389,6 +418,65 @@ export function UploadClient({
               </div>
             </div>
 
+            <div className="grid grid-cols-3 gap-3">
+              {/* Género */}
+              <div className="space-y-1">
+                <label htmlFor="genero" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Género
+                </label>
+                <select
+                  id="genero"
+                  value={genero}
+                  onChange={(e) => setGenero(e.target.value as Genero)}
+                  disabled={isBusy}
+                  className={selectClass}
+                >
+                  <option value="" disabled>Selecciona…</option>
+                  {GENEROS.map((g) => (
+                    <option key={g.value} value={g.value}>{g.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Edad */}
+              <div className="space-y-1">
+                <label htmlFor="edad" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Edad
+                </label>
+                <select
+                  id="edad"
+                  value={edad}
+                  onChange={(e) => setEdad(e.target.value as Edad)}
+                  disabled={isBusy}
+                  className={selectClass}
+                >
+                  <option value="" disabled>Selecciona…</option>
+                  {EDADES.map((a) => (
+                    <option key={a.value} value={a.value}>{a.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* NSE */}
+              <div className="space-y-1">
+                <label htmlFor="nse" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  NSE
+                </label>
+                <select
+                  id="nse"
+                  value={nse}
+                  onChange={(e) => setNse(e.target.value as NSE)}
+                  disabled={isBusy}
+                  className={selectClass}
+                >
+                  <option value="" disabled>Selecciona…</option>
+                  {NSES.map((n) => (
+                    <option key={n.value} value={n.value}>{n.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-2">
               <Button variant="outline" size="sm" onClick={reset} disabled={isBusy} className="h-11 sm:h-7 sm:shrink-0">
                 Cambiar imagen
@@ -409,7 +497,7 @@ export function UploadClient({
 
             {!canAnalyze && !isBusy && (
               <p className="text-xs text-muted-foreground text-center">
-                Selecciona medio y objetivo para habilitar el análisis.
+                Selecciona medio, objetivo y target (género, edad, NSE) para habilitar el análisis.
               </p>
             )}
           </div>
@@ -434,19 +522,33 @@ export function UploadClient({
             <div className="relative aspect-video bg-muted">
               <Image src={preview || state.result.image_url} alt="Pieza analizada" fill className="object-contain" unoptimized />
             </div>
-            <div className="p-4 flex items-center justify-between">
+            <div className="p-4 flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wide">
                   {state.result.medio} · {OBJETIVOS.find(o => o.value === state.result.objetivo)?.label}
                 </p>
                 <p className="text-sm font-medium mt-0.5">Análisis completado</p>
               </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-primary leading-none">
-                  {Math.round(state.result.wow_score)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">WOW Score</p>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-3xl font-bold text-primary leading-none">
+                    {Math.round(state.result.wow_score)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">WOW Score</p>
+                </div>
+                <DownloadPdfButton />
               </div>
+            </div>
+          </div>
+
+          {/* Target Fit (WTM) */}
+          <div className="rounded-xl border bg-card p-4 reveal reveal-2">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Target Fit</p>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                WOW Base {Math.round(state.result.wow_base_score)} × WTM {state.result.target_fit.wtm.toFixed(2)}
+              </span>
+              <span className="font-semibold">Target Fit Score: {state.result.target_fit.score}</span>
             </div>
           </div>
 
@@ -501,13 +603,13 @@ export function UploadClient({
 
           {/* Calificación */}
           {state.result.id && (
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2 reveal reveal-4">
+            <div className="no-print flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2 reveal reveal-4">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">¿Qué tan útil fue?</p>
               <RatingWidget evaluationId={state.result.id} />
             </div>
           )}
 
-          <div className="reveal reveal-5">
+          <div className="no-print reveal reveal-5">
             <Button variant="outline" className="w-full" onClick={reset}>
               Analizar otra pieza
             </Button>

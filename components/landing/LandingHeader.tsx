@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
@@ -47,9 +48,15 @@ export function LandingHeader() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className={`font-heading font-bold tracking-tight text-white flex items-center gap-0.5 hover:opacity-90 transition-all duration-300 ${scrolled ? 'text-xl' : 'text-3xl'}`}>
-            <span className="text-[#F97303]">WOW</span>
-            <span>Score</span>
+          <Link href="/" className="flex items-center hover:opacity-90 transition-all duration-300">
+            <Image
+              src="/logo-full.png"
+              alt="WowScore"
+              width={1025}
+              height={503}
+              priority
+              className={`w-auto transition-all duration-300 ${scrolled ? 'h-8' : 'h-11'}`}
+            />
           </Link>
 
           {/* Desktop Nav Links */}

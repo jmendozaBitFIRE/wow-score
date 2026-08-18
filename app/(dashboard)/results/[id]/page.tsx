@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
 
 export const metadata = { title: 'Resultado — WowScore' }
 
@@ -69,6 +70,11 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
     veredicto?: string
     fortalezas?: string[]
     oportunidades?: string[]
+    genero?: string
+    edad?: string
+    nse?: string
+    wow_base_score?: number
+    target_fit?: { score: number; wtm: number }
   } | null
 
   const dimensiones = evaluation.scores_detail as Record<string, number> | null
@@ -78,10 +84,13 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
     <div className="max-w-xl mx-auto px-4 py-12 space-y-4">
       {/* Header */}
       <div className="reveal reveal-1">
-        <Link href="/dashboard/history" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+        <Link href="/dashboard/history" className="no-print text-xs text-muted-foreground hover:text-foreground transition-colors">
           ← Volver al historial
         </Link>
-        <h1 className="text-2xl font-semibold mt-3 mb-1">Resultado del análisis</h1>
+        <div className="flex items-start justify-between gap-3 mt-3 mb-1">
+          <h1 className="text-2xl font-semibold">Resultado del análisis</h1>
+          <DownloadPdfButton />
+        </div>
         <p className="text-sm text-muted-foreground">
           {new Date(evaluation.created_at).toLocaleDateString('es-MX', {
             day: '2-digit', month: 'long', year: 'numeric',
@@ -115,6 +124,23 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
       </div>
+
+      {/* Target Fit (WTM) */}
+      {feedback?.target_fit && (
+        <div className="rounded-xl border bg-card p-4 reveal reveal-3">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+            Target Fit{feedback.genero || feedback.edad || feedback.nse
+              ? ` · ${[feedback.genero, feedback.edad, feedback.nse].filter(Boolean).join(' · ')}`
+              : ''}
+          </p>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">
+              WOW Base {feedback.wow_base_score !== undefined ? Math.round(feedback.wow_base_score) : '—'} × WTM {feedback.target_fit.wtm.toFixed(2)}
+            </span>
+            <span className="font-semibold">Target Fit Score: {feedback.target_fit.score}</span>
+          </div>
+        </div>
+      )}
 
       {/* Dimensiones */}
       {dimensiones && (
@@ -172,7 +198,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         </div>
       )}
 
-      <div className="reveal reveal-5">
+      <div className="no-print reveal reveal-5">
         <Link
           href="/dashboard/upload"
           className="flex items-center justify-center w-full rounded-lg border px-4 py-3 sm:py-2 text-sm font-medium hover:bg-muted transition-colors"

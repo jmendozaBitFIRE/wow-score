@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Building2, Tag, LayoutDashboard, LogOut, Sparkles } from 'lucide-react'
+import { Building2, Tag, LayoutDashboard, LogOut } from 'lucide-react'
 
 const navItems = [
   { label: 'Clientes', href: '/admin/clients',  icon: Building2     },
@@ -20,11 +21,9 @@ export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
   return (
     <aside className="w-64 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex flex-col">
       <div className="p-6">
-        <Link href="/admin/clients" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-          <div className="bg-primary p-1.5 rounded-lg text-primary-foreground">
-            <Sparkles size={20} fill="currentColor" />
-          </div>
-          <span>Admin</span>
+        <Link href="/admin/clients" className="flex items-center gap-2">
+          <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
+          <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
         </Link>
       </div>
 

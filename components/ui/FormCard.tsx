@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Image from 'next/image'
 
 interface FormCardProps {
   title: string
@@ -18,28 +19,14 @@ export function FormCard({ title, subtitle, children }: FormCardProps) {
       <div className="card w-full max-w-md">
         {/* Brand mark */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <span
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 800,
-              fontSize: '26px',
-              color: 'var(--color-flame)',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            WOW
-          </span>
-          <span
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: '26px',
-              color: 'var(--color-ink)',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Score
-          </span>
+          <Image
+            src="/logo-full.png"
+            alt="WowScore"
+            width={1025}
+            height={503}
+            priority
+            style={{ height: '36px', width: 'auto', margin: '0 auto' }}
+          />
         </div>
 
         <h1
