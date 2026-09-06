@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ImageOff } from 'lucide-react'
+import { ImageOff, FileText } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
@@ -114,7 +114,11 @@ export default async function HistoryPage() {
             >
               {/* Thumbnail */}
               <div className="relative h-14 w-14 sm:h-16 sm:w-24 shrink-0 rounded-md overflow-hidden bg-muted">
-                {ev.signedUrl ? (
+                {ev.signedUrl && /\.txt(\?|$)/i.test(ev.image_url) ? (
+                  <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+                    <FileText size={20} />
+                  </div>
+                ) : ev.signedUrl ? (
                   <Image
                     src={ev.signedUrl}
                     alt="Pieza"

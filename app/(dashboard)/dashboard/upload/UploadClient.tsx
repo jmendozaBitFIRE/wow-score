@@ -3,11 +3,11 @@
 import { useCallback, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { AnalyzingSkeleton } from '@/components/ui/AnalyzingSkeleton'
 import { RatingWidget } from '@/components/dashboard/RatingWidget'
 import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
+import { CreativePreview } from '@/components/dashboard/CreativePreview'
 import type { Medio, Objetivo, Genero, Edad, NSE } from '@/lib/wow-formulas'
 
 // ── Opciones de los dropdowns ───────────────────────────────
@@ -54,9 +54,7 @@ const NSES: { value: NSE; label: string }[] = [
 interface AnalyzeResult {
   id: string | null
   wow_score: number
-  wow_base_score: number
   dimensiones: Record<string, number>
-  target_fit: { score: number; wtm: number }
   fortalezas: string[]
   oportunidades: string[]
   veredicto: string
@@ -75,7 +73,7 @@ type PageState =
 
 
 // ── Constantes ──────────────────────────────────────────────
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'text/plain']
 const MAX_BYTES = 5 * 1024 * 1024
 
 const selectClass =
@@ -108,9 +106,10 @@ export function UploadClient({
   const [isAuthorizing, setIsAuthorizing] = useState(false)
   const [medio, setMedio] = useState<Medio | ''>('')
   const [objetivo, setObjetivo] = useState<Objetivo | ''>('')
-  const [genero, setGenero] = useState<Genero | ''>('')
+  const [genero, setGenero] = useState<Genero[]>([])
   const [edad, setEdad] = useState<Edad | ''>('')
   const [nse, setNse] = useState<NSE | ''>('')
+  const [isTextFile, setIsTextFile] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const hasActiveOrTrial = subscriptionStatus === 'active' || subscriptionStatus === 'trialing'
@@ -144,7 +143,7 @@ export function UploadClient({
   // ── Selección de archivo ──────────────────────────────────
   function selectFile(file: File) {
     if (!ALLOWED_TYPES.includes(file.type)) {
-      setState({ status: 'error', message: 'Formato no permitido. Usa JPG, PNG o WebP.' })
+      setState({ status: 'error', message: 'Formato no permitido. Usa JPG, PNG, WebP o TXT (guion).' })
       return
     }
     if (file.size > MAX_BYTES) {
@@ -152,8 +151,16 @@ export function UploadClient({
       return
     }
     if (preview) URL.revokeObjectURL(preview)
+    setIsTextFile(file.type === 'text/plain')
     setPreview(URL.createObjectURL(file))
     uploadFile(file)
+  }
+
+  // ── Género (multi-selección: Hombres, Mujeres o ambos) ────
+  function toggleGenero(value: Genero) {
+    setGenero((prev) =>
+      prev.includes(value) ? prev.filter((g) => g !== value) : [...prev, value]
+    )
   }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -189,7 +196,7 @@ export function UploadClient({
 
   // ── Análisis ──────────────────────────────────────────────
   async function handleAnalyze() {
-    if (state.status !== 'uploaded' || !medio || !objetivo || !genero || !edad || !nse) return
+    if (state.status !== 'uploaded' || !medio || !objetivo || genero.length === 0 || !edad || !nse) return
     const { imageUrl } = state
     setState({ status: 'analyzing' })
 
@@ -218,9 +225,10 @@ export function UploadClient({
   function reset() {
     if (preview) URL.revokeObjectURL(preview)
     setPreview(null)
+    setIsTextFile(false)
     setMedio('')
     setObjetivo('')
-    setGenero('')
+    setGenero([])
     setEdad('')
     setNse('')
     setState({ status: 'idle' })
@@ -231,7 +239,7 @@ export function UploadClient({
   const isUploading = state.status === 'uploading'
   const isAnalyzing = state.status === 'analyzing'
   const isBusy = isUploading || isAnalyzing
-  const canAnalyze = state.status === 'uploaded' && medio !== '' && objetivo !== '' && genero !== '' && edad !== '' && nse !== ''
+  const canAnalyze = state.status === 'uploaded' && medio !== '' && objetivo !== '' && genero.length > 0 && edad !== '' && nse !== ''
 
   // ── Render ────────────────────────────────────────────────
   return (
@@ -347,25 +355,25 @@ export function UploadClient({
           </svg>
           <div>
             <p className="text-sm font-medium">
-              Arrastra tu imagen aquí o{' '}
+              Arrastra tu imagen o guion aquí o{' '}
               <span className="text-primary underline underline-offset-2">selecciona un archivo</span>
             </p>
-            <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP · Máx. 5 MB</p>
+            <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP o TXT (guion de audio) · Máx. 5 MB</p>
           </div>
-          <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp"
+          <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,text/plain,.txt"
             className="sr-only" onChange={handleInputChange} />
         </div>
       )}
 
       {/* ── Skeleton mientras analiza ── */}
-      {isAnalyzing && preview && <AnalyzingSkeleton preview={preview} />}
+      {isAnalyzing && preview && <AnalyzingSkeleton preview={preview} isText={isTextFile} />}
 
       {/* ── Preview + controles (después de seleccionar) ── */}
       {preview && state.status !== 'done' && !isAnalyzing && (
         <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2">
-          {/* Imagen */}
+          {/* Imagen o guion */}
           <div className="relative aspect-video bg-muted">
-            <Image src={preview} alt="Preview" fill className="object-contain" unoptimized />
+            <CreativePreview src={preview} isText={isTextFile} alt="Preview" />
             {isUploading && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
                 <div className="flex flex-col items-center gap-2">
@@ -419,23 +427,25 @@ export function UploadClient({
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-              {/* Género */}
+              {/* Género (multi-selección) */}
               <div className="space-y-1">
-                <label htmlFor="genero" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   Género
-                </label>
-                <select
-                  id="genero"
-                  value={genero}
-                  onChange={(e) => setGenero(e.target.value as Genero)}
-                  disabled={isBusy}
-                  className={selectClass}
-                >
-                  <option value="" disabled>Selecciona…</option>
+                </span>
+                <div className="flex h-9 items-center gap-3">
                   {GENEROS.map((g) => (
-                    <option key={g.value} value={g.value}>{g.label}</option>
+                    <label key={g.value} className="flex items-center gap-1.5 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={genero.includes(g.value)}
+                        onChange={() => toggleGenero(g.value)}
+                        disabled={isBusy}
+                        className="accent-primary"
+                      />
+                      {g.label}
+                    </label>
                   ))}
-                </select>
+                </div>
               </div>
 
               {/* Edad */}
@@ -517,10 +527,10 @@ export function UploadClient({
       {/* ── Resultados ── */}
       {state.status === 'done' && (
         <div className="space-y-4">
-          {/* Imagen + score */}
+          {/* Imagen o guion + score */}
           <div className="rounded-xl border overflow-hidden bg-card reveal reveal-1">
             <div className="relative aspect-video bg-muted">
-              <Image src={preview || state.result.image_url} alt="Pieza analizada" fill className="object-contain" unoptimized />
+              <CreativePreview src={preview || state.result.image_url} isText={isTextFile} alt="Pieza analizada" />
             </div>
             <div className="p-4 flex items-center justify-between gap-3">
               <div>
@@ -538,17 +548,6 @@ export function UploadClient({
                 </div>
                 <DownloadPdfButton />
               </div>
-            </div>
-          </div>
-
-          {/* Target Fit (WTM) */}
-          <div className="rounded-xl border bg-card p-4 reveal reveal-2">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Target Fit</p>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">
-                WOW Base {Math.round(state.result.wow_base_score)} × WTM {state.result.target_fit.wtm.toFixed(2)}
-              </span>
-              <span className="font-semibold">Target Fit Score: {state.result.target_fit.score}</span>
             </div>
           </div>
 

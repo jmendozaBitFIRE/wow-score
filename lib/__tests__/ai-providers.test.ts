@@ -109,7 +109,7 @@ describe('callOpenAI', () => {
   it('retorna { score, breakdown, raw } parseando la respuesta de OpenAI', async () => {
     fetchMock.mockResolvedValueOnce(openAIResponse(JSON.stringify(ANALYSIS_JSON)))
 
-    const result = await callOpenAI('system prompt', 'https://example.com/image.png')
+    const result = await callOpenAI('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
 
     expect(result.score).toBe(82)
     expect(result.breakdown).toEqual(ANALYSIS_JSON.dimensiones)
@@ -118,14 +118,36 @@ describe('callOpenAI', () => {
     expect(String(fetchMock.mock.calls[0][0])).toContain('api.openai.com')
   })
 
+  it('manda el guion como texto (sin image_url) cuando el input es kind:"text"', async () => {
+    fetchMock.mockResolvedValueOnce(openAIResponse(JSON.stringify(ANALYSIS_JSON)))
+
+    await callOpenAI('system prompt', { kind: 'text', content: 'GUION: hola mundo' })
+
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string)
+    const userContent = body.messages[1].content
+    expect(userContent).toHaveLength(1)
+    expect(userContent[0].type).toBe('text')
+    expect(userContent[0].text).toContain('GUION: hola mundo')
+    expect(JSON.stringify(userContent)).not.toContain('image_url')
+  })
+
   it('activa response_format json_object en la petición', async () => {
     fetchMock.mockResolvedValueOnce(openAIResponse(JSON.stringify(ANALYSIS_JSON)))
 
-    await callOpenAI('system prompt', 'https://example.com/image.png')
+    await callOpenAI('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
 
     const init = fetchMock.mock.calls[0][1] as RequestInit
     const body = JSON.parse(init.body as string)
     expect(body.response_format).toEqual({ type: 'json_object' })
+  })
+
+  it('pide suficientes tokens para no truncar 5 fortalezas + 5 oportunidades + veredicto largo', async () => {
+    fetchMock.mockResolvedValueOnce(openAIResponse(JSON.stringify(ANALYSIS_JSON)))
+
+    await callOpenAI('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
+
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string)
+    expect(body.max_tokens).toBeGreaterThanOrEqual(2000)
   })
 
   it('reintenta tras un primer intento con JSON inválido y devuelve bien en el segundo', async () => {
@@ -134,7 +156,7 @@ describe('callOpenAI', () => {
       .mockResolvedValueOnce(openAIResponse('No puedo procesar esta imagen.'))
       .mockResolvedValueOnce(openAIResponse(JSON.stringify(ANALYSIS_JSON)))
 
-    const promise = callOpenAI('system prompt', 'https://example.com/image.png')
+    const promise = callOpenAI('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
     await vi.runAllTimersAsync()
     const result = await promise
 
@@ -149,7 +171,7 @@ describe('callOpenAI', () => {
       .mockResolvedValueOnce(openAIResponse('texto no json otra vez'))
       .mockResolvedValueOnce(openAIResponse('sigue sin ser json'))
 
-    const promise = callOpenAI('system prompt', 'https://example.com/image.png')
+    const promise = callOpenAI('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
     // Adjunta el handler de rechazo antes de avanzar los timers falsos, para
     // que la promesa nunca quede "unhandled" mientras corre el backoff.
     const assertion = expect(promise).rejects.toThrow(InvalidModelResponseError)
@@ -164,11 +186,13 @@ describe('callClaude', () => {
   it('retorna { score, breakdown, raw } parseando la respuesta de Claude', async () => {
     fetchMock.mockResolvedValueOnce(claudeResponse(JSON.stringify(ANALYSIS_JSON)))
 
-    const result = await callClaude('system prompt', 'https://example.com/image.png')
+    const result = await callClaude('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
 
     expect(result.score).toBe(82)
     expect(result.breakdown).toEqual(ANALYSIS_JSON.dimensiones)
     expect(result.raw).toEqual(ANALYSIS_JSON)
+    const claudeBody = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string)
+    expect(claudeBody.max_tokens).toBeGreaterThanOrEqual(2000)
     expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(String(fetchMock.mock.calls[0][0])).toContain('api.anthropic.com')
   })
@@ -179,7 +203,7 @@ describe('callClaude', () => {
       .mockResolvedValueOnce(claudeResponse('No puedo procesar esta imagen.'))
       .mockResolvedValueOnce(claudeResponse(JSON.stringify(ANALYSIS_JSON)))
 
-    const promise = callClaude('system prompt', 'https://example.com/image.png')
+    const promise = callClaude('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
     await vi.runAllTimersAsync()
     const result = await promise
 
@@ -194,7 +218,7 @@ describe('callClaude', () => {
       .mockResolvedValueOnce(claudeResponse('texto no json otra vez'))
       .mockResolvedValueOnce(claudeResponse('sigue sin ser json'))
 
-    const promise = callClaude('system prompt', 'https://example.com/image.png')
+    const promise = callClaude('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
     const assertion = expect(promise).rejects.toThrow(InvalidModelResponseError)
     await vi.runAllTimersAsync()
     await assertion

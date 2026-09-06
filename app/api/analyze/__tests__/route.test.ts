@@ -145,7 +145,7 @@ const VALID_BODY = {
   image_url: 'https://x.supabase.co/storage/v1/object/sign/ad-images/company-1/user-1/123-test.png?token=abc',
   medio: 'TV',
   objetivo: 'Branding',
-  genero: 'Hombres',
+  genero: ['Hombres'],
   edad: '35-44',
   nse: 'ABC+',
 }

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'text/plain']
 const MAX_BYTES = 5 * 1024 * 1024 // 5 MB
 const BUCKET = 'ad-images'
 
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
   if (!ALLOWED_TYPES.includes(file.type)) {
     return NextResponse.json(
-      { error: 'Formato no permitido. Usa JPG, PNG o WebP.' },
+      { error: 'Formato no permitido. Usa JPG, PNG, WebP o TXT (guion).' },
       { status: 400 }
     )
   }

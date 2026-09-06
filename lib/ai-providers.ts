@@ -41,6 +41,30 @@ export interface AIProviderResult {
   raw: ParsedAnalysis
 }
 
+// La pieza a evaluar es una imagen (la mayoría de medios) o un guion de
+// texto (audio/radio, donde no hay nada que "ver").
+export type CreativeInput = { kind: 'image'; url: string } | { kind: 'text'; content: string }
+
+function creativeUserContent(input: CreativeInput) {
+  if (input.kind === 'text') {
+    return [{ type: 'text' as const, text: `Evalúa este guion/spot de audio:\n\n${input.content}` }]
+  }
+  return [
+    { type: 'image_url' as const, image_url: { url: input.url } },
+    { type: 'text' as const, text: 'Evalúa este anuncio.' },
+  ]
+}
+
+function creativeClaudeContent(input: CreativeInput) {
+  if (input.kind === 'text') {
+    return [{ type: 'text' as const, text: `Evalúa este guion/spot de audio:\n\n${input.content}` }]
+  }
+  return [
+    { type: 'image' as const, source: { type: 'url' as const, url: input.url } },
+    { type: 'text' as const, text: 'Evalúa este anuncio.' },
+  ]
+}
+
 export class InvalidModelResponseError extends Error {
   readonly rawText: string
 
@@ -113,21 +137,22 @@ async function callWithJsonRetry(
   }
 }
 
-export async function callOpenAI(systemPrompt: string, imageUrl: string): Promise<AIProviderResult> {
+// La estandarización de resultados (hasta 5 fortalezas + 5 oportunidades muy
+// detalladas + veredicto de 120-200 palabras) puede superar fácilmente los
+// 800 tokens que bastaban con el formato viejo (3 items cortos) — con ese
+// límite la respuesta se corta a mitad de un string y el JSON queda inválido,
+// y los reintentos no ayudan porque repiten el mismo max_tokens.
+const MAX_OUTPUT_TOKENS = 2000
+
+export async function callOpenAI(systemPrompt: string, input: CreativeInput): Promise<AIProviderResult> {
   const parsed = await callWithJsonRetry(systemPrompt, async (prompt) => {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
-      max_tokens: 800,
+      max_tokens: MAX_OUTPUT_TOKENS,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: prompt },
-        {
-          role: 'user',
-          content: [
-            { type: 'image_url', image_url: { url: imageUrl } },
-            { type: 'text', text: 'Evalúa este anuncio.' },
-          ],
-        },
+        { role: 'user', content: creativeUserContent(input) },
       ],
     })
     return completion.choices[0]?.message?.content ?? ''
@@ -135,20 +160,14 @@ export async function callOpenAI(systemPrompt: string, imageUrl: string): Promis
   return { score: parsed.wow_score, breakdown: parsed.dimensiones, targetFit: parsed.target_fit, raw: parsed }
 }
 
-export async function callClaude(systemPrompt: string, imageUrl: string): Promise<AIProviderResult> {
+export async function callClaude(systemPrompt: string, input: CreativeInput): Promise<AIProviderResult> {
   const parsed = await callWithJsonRetry(systemPrompt, async (prompt) => {
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 800,
+      max_tokens: MAX_OUTPUT_TOKENS,
       system: prompt,
       messages: [
-        {
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'url', url: imageUrl } },
-            { type: 'text', text: 'Evalúa este anuncio.' },
-          ],
-        },
+        { role: 'user', content: creativeClaudeContent(input) },
       ],
     })
     const textBlock = response.content.find((b): b is Anthropic.TextBlock => b.type === 'text')

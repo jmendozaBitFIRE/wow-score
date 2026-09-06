@@ -1,7 +1,7 @@
 'use client'
 
-import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { CreativePreview } from '@/components/dashboard/CreativePreview'
 
 const MESSAGES = [
   'Aplicando fórmula WOW Score...',
@@ -12,9 +12,10 @@ const MESSAGES = [
 
 interface AnalyzingSkeletonProps {
   preview: string
+  isText?: boolean
 }
 
-export function AnalyzingSkeleton({ preview }: AnalyzingSkeletonProps) {
+export function AnalyzingSkeleton({ preview, isText = false }: AnalyzingSkeletonProps) {
   const [msgIndex, setMsgIndex] = useState(0)
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export function AnalyzingSkeleton({ preview }: AnalyzingSkeletonProps) {
       {/* Imagen con overlay sutil */}
       <div className="rounded-xl border overflow-hidden bg-card">
         <div className="relative aspect-video bg-muted">
-          <Image src={preview} alt="Pieza en análisis" fill className="object-contain" unoptimized />
+          <CreativePreview src={preview} isText={isText} alt="Pieza en análisis" label="Guion en análisis" />
           <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px]" />
         </div>
       </div>

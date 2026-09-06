@@ -5,7 +5,7 @@ import {
   WOW_FORMULAS, GLOSARIO, calcTargetFitScore, calcWTM, calcWowFinal,
   type Medio, type Objetivo, type Genero, type Edad, type NSE,
 } from '@/lib/wow-formulas'
-import { callOpenAI, callClaude, InvalidModelResponseError, type AIProviderResult } from '@/lib/ai-providers'
+import { callOpenAI, callClaude, InvalidModelResponseError, type AIProviderResult, type CreativeInput } from '@/lib/ai-providers'
 
 const MEDIOS: Medio[] = ['TV', 'Radio', 'OOH', 'DOOH', 'Digital', 'Impresos', 'Cine']
 const OBJETIVOS: Objetivo[] = ['Branding', 'Ventas', 'Lanzamiento', 'Promocion', 'Informativo', 'BrandLove']
@@ -17,16 +17,17 @@ interface AnalyzeBody {
   image_url: string
   medio: Medio
   objetivo: Objetivo
-  genero: Genero
+  genero: Genero[]
   edad: Edad
   nse: NSE
 }
 
 function buildSystemPrompt(
   medio: Medio, objetivo: Objetivo, formula: typeof WOW_FORMULAS[string],
-  genero: Genero, edad: Edad, nse: NSE
+  genero: Genero[], edad: Edad, nse: NSE
 ): string {
   const { bondad, pesos } = formula
+  const generoLabel = genero.join(' y ')
   return `Eres un evaluador experto en creatividad publicitaria de una consultora internacional de innovación y branding. \
 Evalúa el anuncio usando la Fórmula WOW Score para ${medio} × ${objetivo}.
 Bondad del medio: ${bondad}.
@@ -52,7 +53,7 @@ Estética ${pesos.estetica}%, Relevancia ${pesos.relevancia}%.
 
 El WOW Base Score = suma de (score_dimension × peso/100).
 
-Target Fit (WTM 3.1) — el target de esta evaluación es: género ${genero}, edad ${edad}, NSE ${nse}.
+Target Fit (WTM 3.1) — el target de esta evaluación es: género ${generoLabel}, edad ${edad}, NSE ${nse}.
 Califica de 1 a 10 qué tan bien conecta la pieza con ESE target en estas 5 variables:
 - Tono de Comunicación: ¿le habla en su idioma? ¿usa el tono correcto? ¿se siente aspiracional, cercano o confiable para ese target?
 - Código Visual: ¿la imagen representa al target? ¿los colores y la estética generan conexión o se sienten familiares/aspiracionales para él?
@@ -192,7 +193,7 @@ export async function POST(request: Request) {
   if (!OBJETIVOS.includes(objetivo)) {
     return NextResponse.json({ error: `Objetivo no válido. Valores: ${OBJETIVOS.join(', ')}` }, { status: 400 })
   }
-  if (!GENEROS.includes(genero)) {
+  if (!Array.isArray(genero) || genero.length === 0 || !genero.every((g) => GENEROS.includes(g))) {
     return NextResponse.json({ error: `Género no válido. Valores: ${GENEROS.join(', ')}` }, { status: 400 })
   }
   if (!EDADES.includes(edad)) {
@@ -225,7 +226,22 @@ export async function POST(request: Request) {
     .createSignedUrl(filePath, 60)
 
   if (!signedData?.signedUrl) {
-    return NextResponse.json({ error: 'No se pudo generar signed URL para la imagen.' }, { status: 500 })
+    return NextResponse.json({ error: 'No se pudo generar signed URL para el archivo.' }, { status: 500 })
+  }
+
+  // Un guion de audio (.txt) no es una imagen — se lee como texto y se manda
+  // como texto al modelo en vez de un content block de imagen.
+  let input: CreativeInput
+  if (/\.txt$/i.test(filePath)) {
+    const textRes = await fetch(signedData.signedUrl)
+    if (!textRes.ok) {
+      return NextResponse.json({ error: 'No se pudo leer el guion de texto.' }, { status: 500 })
+    }
+    // ponytail: cap a 8000 caracteres — evita costos/tokens disparados con guiones enormes
+    const content = (await textRes.text()).slice(0, 8000)
+    input = { kind: 'text', content }
+  } else {
+    input = { kind: 'image', url: signedData.signedUrl }
   }
 
   // ── 6. Llamar al proveedor de IA (A/B) ────────────────────
@@ -235,8 +251,8 @@ export async function POST(request: Request) {
   let result: AIProviderResult
   try {
     result = provider === 'openai'
-      ? await callOpenAI(systemPrompt, signedData.signedUrl)
-      : await callClaude(systemPrompt, signedData.signedUrl)
+      ? await callOpenAI(systemPrompt, input)
+      : await callClaude(systemPrompt, input)
   } catch (err) {
     if (err instanceof InvalidModelResponseError) {
       // evaluationId: aún no existe — el fallo ocurre antes del insert en `evaluations`.

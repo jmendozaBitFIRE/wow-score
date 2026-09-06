@@ -1,9 +1,9 @@
 import { redirect, notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
+import { CreativePreview } from '@/components/dashboard/CreativePreview'
 
 export const metadata = { title: 'Resultado — WowScore' }
 
@@ -70,12 +70,9 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
     veredicto?: string
     fortalezas?: string[]
     oportunidades?: string[]
-    genero?: string
-    edad?: string
-    nse?: string
-    wow_base_score?: number
-    target_fit?: { score: number; wtm: number }
   } | null
+
+  const isTextCreative = /\.txt(\?|$)/i.test(evaluation.image_url)
 
   const dimensiones = evaluation.scores_detail as Record<string, number> | null
   const score = evaluation.score_overall ?? 0
@@ -98,16 +95,10 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         </p>
       </div>
 
-      {/* Imagen + score */}
+      {/* Imagen o guion + score */}
       <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2">
         <div className="relative aspect-video bg-muted">
-          <Image
-            src={imageSrc}
-            alt="Pieza analizada"
-            fill
-            className="object-contain"
-            unoptimized
-          />
+          <CreativePreview src={imageSrc} isText={isTextCreative} alt="Pieza analizada" />
         </div>
         <div className="p-4 flex items-center justify-between">
           <div>
@@ -124,23 +115,6 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
       </div>
-
-      {/* Target Fit (WTM) */}
-      {feedback?.target_fit && (
-        <div className="rounded-xl border bg-card p-4 reveal reveal-3">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-            Target Fit{feedback.genero || feedback.edad || feedback.nse
-              ? ` · ${[feedback.genero, feedback.edad, feedback.nse].filter(Boolean).join(' · ')}`
-              : ''}
-          </p>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              WOW Base {feedback.wow_base_score !== undefined ? Math.round(feedback.wow_base_score) : '—'} × WTM {feedback.target_fit.wtm.toFixed(2)}
-            </span>
-            <span className="font-semibold">Target Fit Score: {feedback.target_fit.score}</span>
-          </div>
-        </div>
-      )}
 
       {/* Dimensiones */}
       {dimensiones && (
