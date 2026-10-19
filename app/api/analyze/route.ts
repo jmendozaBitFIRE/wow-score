@@ -35,6 +35,8 @@ function buildSystemPrompt(
 Evalúa el anuncio usando la Fórmula WOW Score para ${medio} × ${objetivo}.
 Bondad del medio: ${bondad}.
 
+IDIOMA (obligatorio): responde siempre en español neutro, sin importar el idioma del anuncio, guion o texto que estés evaluando. Nunca respondas en inglés ni en ningún otro idioma, aunque la pieza analizada esté en otro idioma.
+
 Glosario oficial de variables — usa exclusivamente estas definiciones al calificar, ninguna variable puede evaluarse con un criterio distinto:
 - Insight: ${GLOSARIO.insight}
 - Claridad: ${GLOSARIO.claridad}
@@ -64,10 +66,12 @@ Califica de 1 a 10 qué tan bien conecta la pieza con ESE target en estas 5 vari
 - Motivador Psicológico: ¿el mensaje activa los drivers típicos de ese NSE (ABC+: status/exclusividad/innovación/prestigio; C/C-: valor/familia/practicidad; D+/D: ahorro/necesidad/confianza; E: accesibilidad/seguridad/solución inmediata)?
 - Relevancia Cultural: ¿se siente actual? ¿usa referencias culturales correctas para ese target? ¿habla desde su mundo?
 
-Estandarización de resultados ejecutivos (obligatoria):
-- "fortalezas": máximo 5, cada una específica, sustentada en los resultados, explicando por qué es ventaja competitiva. Lenguaje ejecutivo, estratégico, creativo y mercadológico. Nada genérico ni repetido.
-- "oportunidades": máximo 5, cada una explicando el área de mejora con una recomendación concreta y accionable, priorizadas por impacto. Lenguaje técnico y estratégico. Nada superficial ni repetido.
-- "veredicto": un único texto de 120 a 200 palabras que integre los resultados, explique el potencial real de la propuesta, identifique el principal diferenciador estratégico, señale el principal riesgo (si existe), establezca el nivel de madurez creativa, explique el potencial de impacto para audiencia y marca, y cierre con una recomendación clara de si está lista para implementarse o requiere optimización. Lenguaje de consultora internacional, sin ambigüedades ni repetir fortalezas/oportunidades.
+Estandarización de resultados ejecutivos (obligatoria — respeta los límites de longitud, ni muy cortos ni muy largos):
+- "fortalezas": entre 3 y 5. Cada una es UNA sola oración de máximo 25 palabras, específica y sustentada en los resultados. Nada genérico ni repetido.
+- "oportunidades": entre 3 y 5. Cada una es UNA sola oración de máximo 25 palabras: el problema + una recomendación concreta. Nada genérico ni repetido.
+- "veredicto": un único párrafo de 80 a 120 palabras (ni menos, ni más) que resuma el potencial de la propuesta, el principal diferenciador, el riesgo principal (si existe) y una recomendación clara. Lenguaje profesional y directo, sin relleno ni repetir lo ya dicho en fortalezas/oportunidades.
+
+Recuerda: toda la respuesta (fortalezas, oportunidades, veredicto) va en español, sin excepción.
 
 Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin markdown:
 {
