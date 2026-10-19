@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Users } from 'lucide-react'
+import { Users, UsersRound } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { InviteMemberForm } from '@/components/dashboard/InviteMemberForm'
 import { MemberActions } from '@/components/dashboard/MemberActions'
+import { CreateTeamForm } from '@/components/dashboard/CreateTeamForm'
+import { TeamCard } from '@/components/dashboard/TeamCard'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -15,6 +17,12 @@ interface Member {
   full_name: string
   email: string
   role: 'owner' | 'member'
+}
+
+interface Team {
+  id: string
+  name: string
+  team_members: { profile_id: string }[]
 }
 
 export default async function TeamPage() {
@@ -63,6 +71,14 @@ export default async function TeamPage() {
       )
     ).filter((id): id is string => id !== null)
   )
+
+  const { data: teams } = await admin
+    .from('teams')
+    .select('id, name, team_members(profile_id)')
+    .eq('company_id', profile.company_id)
+    .order('created_at', { ascending: true })
+
+  const teamRows = (teams ?? []) as Team[]
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12 space-y-6">
@@ -120,6 +136,40 @@ export default async function TeamPage() {
           )}
         </div>
       )}
+
+      <div className="space-y-3">
+        <h2 className="text-lg font-semibold flex items-center gap-2">
+          <UsersRound size={18} className="text-primary" />
+          Equipos
+        </h2>
+
+        {teamRows.length > 0 && (
+          <div className="space-y-3">
+            {teamRows.map((team) => {
+              const memberIds = new Set(team.team_members.map((tm) => tm.profile_id))
+              const members = rows.filter((m) => memberIds.has(m.id))
+              const nonMembers = rows.filter((m) => !memberIds.has(m.id))
+              return (
+                <TeamCard
+                  key={team.id}
+                  teamId={team.id}
+                  name={team.name}
+                  members={members}
+                  nonMembers={nonMembers}
+                  isOwner={profile.role === 'owner'}
+                />
+              )
+            })}
+          </div>
+        )}
+
+        {profile.role === 'owner' && (
+          <div className="rounded-xl border bg-card p-4 space-y-3">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Crear equipo</p>
+            <CreateTeamForm />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

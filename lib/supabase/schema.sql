@@ -44,7 +44,9 @@ CREATE TABLE evaluations (
   score_overall int         CHECK (score_overall BETWEEN 0 AND 100),
   scores_detail jsonb,
   feedback_json jsonb,
+  visibility    text        NOT NULL DEFAULT 'private' CHECK (visibility IN ('private','team','company','public')),
   created_at    timestamptz DEFAULT now()
+  -- shared_team_id se agrega más abajo, después de CREATE TABLE teams (referencia hacia adelante)
 );
 
 -- ============================================================
@@ -58,6 +60,28 @@ CREATE TABLE evaluation_ratings (
   rating         int         NOT NULL CHECK (rating BETWEEN 1 AND 5),
   created_at     timestamptz DEFAULT now()
 );
+
+-- ============================================================
+-- TEAMS (sub-grupos dentro de una compañía, ej. Marketing/Dev/Branding)
+-- ============================================================
+CREATE TABLE teams (
+  id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id  uuid        NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  name        text        NOT NULL,
+  created_at  timestamptz DEFAULT now(),
+  UNIQUE (company_id, name)
+);
+
+CREATE TABLE team_members (
+  team_id     uuid        NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+  profile_id  uuid        NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  created_at  timestamptz DEFAULT now(),
+  PRIMARY KEY (team_id, profile_id)
+);
+
+-- Compartir un análisis con un equipo específico (visibility='team'). Si se
+-- borra el equipo, se limpia la referencia en vez de dejarla colgada.
+ALTER TABLE evaluations ADD COLUMN shared_team_id uuid REFERENCES teams(id) ON DELETE SET NULL;
 
 -- ============================================================
 -- 5. PLAN PRICES
@@ -90,8 +114,11 @@ CREATE INDEX ON profiles(company_id);
 CREATE INDEX ON evaluations(company_id);
 CREATE INDEX ON evaluations(profile_id);
 CREATE INDEX ON evaluations(created_at DESC);
+CREATE INDEX ON evaluations(visibility);
 CREATE INDEX ON evaluation_ratings(evaluation_id);
 CREATE INDEX ON evaluation_ratings(company_id);
+CREATE INDEX ON teams(company_id);
+CREATE INDEX ON team_members(profile_id);
 
 -- ============================================================
 -- ROW LEVEL SECURITY
@@ -101,6 +128,8 @@ ALTER TABLE profiles           ENABLE ROW LEVEL SECURITY;
 ALTER TABLE evaluations        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE evaluation_ratings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE plan_prices        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE teams              ENABLE ROW LEVEL SECURITY;
+ALTER TABLE team_members       ENABLE ROW LEVEL SECURITY;
 
 -- Función para obtener el company_id sin causar ciclos infinitos (SECURITY DEFINER)
 CREATE OR REPLACE FUNCTION get_my_company_id()
@@ -122,9 +151,14 @@ CREATE POLICY "company_select" ON companies
 CREATE POLICY "profiles_select" ON profiles
   FOR SELECT USING (company_id = get_my_company_id());
 
--- evaluations: el usuario ve todas las evaluaciones de su company
+-- evaluations: el usuario ve lo suyo, lo compartido con su equipo o company, o lo público
 CREATE POLICY "evaluations_select" ON evaluations
-  FOR SELECT USING (company_id = get_my_company_id());
+  FOR SELECT USING (
+    profile_id = auth.uid()
+    OR (visibility = 'company' AND company_id = get_my_company_id())
+    OR visibility = 'public'
+    OR (visibility = 'team' AND shared_team_id IN (SELECT team_id FROM team_members WHERE profile_id = auth.uid()))
+  );
 
 -- evaluations: el usuario solo inserta en su propia company
 CREATE POLICY "evaluations_insert" ON evaluations
@@ -137,6 +171,16 @@ CREATE POLICY "evaluation_ratings_select" ON evaluation_ratings
 -- evaluation_ratings: el usuario solo inserta en su propia company
 CREATE POLICY "evaluation_ratings_insert" ON evaluation_ratings
   FOR INSERT WITH CHECK (company_id = get_my_company_id());
+
+-- teams/team_members: cualquiera de la compañía puede leer; las escrituras
+-- pasan por Server Actions con el cliente admin (mismo patrón que profiles).
+CREATE POLICY "teams_select" ON teams
+  FOR SELECT USING (company_id = get_my_company_id());
+
+CREATE POLICY "team_members_select" ON team_members
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM teams t WHERE t.id = team_members.team_id AND t.company_id = get_my_company_id())
+  );
 
 -- plan_prices: cualquier usuario autenticado puede leer
 CREATE POLICY "plan_prices_select" ON plan_prices

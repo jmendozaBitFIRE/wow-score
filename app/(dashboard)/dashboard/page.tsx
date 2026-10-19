@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { buildVisibilityOrFilter } from '@/lib/visibility'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -15,7 +16,9 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login')
 
-  const { data: profile } = await createAdminClient()
+  const admin = createAdminClient()
+
+  const { data: profile } = await admin
     .from('profiles')
     .select('company_id, full_name')
     .eq('id', user.id)
@@ -23,13 +26,15 @@ export default async function DashboardPage() {
 
   if (!profile) redirect('/login')
 
-  const { data: company } = await createAdminClient()
+  const { data: company } = await admin
     .from('companies')
     .select('subscription_plan, subscription_status')
     .eq('id', profile.company_id)
     .single()
 
-  const { data: evaluations } = await createAdminClient()
+  const orFilter = await buildVisibilityOrFilter(admin, user.id)
+
+  const { data: evaluations } = await admin
     .from('evaluations')
     .select(`
       id,
@@ -40,6 +45,7 @@ export default async function DashboardPage() {
       created_at
     `)
     .eq('company_id', profile.company_id)
+    .or(orFilter)
     .order('created_at', { ascending: false })
     .limit(3)
 

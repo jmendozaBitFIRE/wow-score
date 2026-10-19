@@ -1,9 +1,11 @@
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ImageOff, FileText } from 'lucide-react'
+import { ImageOff, FileText, Lock, UsersRound, Building2, Globe } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { buildVisibilityOrFilter } from '@/lib/visibility'
+import type { Visibility } from '@/lib/actions/evaluations'
 
 export const metadata = { title: 'Historial — WowScore' }
 
@@ -15,7 +17,16 @@ interface Evaluation {
   score_overall: number | null
   feedback_json: { veredicto?: string } | null
   created_at: string
+  profile_id: string
+  visibility: Visibility
   profiles: { full_name: string }[] | null
+}
+
+const VISIBILITY_ICON: Record<Visibility, typeof Lock> = {
+  private: Lock,
+  team: UsersRound,
+  company: Building2,
+  public: Globe,
 }
 
 interface EvaluationWithImage extends Evaluation {
@@ -49,8 +60,10 @@ export default async function HistoryPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const admin = createAdminClient()
+
   // ── 2. Obtener company_id del profile autenticado ─────────
-  const { data: profile } = await createAdminClient()
+  const { data: profile } = await admin
     .from('profiles')
     .select('company_id')
     .eq('id', user.id)
@@ -58,8 +71,10 @@ export default async function HistoryPage() {
 
   if (!profile) redirect('/login')
 
-  // ── 3. Consultar evaluations filtrando por company_id ──────
-  const { data: evaluations } = await createAdminClient()
+  // ── 3. Consultar evaluations: lo mío + lo compartido con mi equipo/company ──
+  const orFilter = await buildVisibilityOrFilter(admin, user.id)
+
+  const { data: evaluations } = await admin
     .from('evaluations')
     .select(`
       id,
@@ -69,9 +84,12 @@ export default async function HistoryPage() {
       score_overall,
       feedback_json,
       created_at,
+      profile_id,
+      visibility,
       profiles ( full_name )
     `)
     .eq('company_id', profile.company_id)
+    .or(orFilter)
     .order('created_at', { ascending: false })
     .limit(100)
 
@@ -93,7 +111,7 @@ export default async function HistoryPage() {
       <div className="mb-8 reveal reveal-1">
         <h1 className="text-2xl font-semibold mb-1">Historial de análisis</h1>
         <p className="text-sm text-muted-foreground">
-          Todas las evaluaciones de tu empresa · {rowsWithImages.length} resultado{rowsWithImages.length !== 1 ? 's' : ''}
+          Tus análisis y los que tu equipo compartió · {rowsWithImages.length} resultado{rowsWithImages.length !== 1 ? 's' : ''}
         </p>
       </div>
 
@@ -142,6 +160,14 @@ export default async function HistoryPage() {
                   <span className="text-xs font-medium bg-muted px-2 py-0.5 rounded-full">
                     {label(ev.objetivo)}
                   </span>
+                  {(() => {
+                    const VisIcon = VISIBILITY_ICON[ev.visibility]
+                    return (
+                      <span className="text-muted-foreground" title={`Visibilidad: ${ev.visibility}`}>
+                        <VisIcon size={12} />
+                      </span>
+                    )
+                  })()}
                   {ev.profiles?.[0]?.full_name && (
                     <span className="text-xs text-muted-foreground">
                       por {ev.profiles[0].full_name}

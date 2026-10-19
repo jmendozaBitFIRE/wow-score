@@ -3,31 +3,11 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
-import { CreativePreview } from '@/components/dashboard/CreativePreview'
+import { EvaluationResultCard } from '@/components/dashboard/EvaluationResultCard'
+import { VisibilityControl } from '@/components/dashboard/VisibilityControl'
+import type { Visibility } from '@/lib/actions/evaluations'
 
 export const metadata = { title: 'Resultado — WowScore' }
-
-const DIM_LABELS: Record<string, string> = {
-  insight: 'Insight',
-  claridad: 'Claridad',
-  stopping: 'Stopping power',
-  simplicidad: 'Simplicidad',
-  pert: 'Pertinencia',
-  adapt: 'Adaptabilidad',
-  emocion: 'Emoción',
-  recordacion: 'Recordación',
-  estetica: 'Estética',
-  relevancia: 'Relevancia',
-}
-
-const OBJETIVO_LABEL: Record<string, string> = { Promocion: 'Promoción' }
-function label(key: string) { return OBJETIVO_LABEL[key] ?? key }
-
-function scoreColor(score: number) {
-  if (score >= 75) return 'text-green-600 dark:text-green-400'
-  if (score >= 50) return 'text-yellow-600 dark:text-yellow-400'
-  return 'text-destructive'
-}
 
 export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -37,8 +17,10 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const admin = createAdminClient()
+
   // ── 2. Obtener company_id ─────────────────────────────────
-  const { data: profile } = await createAdminClient()
+  const { data: profile } = await admin
     .from('profiles')
     .select('company_id')
     .eq('id', user.id)
@@ -47,14 +29,39 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   if (!profile) redirect('/login')
 
   // ── 3. Cargar evaluación, restringida a la company ────────
-  const { data: evaluation } = await createAdminClient()
+  const { data: evaluation } = await admin
     .from('evaluations')
-    .select('id, image_url, medio, objetivo, score_overall, scores_detail, feedback_json, created_at')
+    .select('id, image_url, medio, objetivo, score_overall, scores_detail, feedback_json, created_at, profile_id, visibility, shared_team_id')
     .eq('id', id)
     .eq('company_id', profile.company_id)
     .single()
 
   if (!evaluation) notFound()
+
+  const isOwner = evaluation.profile_id === user.id
+
+  if (!isOwner) {
+    // Privado: solo quien lo hizo puede verlo, aunque sea de la misma empresa.
+    if (evaluation.visibility === 'private') notFound()
+
+    // Compartido con un equipo: solo quien esté en ESE equipo puede verlo.
+    // Sin shared_team_id (p. ej. se borró el equipo) se trata como privado.
+    if (evaluation.visibility === 'team') {
+      if (!evaluation.shared_team_id) notFound()
+      const { data: membership } = await admin
+        .from('team_members')
+        .select('team_id')
+        .eq('team_id', evaluation.shared_team_id)
+        .eq('profile_id', user.id)
+        .maybeSingle()
+      if (!membership) notFound()
+    }
+  }
+
+  // Equipos de la compañía, para el selector de "compartir con un equipo".
+  const { data: teams } = isOwner
+    ? await admin.from('teams').select('id, name').eq('company_id', profile.company_id).order('name')
+    : { data: null }
 
   let imageSrc = evaluation.image_url
   try {
@@ -74,9 +81,6 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
   const isTextCreative = /\.txt(\?|$)/i.test(evaluation.image_url)
 
-  const dimensiones = evaluation.scores_detail as Record<string, number> | null
-  const score = evaluation.score_overall ?? 0
-
   return (
     <div className="max-w-xl mx-auto px-4 py-12 space-y-4">
       {/* Header */}
@@ -95,82 +99,28 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         </p>
       </div>
 
-      {/* Imagen o guion + score */}
-      <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2">
-        <div className="relative aspect-video bg-muted">
-          <CreativePreview src={imageSrc} isText={isTextCreative} alt="Pieza analizada" />
-        </div>
-        <div className="p-4 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">
-              {evaluation.medio} · {label(evaluation.objetivo)}
-            </p>
-            <p className="text-sm font-medium mt-0.5">Análisis completado</p>
-          </div>
-          <div className="text-right">
-            <p className={`text-3xl font-bold leading-none ${scoreColor(score)}`}>
-              {score}
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">WOW Score</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Dimensiones */}
-      {dimensiones && (
-        <div className="rounded-xl border bg-card p-4 space-y-2 reveal reveal-3">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">Dimensiones</p>
-          {Object.entries(dimensiones).map(([key, val]) => (
-            <div key={key} className="flex items-center gap-3">
-              <span className="text-xs w-28 shrink-0 text-muted-foreground">{DIM_LABELS[key] ?? key}</span>
-              <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                <div className="h-full rounded-full bg-primary" style={{ width: `${val}%` }} />
-              </div>
-              <span className="text-xs font-medium w-7 text-right">{val}</span>
-            </div>
-          ))}
+      {isOwner && (
+        <div className="no-print rounded-xl border bg-card p-4 reveal reveal-1">
+          <VisibilityControl
+            evaluationId={evaluation.id}
+            visibility={evaluation.visibility as Visibility}
+            sharedTeamId={evaluation.shared_team_id}
+            teams={teams ?? []}
+          />
         </div>
       )}
 
-      {/* Fortalezas y oportunidades */}
-      {(feedback?.fortalezas || feedback?.oportunidades) && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal reveal-4">
-          {feedback.fortalezas && (
-            <div className="rounded-xl border bg-card p-4 space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fortalezas</p>
-              <ul className="space-y-1.5">
-                {feedback.fortalezas.map((f, i) => (
-                  <li key={i} className="text-xs flex gap-2">
-                    <span className="text-primary mt-0.5">✓</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {feedback.oportunidades && (
-            <div className="rounded-xl border bg-card p-4 space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Oportunidades</p>
-              <ul className="space-y-1.5">
-                {feedback.oportunidades.map((o, i) => (
-                  <li key={i} className="text-xs flex gap-2">
-                    <span className="text-muted-foreground mt-0.5">↑</span>
-                    <span>{o}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Veredicto */}
-      {feedback?.veredicto && (
-        <div className="rounded-xl border bg-card p-4 space-y-1 reveal reveal-5">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Veredicto</p>
-          <p className="text-sm leading-relaxed">{feedback.veredicto}</p>
-        </div>
-      )}
+      <EvaluationResultCard
+        imageSrc={imageSrc}
+        isTextCreative={isTextCreative}
+        medio={evaluation.medio}
+        objetivo={evaluation.objetivo}
+        score={evaluation.score_overall ?? 0}
+        dimensiones={evaluation.scores_detail as Record<string, number> | null}
+        fortalezas={feedback?.fortalezas}
+        oportunidades={feedback?.oportunidades}
+        veredicto={feedback?.veredicto}
+      />
 
       <div className="no-print reveal reveal-5">
         <Link

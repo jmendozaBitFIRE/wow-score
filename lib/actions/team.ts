@@ -1,33 +1,11 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { getOrigin } from './auth'
+import { requireOwner, type Admin } from './require-owner'
 
 export type InviteState = { error?: string; success?: string } | undefined
-
-type Admin = ReturnType<typeof createAdminClient>
-
-// Confirma que el usuario en sesión es owner y devuelve su company_id.
-// Todas las acciones de equipo (invitar, quitar, reenviar) pasan por aquí.
-async function requireOwner(admin: Admin): Promise<{ companyId: string } | { error: string }> {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'No autorizado.' }
-
-  const { data: profile } = await admin
-    .from('profiles')
-    .select('company_id, role')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile || profile.role !== 'owner') {
-    return { error: 'Solo el propietario de la empresa puede gestionar el equipo.' }
-  }
-
-  return { companyId: profile.company_id }
-}
 
 // Invita por email y crea el profile del nuevo miembro. Usado tanto por
 // inviteMemberAction como por resendInviteAction (reenviar = borrar el

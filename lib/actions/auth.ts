@@ -15,6 +15,9 @@ function slugify(text: string): string {
     .replace(/-+/g, '-')
 }
 
+const DUPLICATE_COMPANY_ERROR =
+  'Ya existe una compañía registrada con este nombre. Si perteneces a ella, pide a tu administrador que te invite desde Equipo → Invitar miembro en vez de registrarte de nuevo.'
+
 function translateAuthError(errorMsg: string): string {
   const msg = errorMsg.toLowerCase()
   if (msg.includes('email not confirmed')) return 'Por favor, confirma tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada o spam.'
@@ -43,6 +46,24 @@ export async function registerAction(
     return { error: 'La contraseña debe tener al menos 6 caracteres.' }
   }
 
+  const slug = slugify(companyName)
+  const admin = createAdminClient()
+
+  // Verificar la compañía ANTES de crear el usuario de Auth. Si no, un choque
+  // de slug (dos personas registrando el mismo nombre de compañía) deja un
+  // auth.user huérfano sin profile ni company — atascado para siempre, porque
+  // un reintento con el mismo correo dice "ya registrado" aunque nunca se
+  // completó el registro. (Bug real: ya afectó cuentas en producción.)
+  const { data: existingCompany } = await admin
+    .from('companies')
+    .select('id')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (existingCompany) {
+    return { error: DUPLICATE_COMPANY_ERROR }
+  }
+
   const supabase = await createClient()
 
   // 1. Crear usuario en Supabase Auth
@@ -56,17 +77,24 @@ export async function registerAction(
     return { error: 'Este correo electrónico ya está registrado. Intenta iniciar sesión.' }
   }
 
-  // 2. Insertar company (con createAdminClient(), usuario aún sin sesión activa)
-  const { data: company, error: companyError } = await createAdminClient()
+  // 2. Insertar company. Si falla (p. ej. condición de carrera: otro registro
+  // tomó el mismo slug entre el check de arriba y este insert), hay que borrar
+  // el auth.user recién creado para no dejarlo huérfano otra vez.
+  const { data: company, error: companyError } = await admin
     .from('companies')
-    .insert({ name: companyName, slug: slugify(companyName), max_members: 1 })
+    .insert({ name: companyName, slug, max_members: 1 })
     .select('id')
     .single()
 
-  if (companyError) return { error: companyError.message }
+  if (companyError) {
+    await admin.auth.admin.deleteUser(data.user.id)
+    if (companyError.code === '23505') return { error: DUPLICATE_COMPANY_ERROR }
+    return { error: companyError.message }
+  }
 
-  // 3. Insertar profile (con createAdminClient())
-  const { error: profileError } = await createAdminClient().from('profiles').insert({
+  // 3. Insertar profile. Si falla, limpiar tanto el auth.user como la company
+  // que se acaba de crear — ninguno de los dos debe quedar huérfano.
+  const { error: profileError } = await admin.from('profiles').insert({
     id: data.user.id,
     company_id: company.id,
     full_name: fullName,
@@ -74,7 +102,11 @@ export async function registerAction(
     role: 'owner',
   })
 
-  if (profileError) return { error: profileError.message }
+  if (profileError) {
+    await admin.auth.admin.deleteUser(data.user.id)
+    await admin.from('companies').delete().eq('id', company.id)
+    return { error: profileError.message }
+  }
 
   redirect('/login?registered=true')
 }
