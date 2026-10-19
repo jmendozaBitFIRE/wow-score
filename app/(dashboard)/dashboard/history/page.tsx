@@ -5,6 +5,7 @@ import { ImageOff, FileText, Lock, UsersRound, Building2, Globe } from 'lucide-r
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buildVisibilityOrFilter } from '@/lib/visibility'
+import { getScriptExtension } from '@/lib/extract-text'
 import type { Visibility } from '@/lib/actions/evaluations'
 
 export const metadata = { title: 'Historial — WowScore' }
@@ -132,7 +133,7 @@ export default async function HistoryPage() {
             >
               {/* Thumbnail */}
               <div className="relative h-14 w-14 sm:h-16 sm:w-24 shrink-0 rounded-md overflow-hidden bg-muted">
-                {ev.signedUrl && /\.txt(\?|$)/i.test(ev.image_url) ? (
+                {ev.signedUrl && getScriptExtension(ev.image_url) !== null ? (
                   <div className="h-full w-full flex items-center justify-center text-muted-foreground">
                     <FileText size={20} />
                   </div>

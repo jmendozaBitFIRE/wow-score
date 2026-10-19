@@ -146,8 +146,8 @@ const VALID_BODY = {
   medio: 'TV',
   objetivo: 'Branding',
   genero: ['Hombres'],
-  edad: '35-44',
-  nse: 'ABC+',
+  edad: ['35-44'],
+  nse: ['ABC+'],
 }
 
 beforeEach(() => {

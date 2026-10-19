@@ -1,10 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buildVisibilityOrFilter } from '@/lib/visibility'
+import { getScriptExtension } from '@/lib/extract-text'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, ArrowRight, History, Sparkles, ImageOff } from 'lucide-react'
+import { Plus, ArrowRight, History, Sparkles, ImageOff, FileText } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -131,7 +132,11 @@ export default async function DashboardPage() {
                 className="group block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden hover:shadow-lg transition-all"
               >
                 <div className="relative aspect-video bg-muted overflow-hidden">
-                  {ev.signedUrl ? (
+                  {ev.signedUrl && getScriptExtension(ev.image_url) !== null ? (
+                    <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+                      <FileText size={28} />
+                    </div>
+                  ) : ev.signedUrl ? (
                     <Image
                       src={ev.signedUrl}
                       alt={ev.medio}

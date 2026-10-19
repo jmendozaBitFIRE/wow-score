@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { EvaluationResultCard } from '@/components/dashboard/EvaluationResultCard'
 import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
+import { getScriptExtension } from '@/lib/extract-text'
 
 export const metadata = { title: 'Análisis compartido — WowScore' }
 
@@ -20,7 +21,7 @@ export default async function SharedResultPage({ params }: { params: Promise<{ i
 
   if (!evaluation || evaluation.visibility !== 'public') notFound()
 
-  const isTextCreative = /\.txt(\?|$)/i.test(evaluation.image_url)
+  const isTextCreative = getScriptExtension(evaluation.image_url) !== null
   const imageSrc = isTextCreative ? evaluation.image_url : `/api/share-image?evaluationId=${evaluation.id}`
 
   const feedback = evaluation.feedback_json as {

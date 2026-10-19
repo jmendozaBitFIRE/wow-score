@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
 import { EvaluationResultCard } from '@/components/dashboard/EvaluationResultCard'
 import { VisibilityControl } from '@/components/dashboard/VisibilityControl'
+import { getScriptExtension } from '@/lib/extract-text'
 import type { Visibility } from '@/lib/actions/evaluations'
 
 export const metadata = { title: 'Resultado — WowScore' }
@@ -79,7 +80,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
     oportunidades?: string[]
   } | null
 
-  const isTextCreative = /\.txt(\?|$)/i.test(evaluation.image_url)
+  const isTextCreative = getScriptExtension(evaluation.image_url) !== null
 
   return (
     <div className="max-w-xl mx-auto px-4 py-12 space-y-4">

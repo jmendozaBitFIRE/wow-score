@@ -73,7 +73,12 @@ type PageState =
 
 
 // ── Constantes ──────────────────────────────────────────────
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'text/plain']
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const SCRIPT_TYPES = [
+  'text/plain', 'application/pdf', 'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+]
+const ALLOWED_TYPES = [...IMAGE_TYPES, ...SCRIPT_TYPES]
 const MAX_BYTES = 5 * 1024 * 1024
 
 const selectClass =
@@ -85,6 +90,50 @@ const DIM_LABELS: Record<string, string> = {
   insight: 'Insight', claridad: 'Claridad', stopping: 'Stopping power',
   simplicidad: 'Simplicidad', pert: 'Pertinencia', adapt: 'Adaptabilidad',
   emocion: 'Emoción', recordacion: 'Recordación', estetica: 'Estética', relevancia: 'Relevancia',
+}
+
+// Grupo de checkboxes multi-selección + "Todas" — usado por Edad y NSE.
+function MultiCheckboxGroup<T extends string>({
+  label, options, selected, onChange, disabled,
+}: {
+  label: string
+  options: { value: T; label: string }[]
+  selected: T[]
+  onChange: (next: T[]) => void
+  disabled?: boolean
+}) {
+  const allSelected = selected.length === options.length
+  return (
+    <div className="space-y-1">
+      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{label}</span>
+      <div className="flex flex-col gap-1">
+        <label className="flex items-center gap-1.5 text-xs font-medium">
+          <input
+            type="checkbox"
+            checked={allSelected}
+            onChange={() => onChange(allSelected ? [] : options.map((o) => o.value))}
+            disabled={disabled}
+            className="accent-primary"
+          />
+          Todas
+        </label>
+        {options.map((o) => (
+          <label key={o.value} className="flex items-center gap-1.5 text-xs">
+            <input
+              type="checkbox"
+              checked={selected.includes(o.value)}
+              onChange={() =>
+                onChange(selected.includes(o.value) ? selected.filter((v) => v !== o.value) : [...selected, o.value])
+              }
+              disabled={disabled}
+              className="accent-primary"
+            />
+            {o.label}
+          </label>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 // ── Componente ──────────────────────────────────────────────
@@ -107,8 +156,8 @@ export function UploadClient({
   const [medio, setMedio] = useState<Medio | ''>('')
   const [objetivo, setObjetivo] = useState<Objetivo | ''>('')
   const [genero, setGenero] = useState<Genero[]>([])
-  const [edad, setEdad] = useState<Edad | ''>('')
-  const [nse, setNse] = useState<NSE | ''>('')
+  const [edad, setEdad] = useState<Edad[]>([])
+  const [nse, setNse] = useState<NSE[]>([])
   const [isTextFile, setIsTextFile] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -143,7 +192,7 @@ export function UploadClient({
   // ── Selección de archivo ──────────────────────────────────
   function selectFile(file: File) {
     if (!ALLOWED_TYPES.includes(file.type)) {
-      setState({ status: 'error', message: 'Formato no permitido. Usa JPG, PNG, WebP o TXT (guion).' })
+      setState({ status: 'error', message: 'Formato no permitido. Usa JPG, PNG, WebP, o PDF/DOC/DOCX/TXT (guion).' })
       return
     }
     if (file.size > MAX_BYTES) {
@@ -151,7 +200,7 @@ export function UploadClient({
       return
     }
     if (preview) URL.revokeObjectURL(preview)
-    setIsTextFile(file.type === 'text/plain')
+    setIsTextFile(SCRIPT_TYPES.includes(file.type))
     setPreview(URL.createObjectURL(file))
     uploadFile(file)
   }
@@ -196,7 +245,7 @@ export function UploadClient({
 
   // ── Análisis ──────────────────────────────────────────────
   async function handleAnalyze() {
-    if (state.status !== 'uploaded' || !medio || !objetivo || genero.length === 0 || !edad || !nse) return
+    if (state.status !== 'uploaded' || !medio || !objetivo || genero.length === 0 || edad.length === 0 || nse.length === 0) return
     const { imageUrl } = state
     setState({ status: 'analyzing' })
 
@@ -229,8 +278,8 @@ export function UploadClient({
     setMedio('')
     setObjetivo('')
     setGenero([])
-    setEdad('')
-    setNse('')
+    setEdad([])
+    setNse([])
     setState({ status: 'idle' })
     if (inputRef.current) inputRef.current.value = ''
   }
@@ -239,7 +288,7 @@ export function UploadClient({
   const isUploading = state.status === 'uploading'
   const isAnalyzing = state.status === 'analyzing'
   const isBusy = isUploading || isAnalyzing
-  const canAnalyze = state.status === 'uploaded' && medio !== '' && objetivo !== '' && genero.length > 0 && edad !== '' && nse !== ''
+  const canAnalyze = state.status === 'uploaded' && medio !== '' && objetivo !== '' && genero.length > 0 && edad.length > 0 && nse.length > 0
 
   // ── Render ────────────────────────────────────────────────
   return (
@@ -358,10 +407,15 @@ export function UploadClient({
               Arrastra tu imagen o guion aquí o{' '}
               <span className="text-primary underline underline-offset-2">selecciona un archivo</span>
             </p>
-            <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP o TXT (guion de audio) · Máx. 5 MB</p>
+            <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP, o PDF/DOC/DOCX/TXT (guion) · Máx. 5 MB</p>
           </div>
-          <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,text/plain,.txt"
-            className="sr-only" onChange={handleInputChange} />
+          <input
+            ref={inputRef}
+            type="file"
+            accept={[...ALLOWED_TYPES, '.txt', '.pdf', '.doc', '.docx'].join(',')}
+            className="sr-only"
+            onChange={handleInputChange}
+          />
         </div>
       )}
 
@@ -448,43 +502,23 @@ export function UploadClient({
                 </div>
               </div>
 
-              {/* Edad */}
-              <div className="space-y-1">
-                <label htmlFor="edad" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Edad
-                </label>
-                <select
-                  id="edad"
-                  value={edad}
-                  onChange={(e) => setEdad(e.target.value as Edad)}
-                  disabled={isBusy}
-                  className={selectClass}
-                >
-                  <option value="" disabled>Selecciona…</option>
-                  {EDADES.map((a) => (
-                    <option key={a.value} value={a.value}>{a.label}</option>
-                  ))}
-                </select>
-              </div>
+              {/* Edad (multi-selección) */}
+              <MultiCheckboxGroup
+                label="Edad"
+                options={EDADES}
+                selected={edad}
+                onChange={setEdad}
+                disabled={isBusy}
+              />
 
-              {/* NSE */}
-              <div className="space-y-1">
-                <label htmlFor="nse" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  NSE
-                </label>
-                <select
-                  id="nse"
-                  value={nse}
-                  onChange={(e) => setNse(e.target.value as NSE)}
-                  disabled={isBusy}
-                  className={selectClass}
-                >
-                  <option value="" disabled>Selecciona…</option>
-                  {NSES.map((n) => (
-                    <option key={n.value} value={n.value}>{n.label}</option>
-                  ))}
-                </select>
-              </div>
+              {/* NSE (multi-selección) */}
+              <MultiCheckboxGroup
+                label="NSE"
+                options={NSES}
+                selected={nse}
+                onChange={setNse}
+                disabled={isBusy}
+              />
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">
