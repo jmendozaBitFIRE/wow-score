@@ -78,6 +78,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
     veredicto?: string
     fortalezas?: string[]
     oportunidades?: string[]
+    target_fit?: { score?: number }
   } | null
 
   const isTextCreative = getScriptExtension(evaluation.image_url) !== null
@@ -121,6 +122,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         fortalezas={feedback?.fortalezas}
         oportunidades={feedback?.oportunidades}
         veredicto={feedback?.veredicto}
+        targetFitScore={feedback?.target_fit?.score}
       />
 
       <div className="no-print reveal reveal-5">

@@ -341,6 +341,16 @@
   border-radius: 9999px;
 }
 
+/* ── Analyzing: línea de escaneo sobre la imagen ───────────── */
+@keyframes scan-sweep {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(600%); }
+}
+
+.scan-line {
+  animation: scan-sweep 2.4s ease-in-out infinite;
+}
+
 /* ── Landing: hero card float ──────────────────────────── */
 @keyframes float {
   0%, 100% { transform: translateY(0px)    rotate(-1deg) }

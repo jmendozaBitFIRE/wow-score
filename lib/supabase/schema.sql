@@ -41,6 +41,7 @@ CREATE TABLE evaluations (
   medio         text        NOT NULL,
   objetivo      text        NOT NULL,
   provider      text        NOT NULL DEFAULT 'openai' CHECK (provider IN ('openai','claude')),
+  cost_usd      numeric(10,6), -- estimado a partir del usage de tokens de la IA, no facturación real
   score_overall int         CHECK (score_overall BETWEEN 0 AND 100),
   scores_detail jsonb,
   feedback_json jsonb,

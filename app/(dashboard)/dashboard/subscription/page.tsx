@@ -48,6 +48,31 @@ export default async function SubscriptionPage() {
 
   if (!profile) redirect('/login')
 
+  // Los miembros no gestionan la suscripción — solo el owner ve facturación.
+  if (profile.role !== 'owner') {
+    const { data: company } = await createAdminClient()
+      .from('companies')
+      .select('name')
+      .eq('id', profile.company_id)
+      .single()
+
+    return (
+      <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
+        <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+          <CreditCard size={24} />
+        </div>
+        <h1 className="text-xl font-semibold">Perteneces a {company?.name ?? 'una compañía'}</h1>
+        <p className="text-sm text-muted-foreground">
+          La gestión de la suscripción y facturación está a cargo del propietario de tu empresa.
+          Contáctalo si necesitas hacer cambios en el plan.
+        </p>
+        <Link href="/dashboard" className={cn(buttonVariants({ variant: 'outline' }), 'rounded-full')}>
+          Volver al dashboard
+        </Link>
+      </div>
+    )
+  }
+
   // Obtener datos de la empresa
   const { data: company } = await createAdminClient()
     .from('companies')

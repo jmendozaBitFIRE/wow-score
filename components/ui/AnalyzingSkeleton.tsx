@@ -27,11 +27,12 @@ export function AnalyzingSkeleton({ preview, isText = false }: AnalyzingSkeleton
 
   return (
     <div className="space-y-4 reveal reveal-1">
-      {/* Imagen con overlay sutil */}
+      {/* Imagen con overlay + línea de escaneo */}
       <div className="rounded-xl border overflow-hidden bg-card">
-        <div className="relative aspect-video bg-muted">
+        <div className="relative aspect-video bg-muted overflow-hidden">
           <CreativePreview src={preview} isText={isText} alt="Pieza en análisis" label="Guion en análisis" />
           <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px]" />
+          <div className="scan-line absolute inset-x-0 top-0 h-1/5 bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
         </div>
       </div>
 

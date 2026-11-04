@@ -76,7 +76,9 @@ export async function inviteMemberAction(
 }
 
 // Quita a un miembro (borra su auth user; el profile se borra en cascada).
-// No permite quitar al propio owner.
+// No permite quitar al propio owner. Sus evaluaciones no tienen ON DELETE
+// CASCADE (ver schema.sql) — hay que reasignarlas al owner antes de borrar,
+// si no `deleteUser` falla con una violación de FK.
 export async function removeMemberAction(memberId: string): Promise<void> {
   const admin = createAdminClient()
   const owner = await requireOwner(admin)
@@ -94,6 +96,12 @@ export async function removeMemberAction(memberId: string): Promise<void> {
   if (member.role === 'owner') {
     throw new Error('No puedes quitar al propietario de la empresa.')
   }
+
+  const { error: reassignError } = await admin
+    .from('evaluations')
+    .update({ profile_id: owner.userId })
+    .eq('profile_id', memberId)
+  if (reassignError) throw new Error(reassignError.message)
 
   const { error } = await admin.auth.admin.deleteUser(memberId)
   if (error) throw new Error(error.message)

@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { CreativePreview } from '@/components/dashboard/CreativePreview'
 
 const DIM_LABELS: Record<string, string> = {
@@ -32,15 +33,22 @@ interface EvaluationResultCardProps {
   fortalezas?: string[] | null
   oportunidades?: string[] | null
   veredicto?: string | null
+  targetFitScore?: number | null
 }
 
 // Bloque visual del resultado de un análisis — compartido entre la vista
-// autenticada (/results/[id]) y la pública (/share/[id]).
+// autenticada (/results/[id]), la pública (/share/[id]) y el done-view de
+// /dashboard/upload.
 export function EvaluationResultCard({
-  imageSrc, isTextCreative, medio, objetivo, score, dimensiones, fortalezas, oportunidades, veredicto,
+  imageSrc, isTextCreative, medio, objetivo, score, dimensiones, fortalezas, oportunidades, veredicto, targetFitScore,
 }: EvaluationResultCardProps) {
   return (
     <>
+      {/* Encabezado con logo — solo visible al imprimir/descargar PDF */}
+      <div className="hidden print:flex items-center gap-2 mb-2">
+        <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
+      </div>
+
       {/* Imagen o guion + score */}
       <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2">
         <div className="relative aspect-video bg-muted">
@@ -61,6 +69,14 @@ export function EvaluationResultCard({
           </div>
         </div>
       </div>
+
+      {/* Target Fit Score */}
+      {targetFitScore != null && (
+        <div className="rounded-xl border bg-card p-4 flex items-center justify-between reveal reveal-2">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Target Fit Score</p>
+          <p className="text-lg font-bold text-primary">{targetFitScore}</p>
+        </div>
+      )}
 
       {/* Dimensiones */}
       {dimensiones && (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,7 @@ import { AnalyzingSkeleton } from '@/components/ui/AnalyzingSkeleton'
 import { RatingWidget } from '@/components/dashboard/RatingWidget'
 import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
 import { CreativePreview } from '@/components/dashboard/CreativePreview'
+import { EvaluationResultCard } from '@/components/dashboard/EvaluationResultCard'
 import type { Medio, Objetivo, Genero, Edad, NSE } from '@/lib/wow-formulas'
 
 // ── Opciones de los dropdowns ───────────────────────────────
@@ -55,6 +56,7 @@ interface AnalyzeResult {
   id: string | null
   wow_score: number
   dimensiones: Record<string, number>
+  target_fit?: { score?: number }
   fortalezas: string[]
   oportunidades: string[]
   veredicto: string
@@ -85,12 +87,6 @@ const selectClass =
   'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm ' +
   'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ' +
   'disabled:cursor-not-allowed disabled:opacity-50'
-
-const DIM_LABELS: Record<string, string> = {
-  insight: 'Insight', claridad: 'Claridad', stopping: 'Stopping power',
-  simplicidad: 'Simplicidad', pert: 'Pertinencia', adapt: 'Adaptabilidad',
-  emocion: 'Emoción', recordacion: 'Recordación', estetica: 'Estética', relevancia: 'Relevancia',
-}
 
 // Grupo de checkboxes multi-selección + "Todas" — usado por Edad y NSE.
 function MultiCheckboxGroup<T extends string>({
@@ -289,6 +285,16 @@ export function UploadClient({
   const isAnalyzing = state.status === 'analyzing'
   const isBusy = isUploading || isAnalyzing
   const canAnalyze = state.status === 'uploaded' && medio !== '' && objetivo !== '' && genero.length > 0 && edad.length > 0 && nse.length > 0
+
+  // Evita perder un análisis en curso por un cierre/recarga accidental de la pestaña.
+  useEffect(() => {
+    if (!isAnalyzing) return
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      e.preventDefault()
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [isAnalyzing])
 
   // ── Render ────────────────────────────────────────────────
   return (
@@ -561,78 +567,22 @@ export function UploadClient({
       {/* ── Resultados ── */}
       {state.status === 'done' && (
         <div className="space-y-4">
-          {/* Imagen o guion + score */}
-          <div className="rounded-xl border overflow-hidden bg-card reveal reveal-1">
-            <div className="relative aspect-video bg-muted">
-              <CreativePreview src={preview || state.result.image_url} isText={isTextFile} alt="Pieza analizada" />
-            </div>
-            <div className="p-4 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                  {state.result.medio} · {OBJETIVOS.find(o => o.value === state.result.objetivo)?.label}
-                </p>
-                <p className="text-sm font-medium mt-0.5">Análisis completado</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  <p className="text-3xl font-bold text-primary leading-none">
-                    {Math.round(state.result.wow_score)}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">WOW Score</p>
-                </div>
-                <DownloadPdfButton />
-              </div>
-            </div>
+          <div className="no-print flex justify-end reveal reveal-1">
+            <DownloadPdfButton />
           </div>
 
-          {/* Dimensiones */}
-          <div className="rounded-xl border bg-card p-4 space-y-2 reveal reveal-2">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">Dimensiones</p>
-            {Object.entries(state.result.dimensiones).map(([key, val]) => (
-              <div key={key} className="flex items-center gap-3">
-                <span className="text-xs w-28 shrink-0 text-muted-foreground">{DIM_LABELS[key] ?? key}</span>
-                <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${val}%` }}
-                  />
-                </div>
-                <span className="text-xs font-medium w-7 text-right">{val}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Fortalezas y oportunidades */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal reveal-3">
-            <div className="rounded-xl border bg-card p-4 space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fortalezas</p>
-              <ul className="space-y-1.5">
-                {state.result.fortalezas.map((f, i) => (
-                  <li key={i} className="text-xs flex gap-2">
-                    <span className="text-primary mt-0.5">✓</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-xl border bg-card p-4 space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Oportunidades</p>
-              <ul className="space-y-1.5">
-                {state.result.oportunidades.map((o, i) => (
-                  <li key={i} className="text-xs flex gap-2">
-                    <span className="text-muted-foreground mt-0.5">↑</span>
-                    <span>{o}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Veredicto */}
-          <div className="rounded-xl border bg-card p-4 space-y-1 reveal reveal-4">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Veredicto</p>
-            <p className="text-sm leading-relaxed">{state.result.veredicto}</p>
-          </div>
+          <EvaluationResultCard
+            imageSrc={preview || state.result.image_url}
+            isTextCreative={isTextFile}
+            medio={state.result.medio}
+            objetivo={state.result.objetivo}
+            score={Math.round(state.result.wow_score)}
+            dimensiones={state.result.dimensiones}
+            targetFitScore={state.result.target_fit?.score}
+            fortalezas={state.result.fortalezas}
+            oportunidades={state.result.oportunidades}
+            veredicto={state.result.veredicto}
+          />
 
           {/* Calificación */}
           {state.result.id && (

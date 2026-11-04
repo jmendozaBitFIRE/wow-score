@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lock, UsersRound, Building2, Globe } from 'lucide-react'
+import { Lock, UsersRound, Building2, Globe, Copy, Check } from 'lucide-react'
 import { updateVisibilityAction, type Visibility } from '@/lib/actions/evaluations'
 
 const OPTIONS: { value: Visibility; label: string; icon: typeof Lock }[] = [
@@ -23,7 +23,18 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
   const [current, setCurrent] = useState(visibility)
   const [teamId, setTeamId] = useState(sharedTeamId ?? '')
   const [isPending, setIsPending] = useState(false)
+  const [copied, setCopied] = useState(false)
   const router = useRouter()
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/share/${evaluationId}`)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      alert('No se pudo copiar el link. Cópialo manualmente desde la barra de direcciones.')
+    }
+  }
 
   async function change(value: Visibility, nextTeamId?: string) {
     if (isPending) return
@@ -93,9 +104,17 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
         <p className="text-xs text-muted-foreground">Cualquiera en tu empresa puede verlo.</p>
       )}
       {current === 'public' && (
-        <p className="text-xs text-muted-foreground">
-          Cualquiera con el link puede verlo, sin iniciar sesión: <span className="font-mono">/share/{evaluationId}</span>
-        </p>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <p className="flex-1">Cualquiera con el link puede verlo, sin iniciar sesión.</p>
+          <button
+            type="button"
+            onClick={copyLink}
+            className="shrink-0 flex items-center gap-1 rounded-md border px-2 py-1 font-medium text-foreground hover:bg-muted transition-colors"
+          >
+            {copied ? <Check size={12} /> : <Copy size={12} />}
+            {copied ? 'Copiado' : 'Copiar link'}
+          </button>
+        </div>
       )}
     </div>
   )

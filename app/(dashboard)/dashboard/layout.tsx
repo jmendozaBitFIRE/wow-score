@@ -23,7 +23,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .single()
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-zinc-50 dark:bg-black">
+    <div className="flex flex-col lg:flex-row lg:h-screen min-h-screen bg-zinc-50 dark:bg-black">
       {/* Nav móvil/tablet — hamburguesa + drawer, oculto en desktop (lg:) */}
       <MobileNav isAdmin={profile?.is_admin ?? false} userEmail={user.email ?? ''} />
 

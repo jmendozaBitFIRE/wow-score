@@ -32,13 +32,14 @@ function jsonResponse(body: unknown) {
   })
 }
 
-function openAIResponse(content: string) {
+function openAIResponse(content: string, usage?: { prompt_tokens: number; completion_tokens: number }) {
   return jsonResponse({
     id: 'chatcmpl-1',
     object: 'chat.completion',
     created: 0,
     model: 'gpt-4o',
     choices: [{ index: 0, message: { role: 'assistant', content }, finish_reason: 'stop' }],
+    ...(usage ? { usage } : {}),
   })
 }
 
@@ -180,6 +181,25 @@ describe('callOpenAI', () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(3)
   })
+
+  it('calcula costUsd a partir del usage de tokens de la respuesta', async () => {
+    fetchMock.mockResolvedValueOnce(
+      openAIResponse(JSON.stringify(ANALYSIS_JSON), { prompt_tokens: 1000, completion_tokens: 500 })
+    )
+
+    const result = await callOpenAI('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
+
+    // gpt-4o: $2.50/1M input, $10/1M output -> 1000*2.5/1e6 + 500*10/1e6
+    expect(result.costUsd).toBeCloseTo(0.0025 + 0.005, 6)
+  })
+
+  it('sin usage en la respuesta, costUsd es 0 en vez de NaN/undefined', async () => {
+    fetchMock.mockResolvedValueOnce(openAIResponse(JSON.stringify(ANALYSIS_JSON)))
+
+    const result = await callOpenAI('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
+
+    expect(result.costUsd).toBe(0)
+  })
 })
 
 describe('callClaude', () => {
@@ -232,5 +252,14 @@ describe('callClaude', () => {
       (text.match(/Responde ÚNICAMENTE con JSON válido/g) ?? []).length
     expect(reinforcementCount(secondBody.system)).toBe(1)
     expect(reinforcementCount(thirdBody.system)).toBe(1)
+  })
+
+  it('calcula costUsd a partir del usage de Claude (input_tokens/output_tokens)', async () => {
+    fetchMock.mockResolvedValueOnce(claudeResponse(JSON.stringify(ANALYSIS_JSON)))
+
+    const result = await callClaude('system prompt', { kind: 'image', url: 'https://example.com/image.png' })
+
+    // claudeResponse() usa { input_tokens: 1, output_tokens: 1 }; sonnet: $3/$15 por 1M
+    expect(result.costUsd).toBeCloseTo((1 * 3 + 1 * 15) / 1_000_000, 10)
   })
 })

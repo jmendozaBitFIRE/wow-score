@@ -28,6 +28,7 @@ export default async function SharedResultPage({ params }: { params: Promise<{ i
     veredicto?: string
     fortalezas?: string[]
     oportunidades?: string[]
+    target_fit?: { score?: number }
   } | null
 
   return (
@@ -58,6 +59,7 @@ export default async function SharedResultPage({ params }: { params: Promise<{ i
         fortalezas={feedback?.fortalezas}
         oportunidades={feedback?.oportunidades}
         veredicto={feedback?.veredicto}
+        targetFitScore={feedback?.target_fit?.score}
       />
     </div>
   )

@@ -39,6 +39,19 @@ export interface AIProviderResult {
   breakdown: Dimensiones
   targetFit: TargetFitDimensiones
   raw: ParsedAnalysis
+  costUsd: number | null
+}
+
+// Precios públicos por 1M tokens (entrada/salida), en USD — estimado, no
+// facturación real de la cuenta. Actualizar si el proveedor cambia precios.
+const PRICING_PER_MILLION_TOKENS: Record<'openai' | 'claude', { input: number; output: number }> = {
+  openai: { input: 2.5, output: 10 },
+  claude: { input: 3, output: 15 },
+}
+
+function estimateCostUsd(provider: 'openai' | 'claude', inputTokens: number, outputTokens: number): number {
+  const pricing = PRICING_PER_MILLION_TOKENS[provider]
+  return (inputTokens * pricing.input + outputTokens * pricing.output) / 1_000_000
 }
 
 // La pieza a evaluar es una imagen (la mayoría de medios) o un guion de
@@ -115,18 +128,30 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+interface ModelCallResult {
+  text: string
+  inputTokens: number
+  outputTokens: number
+}
+
 // Reintenta la llamada completa al modelo (no solo el parseo) hasta agotar
 // RETRY_DELAYS_MS — 3 intentos totales, reforzando el prompt tras cada fallo.
+// Cada intento es una llamada real (y facturable), así que el uso de tokens
+// se acumula entre reintentos para que el costo estimado sea preciso.
 async function callWithJsonRetry(
   systemPrompt: string,
-  callModel: (systemPrompt: string) => Promise<string>
-): Promise<ParsedAnalysis> {
+  callModel: (systemPrompt: string) => Promise<ModelCallResult>
+): Promise<{ parsed: ParsedAnalysis; inputTokens: number; outputTokens: number }> {
   let prompt = systemPrompt
+  let inputTokens = 0
+  let outputTokens = 0
 
   for (let attempt = 0; ; attempt++) {
-    const rawText = await callModel(prompt)
+    const { text: rawText, inputTokens: inTok, outputTokens: outTok } = await callModel(prompt)
+    inputTokens += inTok
+    outputTokens += outTok
     try {
-      return parseModelJSON(rawText)
+      return { parsed: parseModelJSON(rawText), inputTokens, outputTokens }
     } catch (err) {
       if (!(err instanceof InvalidModelResponseError) || attempt >= RETRY_DELAYS_MS.length) {
         throw err
@@ -145,7 +170,7 @@ async function callWithJsonRetry(
 const MAX_OUTPUT_TOKENS = 2000
 
 export async function callOpenAI(systemPrompt: string, input: CreativeInput): Promise<AIProviderResult> {
-  const parsed = await callWithJsonRetry(systemPrompt, async (prompt) => {
+  const { parsed, inputTokens, outputTokens } = await callWithJsonRetry(systemPrompt, async (prompt) => {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       max_tokens: MAX_OUTPUT_TOKENS,
@@ -155,13 +180,23 @@ export async function callOpenAI(systemPrompt: string, input: CreativeInput): Pr
         { role: 'user', content: creativeUserContent(input) },
       ],
     })
-    return completion.choices[0]?.message?.content ?? ''
+    return {
+      text: completion.choices[0]?.message?.content ?? '',
+      inputTokens: completion.usage?.prompt_tokens ?? 0,
+      outputTokens: completion.usage?.completion_tokens ?? 0,
+    }
   })
-  return { score: parsed.wow_score, breakdown: parsed.dimensiones, targetFit: parsed.target_fit, raw: parsed }
+  return {
+    score: parsed.wow_score,
+    breakdown: parsed.dimensiones,
+    targetFit: parsed.target_fit,
+    raw: parsed,
+    costUsd: estimateCostUsd('openai', inputTokens, outputTokens),
+  }
 }
 
 export async function callClaude(systemPrompt: string, input: CreativeInput): Promise<AIProviderResult> {
-  const parsed = await callWithJsonRetry(systemPrompt, async (prompt) => {
+  const { parsed, inputTokens, outputTokens } = await callWithJsonRetry(systemPrompt, async (prompt) => {
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: MAX_OUTPUT_TOKENS,
@@ -171,7 +206,17 @@ export async function callClaude(systemPrompt: string, input: CreativeInput): Pr
       ],
     })
     const textBlock = response.content.find((b): b is Anthropic.TextBlock => b.type === 'text')
-    return textBlock?.text ?? ''
+    return {
+      text: textBlock?.text ?? '',
+      inputTokens: response.usage?.input_tokens ?? 0,
+      outputTokens: response.usage?.output_tokens ?? 0,
+    }
   })
-  return { score: parsed.wow_score, breakdown: parsed.dimensiones, targetFit: parsed.target_fit, raw: parsed }
+  return {
+    score: parsed.wow_score,
+    breakdown: parsed.dimensiones,
+    targetFit: parsed.target_fit,
+    raw: parsed,
+    costUsd: estimateCostUsd('claude', inputTokens, outputTokens),
+  }
 }

@@ -5,7 +5,7 @@ export type Admin = ReturnType<typeof createAdminClient>
 
 // Confirma que el usuario en sesión es owner y devuelve su company_id.
 // Compartido por las Server Actions de miembros (team.ts) y equipos (teams.ts).
-export async function requireOwner(admin: Admin): Promise<{ companyId: string } | { error: string }> {
+export async function requireOwner(admin: Admin): Promise<{ companyId: string; userId: string } | { error: string }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'No autorizado.' }
@@ -20,5 +20,5 @@ export async function requireOwner(admin: Admin): Promise<{ companyId: string } 
     return { error: 'Solo el propietario de la empresa puede gestionar el equipo.' }
   }
 
-  return { companyId: profile.company_id }
+  return { companyId: profile.company_id, userId: user.id }
 }

@@ -309,6 +309,7 @@ export async function POST(request: Request) {
       medio,
       objetivo,
       provider,
+      cost_usd: result.costUsd,
       score_overall: Math.round(wowFinal),
       scores_detail: result.breakdown,
       feedback_json: {
