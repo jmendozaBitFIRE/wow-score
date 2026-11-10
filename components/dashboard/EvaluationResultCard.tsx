@@ -34,6 +34,10 @@ interface EvaluationResultCardProps {
   oportunidades?: string[] | null
   veredicto?: string | null
   targetFitScore?: number | null
+  sugerenciaAlternativa?: string | null
+  // Solo lo pasan las páginas que ya verificaron que quien ve el resultado es
+  // admin — es información operativa interna, no debe llegar a clientes.
+  costInfo?: { inputTokens: number; outputTokens: number; costUsd: number | null } | null
 }
 
 // Bloque visual del resultado de un análisis — compartido entre la vista
@@ -41,6 +45,7 @@ interface EvaluationResultCardProps {
 // /dashboard/upload.
 export function EvaluationResultCard({
   imageSrc, isTextCreative, medio, objetivo, score, dimensiones, fortalezas, oportunidades, veredicto, targetFitScore,
+  sugerenciaAlternativa, costInfo,
 }: EvaluationResultCardProps) {
   return (
     <>
@@ -132,6 +137,24 @@ export function EvaluationResultCard({
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Veredicto</p>
           <p className="text-sm leading-relaxed">{veredicto}</p>
         </div>
+      )}
+
+      {/* Sugerencia alternativa */}
+      {sugerenciaAlternativa && (
+        <div className="rounded-xl border bg-card p-4 space-y-1 reveal reveal-5">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Sugerencia alternativa
+          </p>
+          <p className="text-sm leading-relaxed">{sugerenciaAlternativa}</p>
+        </div>
+      )}
+
+      {/* Costo/tokens — solo visible para admins (ver costInfo arriba) */}
+      {costInfo && (
+        <p className="no-print text-xs text-muted-foreground text-center">
+          Tokens: {costInfo.inputTokens.toLocaleString('es-MX')} entrada · {costInfo.outputTokens.toLocaleString('es-MX')} salida
+          {costInfo.costUsd != null && ` · ~$${costInfo.costUsd.toFixed(4)} USD (estimado)`}
+        </p>
       )}
     </>
   )

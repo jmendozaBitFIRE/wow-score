@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan Comercial WowScore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: documento largo de una columna, TOC de anclas arriba, tarjetas de
+     trimestre en grid de 4, tablas de KPI con números tabulares. */
+  :root{
+    --bg:#faf8f5; --surface:#ffffff; --surface-2:#f3efe9; --border:#e7e0d6;
+    --ink:#241d16; --ink-2:#5c5247; --ink-3:#8b8076;
+    --accent:#e8571c; --accent-ink:#ffffff; --accent-soft:#fdeee7;
+    --good:#1f7a4d; --good-soft:#e7f5ee;
+    --warn:#a8650f; --warn-soft:#fbf0dd;
+    --bad:#b23b2e; --bad-soft:#fbe9e6;
+    --chip-mkt:#c4511a; --chip-mkt-soft:#fbe9e0;
+    --chip-com:#1d6f8c; --chip-com-soft:#e4f1f6;
+    --chip-it:#5a4a9e; --chip-it-soft:#ece8f7;
+    --font-display:'Space Grotesk',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#17140f; --surface:#211c15; --surface-2:#2a241b; --border:#3a3328;
+      --ink:#f3ede3; --ink-2:#c9bfae; --ink-3:#938a7b;
+      --accent:#ff7a3d; --accent-ink:#1a1006; --accent-soft:#3a2416;
+      --good:#5fcf98; --good-soft:#163828;
+      --warn:#e3a94a; --warn-soft:#3a2d14;
+      --bad:#ff7a66; --bad-soft:#3a1a14;
+      --chip-mkt:#ff8a54; --chip-mkt-soft:#3a2416;
+      --chip-com:#6fc2e0; --chip-com-soft:#163038;
+      --chip-it:#b4a4f2; --chip-it-soft:#272038;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#17140f; --surface:#211c15; --surface-2:#2a241b; --border:#3a3328;
+    --ink:#f3ede3; --ink-2:#c9bfae; --ink-3:#938a7b;
+    --accent:#ff7a3d; --accent-ink:#1a1006; --accent-soft:#3a2416;
+    --good:#5fcf98; --good-soft:#163828;
+    --warn:#e3a94a; --warn-soft:#3a2d14;
+    --bad:#ff7a66; --bad-soft:#3a1a14;
+    --chip-mkt:#ff8a54; --chip-mkt-soft:#3a2416;
+    --chip-com:#6fc2e0; --chip-com-soft:#163038;
+    --chip-it:#b4a4f2; --chip-it-soft:#272038;
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--font-body);
+    margin:0; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px));
+    font-size:15.5px; line-height:1.6;
+  }
+  h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0}
+  .wrap{max-width:860px; margin:0 auto; padding-block:40px 80px}
+
+  /* ── Portada ───────────────────────────────────────────── */
+  .cover{display:flex; flex-direction:column; gap:10px; padding-bottom:28px; border-bottom:1px solid var(--border); margin-bottom:28px}
+  .eyebrow{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+  .cover h1{font-size:clamp(28px,5vw,40px); font-weight:700}
+  .cover p.sub{color:var(--ink-2); font-size:16px; max-width:56ch}
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px}
+  .meta-chip{font-size:12px; color:var(--ink-3); background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-variant-numeric:tabular-nums}
+
+  /* ── TOC ───────────────────────────────────────────────── */
+  nav.toc{display:grid; grid-template-columns:repeat(2,1fr); gap:6px 18px; margin-bottom:40px}
+  @media (max-width:480px){ nav.toc{grid-template-columns:1fr} }
+  nav.toc a{color:var(--ink-2); text-decoration:none; font-size:13.5px; display:flex; gap:8px; align-items:baseline; padding:3px 0; border-bottom:1px dotted transparent}
+  nav.toc a:hover{color:var(--accent); border-color:var(--accent)}
+  nav.toc .n{font-variant-numeric:tabular-nums; color:var(--ink-3); font-size:12px}
+
+  section{margin-bottom:52px; scroll-margin-top:16px}
+  section > h2{font-size:22px; font-weight:700; display:flex; align-items:center; gap:10px; margin-bottom:6px}
+  section > h2 .idx{font-size:13px; color:var(--accent); font-variant-numeric:tabular-nums}
+  section > p.lede{color:var(--ink-2); max-width:68ch; margin:10px 0 20px}
+
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  @media (max-width:640px){ .grid2,.grid3{grid-template-columns:1fr} }
+
+  /* ── Stat tiles (resumen ejecutivo) ───────────────────── */
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:18px 0}
+  @media (max-width:640px){ .stats{grid-template-columns:repeat(2,1fr)} }
+  .stat{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 14px}
+  .stat .v{font-family:var(--font-display); font-size:24px; font-weight:700; font-variant-numeric:tabular-nums}
+  .stat .l{font-size:11.5px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.04em; margin-top:2px}
+  .stat .d{font-size:11.5px; color:var(--ink-2); margin-top:4px}
+
+  /* ── Tablas ────────────────────────────────────────────── */
+  table{width:100%; border-collapse:collapse; font-size:13.5px}
+  th,td{text-align:left; padding:9px 10px; border-bottom:1px solid var(--border)}
+  th{color:var(--ink-3); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em}
+  td.num,th.num{text-align:right; font-variant-numeric:tabular-nums}
+  .table-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:12px}
+  .table-wrap table{min-width:420px}
+  tr:last-child td{border-bottom:none}
+
+  /* ── Roadmap trimestral ───────────────────────────────── */
+  .quarters{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+  @media (max-width:760px){ .quarters{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:420px){ .quarters{grid-template-columns:1fr} }
+  .q-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:10px}
+  .q-card .q-tag{font-family:var(--font-display); font-weight:700; font-size:13px; color:var(--accent)}
+  .q-card h4{font-size:15px; font-weight:700}
+  .q-card ul{margin:0; padding-left:18px; font-size:13px; color:var(--ink-2); display:flex; flex-direction:column; gap:5px}
+  .q-card .target{margin-top:auto; padding-top:10px; border-top:1px dashed var(--border); font-size:12.5px}
+  .q-card .target b{font-variant-numeric:tabular-nums; color:var(--ink)}
+
+  /* ── Departamentos ─────────────────────────────────────── */
+  .dept{border-radius:16px; padding:20px 22px; border:1px solid var(--border); margin-bottom:18px}
+  .dept.mkt{background:var(--chip-mkt-soft)}
+  .dept.com{background:var(--chip-com-soft)}
+  .dept.it{background:var(--chip-it-soft)}
+  .dept-head{display:flex; align-items:center; gap:10px; margin-bottom:4px}
+  .dept-tag{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:999px; color:#fff}
+  .dept.mkt .dept-tag{background:var(--chip-mkt)}
+  .dept.com .dept-tag{background:var(--chip-com)}
+  .dept.it .dept-tag{background:var(--chip-it)}
+  .dept h3{font-size:18px; font-weight:700}
+  .dept .mission{color:var(--ink-2); font-size:13.5px; margin:8px 0 16px; max-width:70ch}
+  .dept .sub{font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-2); margin:14px 0 8px}
+  .okr-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
+  @media (max-width:760px){ .okr-grid{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:420px){ .okr-grid{grid-template-columns:1fr} }
+  .okr{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:12.5px}
+  .okr .qlabel{font-weight:700; color:var(--ink)}
+  .okr div.body{color:var(--ink-2); margin-top:4px}
+  .kpi-list{display:flex; flex-wrap:wrap; gap:8px}
+  .kpi-pill{background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:5px 12px; font-size:12px; display:flex; gap:6px; align-items:baseline}
+  .kpi-pill b{font-variant-numeric:tabular-nums}
+
+  .callout{display:flex; gap:12px; background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius:12px; padding:14px 16px; font-size:13.5px}
+  .callout.good{background:var(--good-soft)}
+  .callout.warn{background:var(--warn-soft)}
+  .callout b{display:block; margin-bottom:2px}
+
+  ul.plain{padding-left:18px; margin:0; display:flex; flex-direction:column; gap:6px; font-size:14px; color:var(--ink-2)}
+  ul.plain li::marker{color:var(--accent)}
+
+  .foot{color:var(--ink-3); font-size:12px; margin-top:40px; padding-top:16px; border-top:1px solid var(--border)}
+
+  /* ── Transiciones y scroll-reveal ─────────────────────── */
+  html{scroll-behavior:smooth}
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1; transform:none; transition:none}
+  }
+  .card,.q-card,.dept,.stat,.okr,.kpi-pill,.foda-card{transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease, color .2s ease}
+  .card:hover,.q-card:hover,.foda-card:hover{transform:translateY(-3px); box-shadow:0 10px 26px -14px rgba(0,0,0,.22); border-color:color-mix(in srgb, var(--accent) 35%, var(--border))}
+
+  /* ── FODA ──────────────────────────────────────────────── */
+  .foda-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media (max-width:640px){ .foda-grid{grid-template-columns:1fr} }
+  .foda-card{border-radius:16px; padding:18px 20px; border:1px solid var(--border)}
+  .foda-card.good{background:var(--good-soft)}
+  .foda-card.accent{background:var(--accent-soft)}
+  .foda-card.warn{background:var(--warn-soft)}
+  .foda-card.bad{background:var(--bad-soft)}
+  .foda-head{margin-bottom:10px}
+  .foda-tag{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:999px; color:#fff}
+  .foda-card.good .foda-tag{background:var(--good)}
+  .foda-card.accent .foda-tag{background:var(--accent)}
+  .foda-card.warn .foda-tag{background:var(--warn)}
+  .foda-card.bad .foda-tag{background:var(--bad)}
+  .stat:hover{transform:translateY(-2px); border-color:color-mix(in srgb, var(--accent) 40%, var(--border))}
+  .kpi-pill:hover{border-color:var(--accent); color:var(--accent)}
+  tbody tr{transition:background-color .15s ease}
+  tbody tr:hover{background:var(--surface-2)}
+  nav.toc a{transition:color .2s ease, border-color .2s ease}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="cover">
+    <span class="eyebrow">Plan comercial · 12 meses</span>
+    <h1>De producto listo a los primeros clientes — WowScore</h1>
+    <p class="sub">Evaluación de creatividad publicitaria con IA. Plan para pasar de un producto ya construido, sin clientes de pago reales todavía, a un proceso repetible de adquisición, ventas y producto, organizado por departamento.</p>
+    <div class="meta-row">
+      <span class="meta-chip">Noviembre 2026</span>
+      <span class="meta-chip">Horizonte: 4 trimestres</span>
+      <span class="meta-chip">Fase pre-comercial · 0 clientes reales</span>
+      <span class="meta-chip">Cifras en MXN · TC ref. $18.50</span>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <a href="#resumen"><span class="n">01</span> Resumen ejecutivo</a>
+    <a href="#mercado"><span class="n">02</span> Propuesta de valor y mercado</a>
+    <a href="#foda"><span class="n">03</span> Análisis FODA</a>
+    <a href="#pricing"><span class="n">04</span> Pricing actual</a>
+    <a href="#roadmap"><span class="n">05</span> Hitos trimestrales</a>
+    <a href="#kpis"><span class="n">06</span> KPIs de negocio</a>
+    <a href="#marketing"><span class="n">07</span> Departamento Marketing</a>
+    <a href="#comercial"><span class="n">08</span> Departamento Comercial</a>
+    <a href="#it"><span class="n">09</span> Departamento IT / Producto</a>
+    <a href="#riesgos"><span class="n">10</span> Riesgos y supuestos</a>
+    <a href="#siguientes"><span class="n">11</span> Próximos 30/60/90 días</a>
+  </nav>
+
+  <section id="resumen">
+    <h2><span class="idx">01</span> Resumen ejecutivo</h2>
+    <p class="lede">WowScore ya es un producto funcional y probado técnicamente, pero todavía no tiene clientes de pago reales. Las cuentas y análisis registrados hasta hoy son pruebas internas de desarrollo. El objetivo de este plan es instalar, desde cero, un proceso repetible de marketing, ventas y producto que consiga a los primeros clientes reales y los haga crecer.</p>
+
+    <div class="stats">
+      <div class="stat reveal"><div class="v" data-target="0">0</div><div class="l">Clientes de pago reales</div><div class="d">Fase pre-comercial — todavía no hay ventas</div></div>
+      <div class="stat reveal"><div class="v" data-target="17">0</div><div class="l">Cuentas de prueba en la base</div><div class="d">Creadas durante desarrollo, no son clientes</div></div>
+      <div class="stat reveal"><div class="v" data-target="0" data-prefix="$" data-suffix=" MXN" data-locale="es-MX">$0 MXN</div><div class="l">MRR real</div><div class="d">Meta a 12 meses: ~$77,700 MXN (ver hoja de ruta)</div></div>
+      <div class="stat reveal"><div class="v" data-target="95">0</div><div class="l">Análisis de prueba ejecutados</div><div class="d">Validación funcional interna, no uso real de clientes</div></div>
+    </div>
+
+    <div class="callout warn reveal">
+      <div><b>Lectura honesta del dato</b>Las 17 cuentas y 95 análisis de la base de producción son pruebas internas (QA/desarrollo), no clientes reales. Este plan no parte de una base ya validada en el mercado — parte de un producto listo para venderse.</div>
+    </div>
+
+    <p class="lede" style="margin-top:18px">Este documento fija un objetivo de negocio para los próximos 12 meses, lo descompone en 4 hitos trimestrales, define los KPIs que miden si el plan funciona, y asigna responsabilidades concretas a Marketing, Comercial e IT.</p>
+  </section>
+
+  <section id="mercado">
+    <h2><span class="idx">02</span> Propuesta de valor y mercado</h2>
+    <p class="lede">El dolor que resuelve WowScore: decidir qué creatividad publicitaria lanzar es, hoy, una discusión subjetiva de "a mí me gusta más esta". WowScore pone un número y una razón detrás de esa decisión, antes de gastar presupuesto de medios.</p>
+
+    <div class="grid2">
+      <div class="card reveal">
+        <div class="sub" style="margin-top:0">Cliente ideal (ICP)</div>
+        <ul class="plain">
+          <li>Agencias de publicidad boutique/medianas (hipótesis de ICP: agencias .com.mx que gestionan varias marcas — patrón esperado, todavía sin validar con clientes reales).</li>
+          <li>Equipos de marketing in-house que revisan piezas antes de pautar.</li>
+          <li>Freelancers y consultores de medios que necesitan justificar una recomendación con datos.</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="sub" style="margin-top:0">Diferenciadores de producto</div>
+        <ul class="plain">
+          <li>Fórmula WOW Score: 42 combinaciones medio × objetivo, no un score genérico.</li>
+          <li>Target Fit: ajusta el score según género, edad y NSE reales de la audiencia.</li>
+          <li>Acepta imagen <em>o</em> guion de audio/radio — no solo piezas visuales.</li>
+          <li>Multi-tenant con equipos: una agencia puede separar cuentas por cliente o departamento.</li>
+          <li>Nuevo: sugerencia de pieza alternativa generada junto con cada análisis.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="foda">
+    <h2><span class="idx">03</span> Análisis FODA</h2>
+    <p class="lede">Lectura estratégica rápida antes de entrar a pricing y hoja de ruta: qué juega a favor hoy, qué hay que vigilar de cerca, y de dónde puede venir el próximo empujón o el próximo golpe.</p>
+
+    <div class="foda-grid">
+      <div class="foda-card good reveal">
+        <div class="foda-head"><span class="foda-tag">Fortalezas</span></div>
+        <ul class="plain">
+          <li>Producto funcional y probado técnicamente en pruebas internas (QA/desarrollo) — base sólida para empezar a vender, aunque todavía sin clientes de pago reales.</li>
+          <li>Fórmula técnica diferenciada: 42 combinaciones medio × objetivo y ajuste de Target Fit por audiencia.</li>
+          <li>Acepta imagen <em>o</em> guion de audio/radio — cubre más tipos de creatividad que un "ad scoring" genérico.</li>
+          <li>Arquitectura multi-tenant con equipos, lista para vender a agencias con varias cuentas.</li>
+          <li>Costo de IA por análisis ya instrumentado — visibilidad de margen desde el día uno.</li>
+        </ul>
+      </div>
+      <div class="foda-card accent reveal">
+        <div class="foda-head"><span class="foda-tag">Oportunidades</span></div>
+        <ul class="plain">
+          <li>Terreno limpio: no hay clientes insatisfechos ni deuda de marca que gestionar — se puede diseñar el proceso comercial desde cero.</li>
+          <li>Hueco de pricing sin explotar: un plan "Agencia" intermedio entre Solo y Team.</li>
+          <li>Hipótesis de ICP (agencias .com.mx que gestionan varias marcas) lista para probarse con los primeros clientes reales en Q1.</li>
+          <li>Posibilidad de lanzar un programa de early-adopters con condiciones preferenciales para los primeros clientes reales.</li>
+          <li>Momentum de mercado alrededor de decisiones creativas basadas en datos/IA.</li>
+        </ul>
+      </div>
+      <div class="foda-card warn reveal">
+        <div class="foda-head"><span class="foda-tag">Debilidades</span></div>
+        <ul class="plain">
+          <li>No existe función ni proceso comercial, y tampoco hay todavía ningún cliente de pago real — todo lo registrado hasta hoy son pruebas internas de desarrollo.</li>
+          <li>Cero validación de mercado: no hay evidencia de que alguien externo esté dispuesto a pagar, más allá de que el producto funciona técnicamente.</li>
+          <li>Ningún canal de adquisición probado todavía, ni orgánico ni pagado.</li>
+          <li>Salto de precio Solo→Team de 3× sin un escalón intermedio, sin datos reales todavía de si frena la conversión.</li>
+        </ul>
+      </div>
+      <div class="foda-card bad reveal">
+        <div class="foda-head"><span class="foda-tag">Amenazas</span></div>
+        <ul class="plain">
+          <li>Herramientas genéricas de "creative testing" con más presupuesto de marketing que WowScore.</li>
+          <li>Alza en el costo de los modelos de IA (OpenAI/Claude) que comprima el margen si no se traslada a precio.</li>
+          <li>Clientes que arman su propia evaluación con prompts de ChatGPT en vez de pagar una herramienta dedicada.</li>
+          <li>Ciclo de venta B2B lento en agencias con presupuestos de medios ya comprometidos.</li>
+          <li>Arrancar sin validación de mercado real: riesgo de seguir construyendo producto antes de confirmar que alguien paga por el que ya existe.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2><span class="idx">04</span> Pricing actual</h2>
+    <p class="lede">Estructura vigente en Stripe, convertida a pesos mexicanos (TC referencia $18.50 MXN/USD). Antes de invertir en adquisición, vale la pena validar si el salto de Solo a Team ($925 → $2,870 MXN) es demasiado grande para una agencia de 2-3 personas — es la fricción más probable en el embudo de ventas.</p>
+    <div class="table-wrap reveal">
+      <table>
+        <thead><tr><th>Plan</th><th class="num">Precio (MXN)</th><th class="num">Créditos/mes</th><th>Equivalencia</th></tr></thead>
+        <tbody>
+          <tr><td>Solo mensual</td><td class="num">$925</td><td class="num">10</td><td>—</td></tr>
+          <tr><td>Solo anual</td><td class="num">$9,250</td><td class="num">10</td><td>≈ $771/mes · 17% desc.</td></tr>
+          <tr><td>Team mensual</td><td class="num">$2,870</td><td class="num">10</td><td>—</td></tr>
+          <tr><td>Team anual</td><td class="num">$27,750</td><td class="num">10</td><td>≈ $2,313/mes · 19% desc.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout reveal" style="margin-top:14px">
+      <div><b>Acción sugerida para Comercial</b>Probar un plan "Agencia" intermedio (ej. $1,650-$1,850/mes, 2-3 usuarios) que suavice el salto Solo→Team, y validar con las 2 cuentas Team actuales qué las convenció de pagar 3× más.</div>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <h2><span class="idx">05</span> Hitos trimestrales — año 1 de venta formal</h2>
+    <p class="lede">Meta de 12 meses: pasar de 0 a ~55-60 clientes de pago reales y de $0 a ~$77,700 MXN de MRR. Son objetivos de partida para validar con el equipo, no compromisos cerrados — ajústalos tras el primer trimestre real de datos.</p>
+
+    <div class="quarters">
+      <div class="q-card reveal">
+        <span class="q-tag">Q1</span>
+        <h4>Cimientos comerciales</h4>
+        <ul>
+          <li>Definir ICP y mensaje de venta por escrito</li>
+          <li>Página de precios y guion de demo (sin casos de éxito de clientes reales todavía)</li>
+          <li>Playbook de ventas y demo estándar</li>
+          <li>Conseguir los primeros 3-5 clientes piloto reales</li>
+        </ul>
+        <div class="target">Meta: <b>8-10</b> clientes de pago reales · <b>~$9,650</b> MRR</div>
+      </div>
+      <div class="q-card reveal">
+        <span class="q-tag">Q2</span>
+        <h4>Motor de adquisición</h4>
+        <ul>
+          <li>Primer canal pago probado (SEM o LinkedIn Ads)</li>
+          <li>Programa de referidos con los primeros clientes reales conseguidos en Q1</li>
+          <li>Primer repetible de outbound a agencias</li>
+        </ul>
+        <div class="target">Meta: <b>20-22</b> clientes de pago reales · <b>~$25,400</b> MRR</div>
+      </div>
+      <div class="q-card reveal">
+        <span class="q-tag">Q3</span>
+        <h4>Escala y expansión</h4>
+        <ul>
+          <li>Automatizar onboarding (activación en &lt;15 min)</li>
+          <li>Campaña de upsell Solo → Team / Agencia</li>
+          <li>Primera integración o reporte exportable</li>
+        </ul>
+        <div class="target">Meta: <b>35</b> clientes de pago reales · <b>~$47,000</b> MRR</div>
+      </div>
+      <div class="q-card reveal">
+        <span class="q-tag">Q4</span>
+        <h4>Consolidación</h4>
+        <ul>
+          <li>Reducir churn con re-engagement de cuentas inactivas</li>
+          <li>Medir NRR y ajustar pricing con datos reales</li>
+          <li>Preparar objetivos del año 2</li>
+        </ul>
+        <div class="target">Meta: <b>55-60</b> clientes de pago reales · <b>~$77,700</b> MRR</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="kpis">
+    <h2><span class="idx">06</span> KPIs de negocio (transversales)</h2>
+    <p class="lede">Los que se revisan en la reunión mensual de los tres departamentos juntos — si uno de estos se mueve mal, es una señal de que hay que redistribuir esfuerzo entre áreas.</p>
+    <div class="table-wrap reveal">
+      <table>
+        <thead><tr><th>KPI</th><th>Qué mide</th><th>Dueño</th></tr></thead>
+        <tbody>
+          <tr><td>MRR / ARR</td><td>Ingreso recurrente mensual/anual</td><td>Comercial</td></tr>
+          <tr><td>Net New MRR</td><td>MRR nuevo menos churn, por mes</td><td>Comercial</td></tr>
+          <tr><td>Churn rate (logos y $)</td><td>% de clientes/ingreso que se pierde al mes</td><td>Comercial</td></tr>
+          <tr><td>CAC</td><td>Costo de adquisición por cliente nuevo</td><td>Marketing</td></tr>
+          <tr><td>LTV : CAC</td><td>Relación valor de vida / costo de adquisición (meta &gt;3:1)</td><td>Marketing + Comercial</td></tr>
+          <tr><td>Activation rate</td><td>% de registros que corren ≥1 análisis en 48h</td><td>IT / Producto</td></tr>
+          <tr><td>NRR (Net Revenue Retention)</td><td>Expansión de cuentas existentes vs. contracción</td><td>Comercial</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="marketing">
+    <h2><span class="idx">07</span> Departamentos</h2>
+    <p class="lede">Cada departamento tiene una misión, objetivos por trimestre (en la línea del roadmap de la sección 04) y los KPIs que le pertenecen.</p>
+
+    <div class="dept mkt reveal">
+      <div class="dept-head"><span class="dept-tag">Marketing</span></div>
+      <h3>Generar demanda calificada, no solo tráfico</h3>
+      <p class="mission">Hoy no hay clientes de pago reales ni canales de adquisición probados. La misión de Marketing es construir desde cero la demanda y conseguir el primer caso de éxito real que sirva de prueba social.</p>
+
+      <div class="sub">Objetivos por trimestre</div>
+      <div class="okr-grid">
+        <div class="okr"><div class="qlabel">Q1</div><div class="body">Mensaje de venta, 1-2 casos de uso basados en pruebas internas (sin casos de éxito de clientes reales todavía), página de precios rediseñada.</div></div>
+        <div class="okr"><div class="qlabel">Q2</div><div class="body">Lanzar 1 canal pago (SEM o LinkedIn), blog con 8 artículos SEO sobre evaluación creativa.</div></div>
+        <div class="okr"><div class="qlabel">Q3</div><div class="body">Webinar o demo en vivo mensual; diseñar programa de referidos para activarlo con los primeros clientes reales.</div></div>
+        <div class="okr"><div class="qlabel">Q4</div><div class="body">Reporte anual de "estado de la creatividad publicitaria" como pieza de relaciones públicas.</div></div>
+      </div>
+
+      <div class="sub">KPIs propios</div>
+      <div class="kpi-list">
+        <span class="kpi-pill">Tráfico mensual <b>→</b></span>
+        <span class="kpi-pill">MQLs / mes <b>→</b></span>
+        <span class="kpi-pill">Costo por lead <b>→</b></span>
+        <span class="kpi-pill">Conversión visita→registro <b>→</b></span>
+        <span class="kpi-pill">% leads orgánicos vs. pagados <b>→</b></span>
+      </div>
+    </div>
+
+    <div class="dept com reveal" id="comercial">
+      <div class="dept-head"><span class="dept-tag">Comercial</span></div>
+      <h3>Convertir leads en clientes de pago y expandir cuentas</h3>
+      <p class="mission">No existe hoy ni un proceso de ventas formal ni ningún cliente de pago real — todas las cuentas registradas son pruebas internas. La misión es construir el proceso de ventas desde cero y conseguir a los primeros clientes reales.</p>
+
+      <div class="sub">Objetivos por trimestre</div>
+      <div class="okr-grid">
+        <div class="okr"><div class="qlabel">Q1</div><div class="body">Definir proceso demo→trial→cierre; entrevistar a prospectos reales del ICP para validar el mensaje de venta.</div></div>
+        <div class="okr"><div class="qlabel">Q2</div><div class="body">Primer ciclo de outbound a agencias segmentadas; meta de 10 demos/mes.</div></div>
+        <div class="okr"><div class="qlabel">Q3</div><div class="body">Campaña de upsell Solo→Team; plan "Agencia" intermedio en producción.</div></div>
+        <div class="okr"><div class="qlabel">Q4</div><div class="body">Playbook de retención para cuentas con churn risk (baja frecuencia de análisis).</div></div>
+      </div>
+
+      <div class="sub">KPIs propios</div>
+      <div class="kpi-list">
+        <span class="kpi-pill">SQLs / mes <b>→</b></span>
+        <span class="kpi-pill">Tasa trial→pago <b>→</b></span>
+        <span class="kpi-pill">Ciclo de venta (días) <b>→</b></span>
+        <span class="kpi-pill">ARPU <b>→</b></span>
+        <span class="kpi-pill">Churn mensual <b>→</b></span>
+      </div>
+    </div>
+
+    <div class="dept it reveal" id="it">
+      <div class="dept-head"><span class="dept-tag">IT / Producto</span></div>
+      <h3>Que el producto no sea el freno de las ventas</h3>
+      <p class="mission">Base técnica ya sólida: multi-tenant, RLS, seguimiento de costo de IA por análisis, y bugs recientes de onboarding (redirect de sesión, menú lateral) ya corregidos. El foco pasa a features con impacto comercial directo y a controlar el costo marginal por cliente.</p>
+
+      <div class="sub">Objetivos por trimestre</div>
+      <div class="okr-grid">
+        <div class="okr"><div class="qlabel">Q1</div><div class="body">Dashboard interno de margen (costo IA por análisis vs. plan del cliente).</div></div>
+        <div class="okr"><div class="qlabel">Q2</div><div class="body">Onboarding en producto (sin soporte manual) y reporte de marca mejorado para PDF.</div></div>
+        <div class="okr"><div class="qlabel">Q3</div><div class="body">Primera integración (export a Looker/Sheets o API para agencias técnicas).</div></div>
+        <div class="okr"><div class="qlabel">Q4</div><div class="body">Hardening: SLA de uptime, auditoría de seguridad, plan de capacidad para 2× usuarios.</div></div>
+      </div>
+
+      <div class="sub">KPIs propios</div>
+      <div class="kpi-list">
+        <span class="kpi-pill">Uptime <b>→</b></span>
+        <span class="kpi-pill">Costo IA / análisis (MXN) <b>→</b></span>
+        <span class="kpi-pill">% análisis fallidos <b>→</b></span>
+        <span class="kpi-pill">Lead time de feature <b>→</b></span>
+        <span class="kpi-pill">Bugs críticos abiertos <b>→</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="riesgos">
+    <h2><span class="idx">10</span> Riesgos y supuestos</h2>
+    <div class="grid2">
+      <div class="card reveal">
+        <div class="sub" style="margin-top:0">Supuestos de este plan</div>
+        <ul class="plain">
+          <li>Los precios de Stripe siguen definidos en USD; las cifras de este plan se convirtieron a pesos mexicanos con un tipo de cambio de referencia de $18.50 MXN/USD — confirmar con finanzas y ajustar si el tipo de cambio cambia o si se migra el pricing a MXN nativo.</li>
+          <li>El costo de IA por análisis lo factura el proveedor (OpenAI/Claude) en USD; la cifra en MXN de este documento es una conversión para reporte interno, no el cobro real.</li>
+          <li>Hay capacidad de contratar o asignar tiempo dedicado a Marketing y Comercial — hoy no existe ninguno de los dos.</li>
+          <li>El costo de IA por análisis (ya medido en pruebas internas) se mantiene como % menor del precio del plan a medida que se consigan clientes reales.</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="sub" style="margin-top:0">Riesgos principales</div>
+        <ul class="plain">
+          <li>Arrancar sin ningún cliente de pago real es el riesgo central del plan — hasta validar con los primeros clientes reales, toda meta cuantitativa (hitos, MRR) es una hipótesis.</li>
+          <li>No hay todavía ningún canal de adquisición probado — conviene diseñar y probar más de uno desde el inicio en vez de depender de uno solo.</li>
+          <li>Salto de precio Solo→Team puede frenar la conversión de los primeros prospectos a Team/Agencia.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="siguientes">
+    <h2><span class="idx">11</span> Próximos 30 / 60 / 90 días</h2>
+    <div class="grid3">
+      <div class="card reveal">
+        <div class="sub" style="margin-top:0">30 días</div>
+        <ul class="plain">
+          <li>Reclutar 3-5 clientes piloto reales (beta, con condiciones preferenciales)</li>
+          <li>Definir el proceso demo → trial → cierre</li>
+          <li>Escribir mensaje de venta y guion de demo (sin caso de éxito real todavía)</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="sub" style="margin-top:0">60 días</div>
+        <ul class="plain">
+          <li>Página de precios y demo estándar listas</li>
+          <li>Primer experimento de canal pago (presupuesto pequeño, medir CAC)</li>
+          <li>Dashboard interno de margen por análisis</li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <div class="sub" style="margin-top:0">90 días</div>
+        <ul class="plain">
+          <li>Revisar metas de Q1 con los primeros clientes reales y ajustar Q2</li>
+          <li>Decidir si se lanza el plan "Agencia" intermedio</li>
+          <li>Primer reporte conjunto Marketing/Comercial/IT con datos reales, aunque sean pocos</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Plan de trabajo interno — las cifras de cuentas y análisis (17 cuentas, 95 análisis) vienen de la base de producción al 10 de noviembre de 2026 y corresponden a pruebas internas de desarrollo, no a clientes de pago reales. Las cifras monetarias se convirtieron de USD a pesos mexicanos con un tipo de cambio de referencia de $18.50 MXN/USD. Las metas trimestrales son una propuesta inicial: revisar con el equipo antes de comunicarlas como compromiso.</p>
+
+</div>
+
+<script>
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function countUp(el){
+    var target = parseFloat(el.dataset.target);
+    if(isNaN(target)) return;
+    var prefix = el.dataset.prefix || '';
+    var suffix = el.dataset.suffix || '';
+    var locale = el.dataset.locale || null;
+    function render(val){ el.textContent = prefix + (locale ? Math.round(val).toLocaleString(locale) : Math.round(val)) + suffix; }
+    if(reduced){ render(target); return; }
+    var start = performance.now(), dur = 1100;
+    function tick(now){
+      var p = Math.min(1, (now - start) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      render(target * eased);
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  var items = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window) || reduced){
+    items.forEach(function(el){
+      el.classList.add('in');
+      el.querySelectorAll('[data-target]').forEach(countUp);
+    });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        entry.target.querySelectorAll('[data-target]').forEach(countUp);
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  items.forEach(function(el, i){
+    el.style.transitionDelay = (Math.min(i % 6, 5) * 60) + 'ms';
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>

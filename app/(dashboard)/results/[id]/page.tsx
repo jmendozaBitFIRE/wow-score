@@ -23,7 +23,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   // ── 2. Obtener company_id ─────────────────────────────────
   const { data: profile } = await admin
     .from('profiles')
-    .select('company_id')
+    .select('company_id, is_admin')
     .eq('id', user.id)
     .single()
 
@@ -32,7 +32,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   // ── 3. Cargar evaluación, restringida a la company ────────
   const { data: evaluation } = await admin
     .from('evaluations')
-    .select('id, image_url, medio, objetivo, score_overall, scores_detail, feedback_json, created_at, profile_id, visibility, shared_team_id')
+    .select('id, image_url, medio, objetivo, score_overall, scores_detail, feedback_json, created_at, profile_id, visibility, shared_team_id, cost_usd')
     .eq('id', id)
     .eq('company_id', profile.company_id)
     .single()
@@ -79,6 +79,8 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
     fortalezas?: string[]
     oportunidades?: string[]
     target_fit?: { score?: number }
+    sugerencia_alternativa?: string
+    tokens?: { input: number; output: number }
   } | null
 
   const isTextCreative = getScriptExtension(evaluation.image_url) !== null
@@ -123,6 +125,10 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         oportunidades={feedback?.oportunidades}
         veredicto={feedback?.veredicto}
         targetFitScore={feedback?.target_fit?.score}
+        sugerenciaAlternativa={feedback?.sugerencia_alternativa}
+        costInfo={profile.is_admin && feedback?.tokens
+          ? { inputTokens: feedback.tokens.input, outputTokens: feedback.tokens.output, costUsd: evaluation.cost_usd }
+          : null}
       />
 
       <div className="no-print reveal reveal-5">

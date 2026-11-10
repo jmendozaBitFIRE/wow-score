@@ -23,6 +23,7 @@ const ANALYSIS_JSON = {
   fortalezas: ['a', 'b', 'c'],
   oportunidades: ['x', 'y', 'z'],
   veredicto: 'Buen anuncio.',
+  sugerencia_alternativa: 'Prueba con un tono más directo.',
 }
 
 function jsonResponse(body: unknown) {

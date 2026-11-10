@@ -25,7 +25,7 @@ interface AnalyzeBody {
 
 function buildSystemPrompt(
   medio: Medio, objetivo: Objetivo, formula: typeof WOW_FORMULAS[string],
-  genero: Genero[], edad: Edad[], nse: NSE[]
+  genero: Genero[], edad: Edad[], nse: NSE[], isText: boolean
 ): string {
   const { bondad, pesos } = formula
   const generoLabel = genero.join(' y ')
@@ -71,7 +71,12 @@ Estandarización de resultados ejecutivos (obligatoria — respeta los límites 
 - "oportunidades": entre 3 y 5. Cada una es UNA sola oración de máximo 25 palabras: el problema + una recomendación concreta. Nada genérico ni repetido.
 - "veredicto": un único párrafo de 80 a 120 palabras (ni menos, ni más) que resuma el potencial de la propuesta, el principal diferenciador, el riesgo principal (si existe) y una recomendación clara. Lenguaje profesional y directo, sin relleno ni repetir lo ya dicho en fortalezas/oportunidades.
 
-Recuerda: toda la respuesta (fortalezas, oportunidades, veredicto) va en español, sin excepción.
+Sugerencia alternativa (obligatoria): ${isText
+    ? 'reescribe una versión alternativa COMPLETA del guion/spot que corrija las oportunidades detectadas — no una descripción, el guion mismo, listo para usarse.'
+    : 'describe en detalle una pieza visual alternativa (composición, mensaje principal, elementos visuales, tono) que resolvería las oportunidades detectadas y elevaría el WOW Score — no generes una imagen, redacta la idea con precisión suficiente para que un diseñador la ejecute.'
+  } Entre 60 y 150 palabras, en español.
+
+Recuerda: toda la respuesta (fortalezas, oportunidades, veredicto, sugerencia_alternativa) va en español, sin excepción.
 
 Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin markdown:
 {
@@ -88,7 +93,8 @@ Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin markdown:
   },
   "fortalezas": string[],
   "oportunidades": string[],
-  "veredicto": string
+  "veredicto": string,
+  "sugerencia_alternativa": string
 }`
 }
 
@@ -106,7 +112,7 @@ export async function POST(request: Request) {
   // ── 2. Verificar subscription activa ─────────────────────
   const { data: profile } = await createAdminClient()
     .from('profiles')
-    .select('company_id')
+    .select('company_id, is_admin')
     .eq('id', user.id)
     .single()
 
@@ -259,7 +265,7 @@ export async function POST(request: Request) {
   }
 
   // ── 6. Llamar al proveedor de IA (A/B) ────────────────────
-  const systemPrompt = buildSystemPrompt(medio, objetivo, formula, genero, edad, nse)
+  const systemPrompt = buildSystemPrompt(medio, objetivo, formula, genero, edad, nse, input.kind === 'text')
   const provider: 'openai' | 'claude' = Math.random() < 0.5 ? 'openai' : 'claude'
 
   let result: AIProviderResult
@@ -316,11 +322,13 @@ export async function POST(request: Request) {
         veredicto: result.raw.veredicto,
         fortalezas: result.raw.fortalezas,
         oportunidades: result.raw.oportunidades,
+        sugerencia_alternativa: result.raw.sugerencia_alternativa,
         genero,
         edad,
         nse,
         wow_base_score: wowBaseScore,
         target_fit: { dimensiones: result.targetFit, score: targetFitScore, wtm },
+        tokens: { input: result.inputTokens, output: result.outputTokens },
       },
     })
     .select('id, created_at')
@@ -360,6 +368,11 @@ export async function POST(request: Request) {
     fortalezas: result.raw.fortalezas,
     oportunidades: result.raw.oportunidades,
     veredicto: result.raw.veredicto,
+    sugerencia_alternativa: result.raw.sugerencia_alternativa,
+    // Costo/tokens: solo se exponen a admins — es información operativa interna.
+    ...(profile.is_admin
+      ? { tokens: { input: result.inputTokens, output: result.outputTokens }, cost_usd: result.costUsd }
+      : {}),
     image_url,
     created_at: evaluation?.created_at ?? new Date().toISOString(),
   })

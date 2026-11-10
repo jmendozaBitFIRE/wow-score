@@ -60,6 +60,10 @@ interface AnalyzeResult {
   fortalezas: string[]
   oportunidades: string[]
   veredicto: string
+  sugerencia_alternativa?: string
+  // Solo presentes en la respuesta cuando quien analiza es admin (ver /api/analyze).
+  tokens?: { input: number; output: number }
+  cost_usd?: number | null
   medio: Medio
   objetivo: Objetivo
   image_url: string
@@ -582,6 +586,10 @@ export function UploadClient({
             fortalezas={state.result.fortalezas}
             oportunidades={state.result.oportunidades}
             veredicto={state.result.veredicto}
+            sugerenciaAlternativa={state.result.sugerencia_alternativa}
+            costInfo={state.result.tokens
+              ? { inputTokens: state.result.tokens.input, outputTokens: state.result.tokens.output, costUsd: state.result.cost_usd ?? null }
+              : null}
           />
 
           {/* Calificación */}

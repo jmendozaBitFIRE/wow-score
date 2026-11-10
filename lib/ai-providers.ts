@@ -32,6 +32,7 @@ export interface ParsedAnalysis {
   fortalezas: string[]
   oportunidades: string[]
   veredicto: string
+  sugerencia_alternativa: string
 }
 
 export interface AIProviderResult {
@@ -40,6 +41,8 @@ export interface AIProviderResult {
   targetFit: TargetFitDimensiones
   raw: ParsedAnalysis
   costUsd: number | null
+  inputTokens: number
+  outputTokens: number
 }
 
 // Precios públicos por 1M tokens (entrada/salida), en USD — estimado, no
@@ -167,7 +170,7 @@ async function callWithJsonRetry(
 // 800 tokens que bastaban con el formato viejo (3 items cortos) — con ese
 // límite la respuesta se corta a mitad de un string y el JSON queda inválido,
 // y los reintentos no ayudan porque repiten el mismo max_tokens.
-const MAX_OUTPUT_TOKENS = 2000
+const MAX_OUTPUT_TOKENS = 2400
 
 export async function callOpenAI(systemPrompt: string, input: CreativeInput): Promise<AIProviderResult> {
   const { parsed, inputTokens, outputTokens } = await callWithJsonRetry(systemPrompt, async (prompt) => {
@@ -192,6 +195,8 @@ export async function callOpenAI(systemPrompt: string, input: CreativeInput): Pr
     targetFit: parsed.target_fit,
     raw: parsed,
     costUsd: estimateCostUsd('openai', inputTokens, outputTokens),
+    inputTokens,
+    outputTokens,
   }
 }
 
@@ -218,5 +223,7 @@ export async function callClaude(systemPrompt: string, input: CreativeInput): Pr
     targetFit: parsed.target_fit,
     raw: parsed,
     costUsd: estimateCostUsd('claude', inputTokens, outputTokens),
+    inputTokens,
+    outputTokens,
   }
 }
