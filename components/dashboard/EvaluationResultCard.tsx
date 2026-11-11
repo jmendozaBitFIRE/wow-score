@@ -54,6 +54,8 @@ export function EvaluationResultCard({
         <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
       </div>
 
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start print:grid-cols-1">
+      <div className="space-y-4 min-w-0">
       {/* Imagen o guion + score */}
       <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2">
         <div className="relative aspect-video bg-muted">
@@ -99,9 +101,11 @@ export function EvaluationResultCard({
         </div>
       )}
 
+      </div>
+      <div className="space-y-4 min-w-0">
       {/* Fortalezas y oportunidades */}
       {((fortalezas?.length ?? 0) > 0 || (oportunidades?.length ?? 0) > 0) && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal reveal-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 reveal reveal-4">
           {fortalezas && fortalezas.length > 0 && (
             <div className="rounded-xl border bg-card p-4 space-y-2">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fortalezas</p>
@@ -148,6 +152,9 @@ export function EvaluationResultCard({
           <p className="text-sm leading-relaxed">{sugerenciaAlternativa}</p>
         </div>
       )}
+
+      </div>
+      </div>
 
       {/* Costo/tokens — solo visible para admins (ver costInfo arriba) */}
       {costInfo && (

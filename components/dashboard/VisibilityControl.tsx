@@ -60,7 +60,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
   return (
     <div className="space-y-2">
       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Visibilidad</p>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {OPTIONS.map(({ value, label, icon: Icon }) => (
           <button
             key={value}

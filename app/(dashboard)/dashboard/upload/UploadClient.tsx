@@ -95,7 +95,7 @@ const selectClass =
 // Opción tipo chip: el checkbox sigue siendo real (teclado y lector de pantalla);
 // el chip entero es el objetivo táctil (44px en móvil).
 const chipClass =
-  'inline-flex min-h-11 lg:min-h-9 cursor-pointer items-center gap-2 rounded-full border border-input px-3 text-sm ' +
+  'inline-flex min-h-11 lg:min-h-9 cursor-pointer items-center gap-2 rounded-full border border-ink/30 bg-card px-3 text-sm hover:border-ink/50 ' +
   'transition-colors has-[:checked]:border-flame has-[:checked]:bg-flame/10 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-flame/60 ' +
   'has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50'
 const checkClass = 'size-4 accent-flame'
@@ -310,7 +310,7 @@ export function UploadClient({
 
   // ── Render ────────────────────────────────────────────────
   return (
-    <div className="max-w-xl mx-auto px-4 py-12 space-y-6">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6">
       <div className="reveal reveal-1">
         <h1 className="text-2xl font-semibold mb-1">Analizar creatividad</h1>
         <p className="text-sm text-muted-foreground">
@@ -444,9 +444,9 @@ export function UploadClient({
 
       {/* ── Preview + controles (después de seleccionar) ── */}
       {preview && state.status !== 'done' && !isAnalyzing && (
-        <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2">
+        <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
           {/* Imagen o guion */}
-          <div className="relative aspect-video bg-muted">
+          <div className="relative aspect-video bg-muted lg:aspect-auto lg:min-h-[420px]">
             <CreativePreview src={preview} isText={isTextFile} alt="Preview" />
             {isUploading && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
@@ -459,7 +459,7 @@ export function UploadClient({
           </div>
 
           {/* Dropdowns + botón */}
-          <div className="p-4 space-y-4">
+          <div className="p-4 lg:p-6 space-y-4 lg:border-l">
             <div className="grid grid-cols-2 gap-3">
               {/* Medio */}
               <div className="space-y-1">
@@ -500,7 +500,11 @@ export function UploadClient({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3">
+            <div className="rounded-xl border border-ink/20 bg-muted/40 p-3 sm:p-4 space-y-4">
+              <div>
+                <p className="text-sm font-semibold">Target</p>
+                <p className="text-xs text-muted-foreground">¿A quién va dirigida la pieza? Elige género, edad y NSE.</p>
+              </div>
               {/* Género (multi-selección) */}
               <fieldset className="space-y-1.5 min-w-0">
                 <legend className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">

@@ -33,7 +33,7 @@ export default async function SharedResultPage({ params }: { params: Promise<{ i
   } | null
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-12 space-y-4">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-4">
       <div className="reveal reveal-1">
         <Link href="/" className="inline-block">
           <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
