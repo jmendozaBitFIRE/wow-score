@@ -402,6 +402,7 @@ export function UploadClient({
           className={[
             'flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed',
             'cursor-pointer py-14 px-6 text-center transition-colors select-none reveal reveal-2',
+            'has-[:focus-visible]:border-primary has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary/60 has-[:focus-visible]:ring-offset-2',
             isDragging
               ? 'border-primary bg-primary/5'
               : 'border-border hover:border-primary/50 hover:bg-muted/40',
@@ -422,6 +423,7 @@ export function UploadClient({
           <input
             ref={inputRef}
             type="file"
+            aria-label="Seleccionar imagen o guion para analizar"
             accept={[...ALLOWED_TYPES, '.txt', '.pdf', '.doc', '.docx'].join(',')}
             className="sr-only"
             onChange={handleInputChange}
@@ -560,9 +562,9 @@ export function UploadClient({
 
       {/* ── Error ── */}
       {state.status === 'error' && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 flex items-start gap-3">
+        <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 flex items-start gap-3">
           <p className="text-sm text-destructive flex-1">{state.message}</p>
-          <button onClick={reset} className="text-xs text-destructive underline underline-offset-2 shrink-0">
+          <button type="button" onClick={reset} className="text-xs text-destructive underline underline-offset-2 shrink-0 min-h-11 px-2 -my-2 rounded focus-visible:outline-2 focus-visible:outline-destructive">
             Reintentar
           </button>
         </div>

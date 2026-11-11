@@ -44,7 +44,8 @@ export function AnalyzingSkeleton({ preview, isText = false }: AnalyzingSkeleton
         </div>
 
         {/* Texto rotatorio */}
-        <p className="text-sm text-center text-muted-foreground min-h-[1.25rem] transition-opacity">
+        <p role="status" className="sr-only">Analizando tu creatividad…</p>
+        <p aria-hidden="true" className="text-sm text-center text-muted-foreground min-h-[1.25rem] transition-opacity">
           {MESSAGES[msgIndex]}
         </p>
 
