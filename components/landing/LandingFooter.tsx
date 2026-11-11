@@ -100,7 +100,7 @@ function FooterLogo() {
     <motion.div variants={itemVariants} className="flex flex-col gap-5">
       {/* Brand mark */}
       <Link href="/" className="flex items-center group w-fit hover:opacity-80 transition-opacity">
-        <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
+        <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
       </Link>
 
       {/* Description */}

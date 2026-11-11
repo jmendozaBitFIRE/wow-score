@@ -202,6 +202,7 @@ function AnimatedBackground() {
 
     // Animation loop
     let animationFrameId = 0
+    let isRunning = false
     const animate = () => {
       // Clear canvas with semi-transparent background for trail effect
       ctx.fillStyle = 'rgba(29, 29, 27, 0.02)'
@@ -303,15 +304,32 @@ function AnimatedBackground() {
         ctx.stroke()
       }
 
-      if (!reduceMotion) animationFrameId = requestAnimationFrame(animate)
+      if (!reduceMotion && isRunning) animationFrameId = requestAnimationFrame(animate)
     }
 
-    animate()
+    // El loop solo corre mientras el hero es visible: fuera de pantalla gastaba ~16% del hilo principal.
+    const start = () => {
+      if (isRunning) return
+      isRunning = true
+      animationFrameId = requestAnimationFrame(animate)
+    }
+    const stop = () => {
+      isRunning = false
+      cancelAnimationFrame(animationFrameId)
+    }
+    animate() // primer cuadro (único con movimiento reducido)
+    const observer = new IntersectionObserver(([entry]) => {
+      if (reduceMotion) return
+      if (entry.isIntersecting) start()
+      else stop()
+    })
+    observer.observe(canvas)
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
       window.removeEventListener('mousemove', handleMouseMove)
-      cancelAnimationFrame(animationFrameId)
+      stop()
+      observer.disconnect()
     }
   }, [])
 

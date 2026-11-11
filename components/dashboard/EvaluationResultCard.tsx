@@ -51,7 +51,7 @@ export function EvaluationResultCard({
     <>
       {/* Encabezado con logo — solo visible al imprimir/descargar PDF */}
       <div className="hidden print:flex items-center gap-2 mb-2">
-        <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
+        <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
       </div>
 
       {/* Imagen o guion + score */}

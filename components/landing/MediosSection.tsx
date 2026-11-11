@@ -117,21 +117,15 @@ function SliderTrack() {
       <div className="absolute left-0 top-0 bottom-0 w-16 md:w-40 bg-gradient-to-r from-ink to-transparent z-10 pointer-events-none" />
 
       {/* Track animado */}
-      <motion.div
-        className="flex items-stretch gap-3 md:gap-6 w-max py-4"
-        animate={{ x: ['0%', '-33.333%'] }}
-        transition={{
-          x: {
-            duration: duration,
-            repeat: Infinity,
-            ease: 'linear',
-          },
-        }}
+      {/* Animación CSS (compositor): framer-motion la animaba en JS cada cuadro y ocupaba ~9% del hilo principal */}
+      <div
+        className="marquee-track flex items-stretch gap-3 md:gap-6 w-max py-4"
+        style={{ animationDuration: `${duration}s` }}
       >
         {duplicatedMedios.map((medio, index) => (
           <MedioCard key={`${medio.id}-${index}`} medio={medio} />
         ))}
-      </motion.div>
+      </div>
 
       {/* Fade gradient derecho */}
       <div className="absolute right-0 top-0 bottom-0 w-16 md:w-40 bg-gradient-to-l from-ink to-transparent z-10 pointer-events-none" />

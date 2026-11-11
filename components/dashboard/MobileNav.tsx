@@ -60,7 +60,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
       {/* Top bar — solo móvil/tablet, oculta en desktop (lg:) donde vive el sidebar fijo */}
       <header className="no-print lg:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-white px-4 py-3 dark:bg-zinc-950 dark:border-zinc-800">
         <Link href="/dashboard" className="flex items-center">
-          <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" priority />
+          <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" priority />
         </Link>
         <button
           ref={openerRef}
@@ -96,7 +96,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
                 onClick={() => setOpen(false)}
                 className="flex items-center"
               >
-                <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
+                <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
               </Link>
               <button
                 ref={closeRef}

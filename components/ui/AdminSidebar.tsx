@@ -22,7 +22,7 @@ export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
     <aside className="w-64 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex flex-col">
       <div className="p-6">
         <Link href="/admin/clients" className="flex items-center gap-2">
-          <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
+          <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
           <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
         </Link>
       </div>

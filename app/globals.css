@@ -364,6 +364,16 @@
 }
 
 
+/* ── Landing: carrusel de medios ───────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0) }
+  to   { transform: translateX(-33.333%) }
+}
+
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+
 /* ── Movimiento reducido ───────────────────────────────────────
    Se quita el desplazamiento y los loops decorativos; se conservan
    los cambios de opacidad, el progreso y los spinners de carga,

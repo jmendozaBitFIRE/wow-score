@@ -50,7 +50,7 @@ export function LandingHeader() {
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-90 transition-all duration-300">
             <Image
-              src="/logo-full.png"
+              src="/logo-full.png" sizes="100px"
               alt="WowScore"
               width={1025}
               height={503}
