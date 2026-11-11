@@ -12,7 +12,7 @@ const syne = Syne({
 const dmSans = DM_Sans({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 

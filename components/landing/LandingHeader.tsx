@@ -86,7 +86,7 @@ export function LandingHeader() {
             </Link>
             <Link
               href="/register"
-              className={`bg-flame text-on-flame font-bold hover:bg-flame-hover font-semibold rounded-xl transition-all duration-300 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_6px_20px_rgba(246,101,2,0.1)] hover:-translate-y-0.5 ${scrolled ? 'text-sm px-6 py-2.5' : 'text-base px-8 py-3.5'}`}
+              className={`bg-flame-deep text-on-flame font-bold tracking-[0.01em] hover:bg-flame-deep-hover rounded-xl transition-all duration-300 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_6px_20px_rgba(246,101,2,0.1)] hover:-translate-y-0.5 ${scrolled ? 'text-sm px-6 py-2.5' : 'text-base px-8 py-3.5'}`}
             >
               Crear cuenta  →
             </Link>
@@ -140,7 +140,7 @@ export function LandingHeader() {
                 <Link
                   href="/register"
                   onClick={() => setIsOpen(false)}
-                  className="w-full bg-flame text-on-flame hover:bg-flame-hover text-center font-bold py-3 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)]"
+                  className="w-full bg-flame-deep text-on-flame hover:bg-flame-deep-hover text-center font-bold tracking-[0.01em] py-3 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)]"
                 >
                   Crear cuenta →
                 </Link>

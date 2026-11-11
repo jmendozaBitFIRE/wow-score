@@ -232,7 +232,7 @@ export function ContactoSection() {
               <button
                 type="submit"
                 disabled={!agreed}
-                className="mt-4 w-full bg-flame hover:bg-flame-hover disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed  text-on-flame font-bold text-sm px-6 py-4 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                className="mt-4 w-full bg-flame-deep hover:bg-flame-deep-hover disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed  text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 Enviar mensaje
                 <Send size={16} />

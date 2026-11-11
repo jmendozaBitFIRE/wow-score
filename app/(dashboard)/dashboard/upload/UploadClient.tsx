@@ -322,7 +322,7 @@ export function UploadClient({
           </p>
           <div className="pt-4">
             <Link href="/dashboard/pricing">
-              <Button className="bg-flame hover:bg-flame-hover text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto">
+              <Button className="bg-flame-deep hover:bg-flame-deep-hover text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto">
                 Ver planes y precios
               </Button>
             </Link>
@@ -344,7 +344,7 @@ export function UploadClient({
             <Button 
               onClick={authorizeCharge} 
               disabled={isAuthorizing}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-3 sm:py-2 h-auto text-base font-semibold"
+              className="bg-flame-deep hover:bg-flame-deep-hover text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto text-base font-semibold"
             >
               {isAuthorizing ? 'Autorizando...' : 'Autorizar Cobro'}
             </Button>

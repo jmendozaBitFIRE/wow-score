@@ -243,7 +243,7 @@ export default async function SubscriptionPage() {
                 <div>
                   <Link
                     href="/dashboard/pricing"
-                    className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-8 bg-flame hover:bg-flame-hover text-on-flame rounded-full px-5')}
+                    className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-8 bg-flame-deep hover:bg-flame-deep-hover text-on-flame rounded-full px-5')}
                   >
                     Ver planes disponibles
                   </Link>
@@ -368,7 +368,7 @@ export default async function SubscriptionPage() {
       <div className="flex justify-center pt-4">
         <Link
           href="/dashboard/pricing"
-          className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-9 bg-flame hover:bg-flame-hover text-on-flame rounded-full px-8 py-2')}
+          className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-9 bg-flame-deep hover:bg-flame-deep-hover text-on-flame rounded-full px-8 py-2')}
         >
           Ver más planes y precios
         </Link>

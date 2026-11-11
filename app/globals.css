@@ -9,7 +9,10 @@
   --color-flame: #F66502;        /* fills, accents, orange text on dark (5.4:1 on ink) */
   --color-flame-hover: #FF7A1A;  /* hover/lighter fill; ink text on it is 6.5:1 */
   --color-flame-text: #B84A00;   /* orange text on light surfaces (5.0:1 on paper) */
-  --color-on-flame: #1D1D1B;     /* text on flame fills (5.4:1); white would be 3.1:1 */
+  --color-flame-deep: #C94B00;   /* button/badge fill under white text (4.7:1) */
+  --color-flame-deep-hover: #B04100; /* hover of deep fills; darkens so white keeps 5.8:1 */
+  --color-flame-strong: #E05800; /* hover of vivid flame fills under LARGE white text (3.8:1) */
+  --color-on-flame: #FFFFFF;     /* text on flame fills. Vivid flame (3.1:1) only for large bold text (>=18.7px) */
   --color-ink: #1D1D1B;
   --color-paper: #FBFBFB;
   --color-mist: #D8DADD;
@@ -67,7 +70,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: #F66502;
-  --primary-foreground: #1D1D1B;
+  --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -100,9 +103,9 @@
   --color-success: #16A34A;
 
   /* ── Brand gradients ─────────────────────────── */
-  --gradient-brand: linear-gradient(135deg, #F66502 0%, #FF7A1A 100%);
+  --gradient-brand: linear-gradient(135deg, #C94B00 0%, #B04100 100%); /* carries white text */
   --gradient-brand-subtle: linear-gradient(135deg,
-    rgba(246,101,2,0.08) 0%, rgba(255,122,26,0.08) 100%);
+    rgba(246,101,2,0.08) 0%, rgba(246,101,2,0.08) 100%);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -175,12 +178,13 @@
   color: var(--color-on-flame);
   font-family: var(--font-body);
   font-weight: 600;
+  letter-spacing: 0.01em;
   border-radius: 10px;
   padding: 12px 24px;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(246,101,2,0.25);
+  box-shadow: 0 4px 14px rgba(201,75,0,0.3);
 }
 .btn-primary:hover {
   transform: translateY(-1px);
