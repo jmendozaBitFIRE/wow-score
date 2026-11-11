@@ -55,6 +55,8 @@ export function PasswordField({
           value={value}
           onChange={onChange}
           required={required}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${name}-error` : undefined}
           minLength={minLength}
           className={`input-field has-right-icon${error ? ' error' : ''}`}
         />
@@ -64,21 +66,25 @@ export function PasswordField({
           className="input-icon-right"
           onClick={() => setShowPassword((v) => !v)}
           aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-          style={{ background: 'none', border: 'none', padding: 0, width: 18, height: 18 }}
+          style={{ background: 'none', border: 'none', padding: 0 }}
         >
           <Eye
             size={18}
             aria-hidden
-            style={{ position: 'absolute', top: 0, left: 0, opacity: showPassword ? 0 : 1, transition: 'opacity 0.15s' }}
+            style={{ opacity: showPassword ? 0 : 1, transition: 'opacity 0.15s' }}
           />
           <EyeOff
             size={18}
             aria-hidden
-            style={{ position: 'absolute', top: 0, left: 0, opacity: showPassword ? 1 : 0, transition: 'opacity 0.15s' }}
+            style={{ opacity: showPassword ? 1 : 0, transition: 'opacity 0.15s' }}
           />
         </button>
       </div>
-      {error && <span style={errorStyle}>{error}</span>}
+      {error && (
+        <span id={`${name}-error`} role="alert" style={errorStyle}>
+          {error}
+        </span>
+      )}
     </div>
   )
 }

@@ -54,10 +54,16 @@ export function InputField({
           value={value}
           onChange={onChange}
           required={required}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${name}-error` : undefined}
           className={`input-field${error ? ' error' : ''}`}
         />
       </div>
-      {error && <span style={errorStyle}>{error}</span>}
+      {error && (
+        <span id={`${name}-error`} role="alert" style={errorStyle}>
+          {error}
+        </span>
+      )}
     </div>
   )
 }

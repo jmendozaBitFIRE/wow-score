@@ -222,7 +222,7 @@ export function ContactoSection() {
                 />
                 <label htmlFor="privacy" className="text-sm text-[#fbfbfb] leading-relaxed">
                   He leído y acepto la{' '}
-                  <Link href="/privacidad" className="text-[#F97303] hover:underline underline-offset-2">
+                  <Link href="/politica-de-privacidad" className="text-[#F97303] hover:underline underline-offset-2">
                     política de privacidad
                   </Link>
                   .

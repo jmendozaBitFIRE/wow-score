@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Menu, X, LogOut } from 'lucide-react'
@@ -14,6 +14,46 @@ interface MobileNavProps {
 
 export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
   const [open, setOpen] = useState(false)
+  const openerRef = useRef<HTMLButtonElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const drawerRef = useRef<HTMLElement>(null)
+
+  // Drawer modal: Escape cierra, el foco entra al abrir y vuelve al botón al cerrar,
+  // Tab se queda dentro del drawer y la página de fondo no hace scroll.
+  useEffect(() => {
+    if (!open) return
+    const opener = openerRef.current
+    closeRef.current?.focus()
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        return
+      }
+      if (e.key !== 'Tab' || !drawerRef.current) return
+      const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = prevOverflow
+      opener?.focus()
+    }
+  }, [open])
 
   return (
     <>
@@ -23,9 +63,12 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
           <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" priority />
         </Link>
         <button
+          ref={openerRef}
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Abrir menú"
+          aria-expanded={open}
+          aria-haspopup="dialog"
           className="flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
         >
           <Menu size={22} />
@@ -40,7 +83,13 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white dark:bg-zinc-950">
+          <aside
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menú de navegación"
+            className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white dark:bg-zinc-950"
+          >
             <div className="flex items-center justify-between p-4 border-b dark:border-zinc-800">
               <Link
                 href="/dashboard"
@@ -50,6 +99,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
                 <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
               </Link>
               <button
+                ref={closeRef}
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Cerrar menú"
