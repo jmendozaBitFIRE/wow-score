@@ -5,7 +5,7 @@ import { getScriptExtension } from '@/lib/extract-text'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, ArrowRight, History, Sparkles, ImageOff, FileText } from 'lucide-react'
+import { Plus, ArrowRight, ClockCounterClockwise, Sparkle, ImageBroken, FileText } from '@phosphor-icons/react/ssr'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -60,8 +60,8 @@ export default async function DashboardPage() {
   })
 
   const stats = [
-    { label: 'Evaluaciones totales', value: '12', icon: History },
-    { label: 'Promedio WOW Score', value: '78', icon: Sparkles },
+    { label: 'Evaluaciones totales', value: '12', icon: ClockCounterClockwise },
+    { label: 'Promedio WOW Score', value: '78', icon: Sparkle },
   ]
 
   return (
@@ -91,7 +91,7 @@ export default async function DashboardPage() {
             </Link>
           </div>
           <div className="absolute top-0 right-0 p-8 opacity-15 transform translate-x-1/4 -translate-y-1/4">
-             <Sparkles size={160} />
+             <Sparkle size={160} />
           </div>
         </div>
 
@@ -146,7 +146,7 @@ export default async function DashboardPage() {
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                      <ImageOff size={28} />
+                      <ImageBroken size={28} />
                     </div>
                   )}
                   <div className="absolute top-2 right-2 bg-white/90 dark:bg-black/90 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1.5 shadow-sm border border-flame/20">
@@ -169,7 +169,7 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed p-12 text-center space-y-3 bg-zinc-50/50 dark:bg-zinc-900/20">
-            <History className="mx-auto text-zinc-300 dark:text-zinc-700" size={40} />
+            <ClockCounterClockwise className="mx-auto text-zinc-300 dark:text-zinc-700" size={40} />
             <p className="text-zinc-500 dark:text-zinc-400">Aún no has realizado ningún análisis.</p>
             <Link href="/dashboard/upload" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'rounded-full border-flame/40 text-flame-text hover:bg-flame/10')}>
               Empezar ahora

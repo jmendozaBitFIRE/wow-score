@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Lock, Eye, EyeOff } from 'lucide-react'
+import { Lock, Eye, EyeSlash } from '@phosphor-icons/react'
 
 interface PasswordFieldProps {
   label: string
@@ -73,7 +73,7 @@ export function PasswordField({
             aria-hidden
             style={{ opacity: showPassword ? 0 : 1, transition: 'opacity 0.15s' }}
           />
-          <EyeOff
+          <EyeSlash
             size={18}
             aria-hidden
             style={{ opacity: showPassword ? 1 : 0, transition: 'opacity 0.15s' }}

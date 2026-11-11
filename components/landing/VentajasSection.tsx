@@ -3,20 +3,12 @@
 import Link from 'next/link'
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import {
-  Zap,
-  FlaskConical,
-  Eye,
-  Building2,
-  History,
-  ShieldCheck,
-  type LucideIcon,
-} from 'lucide-react'
+import { Lightning, Flask, Eye, Buildings, ClockCounterClockwise, ShieldCheck, type Icon } from '@phosphor-icons/react'
 
 // ── TYPES ────────────────────────────────────────────────────────────────────
 interface Ventaja {
   id: number
-  icon: LucideIcon
+  icon: Icon
   title: string
   description: string
 }
@@ -25,14 +17,14 @@ interface Ventaja {
 const VENTAJAS: Ventaja[] = [
   {
     id: 1,
-    icon: Zap,
+    icon: Lightning,
     title: 'Resultados al instante',
     description:
       'Sin esperas. Tu WOW Score aparece en segundos, listo para presentar o ajustar.',
   },
   {
     id: 2,
-    icon: FlaskConical,
+    icon: Flask,
     title: 'Fórmula científica',
     description:
       '42 combinaciones únicas de medio × objetivo. Cada campaña evaluada con los pesos correctos.',
@@ -46,14 +38,14 @@ const VENTAJAS: Ventaja[] = [
   },
   {
     id: 4,
-    icon: Building2,
+    icon: Buildings,
     title: 'Para equipos y agencias',
     description:
       'Multiusuario por empresa. Historial compartido. Todos en la misma página creativa.',
   },
   {
     id: 5,
-    icon: History,
+    icon: ClockCounterClockwise,
     title: 'Historial de evaluaciones',
     description:
       'Compara versiones de una campaña. Ve la evolución de tu creatividad en el tiempo.',
@@ -109,12 +101,12 @@ const lineVariants = {
 /**
  * VentajaIcon - Icono con contenedor y efectos hover/active
  */
-function VentajaIcon({ Icon }: { Icon: LucideIcon }) {
+function VentajaIcon({ Icon }: { Icon: Icon }) {
   return (
     <div className="relative shrink-0">
       <div className="absolute inset-0 w-12 h-12 rounded-2xl bg-flame/20 blur-lg group-hover:bg-flame/40 transition duration-500" />
       <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-flame/25 to-flame/10 border border-flame/40 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 active:scale-110 active:rotate-3 transition duration-500">
-        <Icon size={22} className="text-flame" strokeWidth={1.75} />
+        <Icon size={22} className="text-flame" />
       </div>
     </div>
   )

@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lock, UsersRound, Building2, Globe, Copy, Check } from 'lucide-react'
+import { Lock, UsersThree, Buildings, Globe, Copy, Check } from '@phosphor-icons/react'
 import { updateVisibilityAction, type Visibility } from '@/lib/actions/evaluations'
+import { useToast } from '@/components/ui/toast'
 
 const OPTIONS: { value: Visibility; label: string; icon: typeof Lock }[] = [
   { value: 'private', label: 'Privado', icon: Lock },
-  { value: 'team', label: 'Equipo', icon: UsersRound },
-  { value: 'company', label: 'Compañía', icon: Building2 },
+  { value: 'team', label: 'Equipo', icon: UsersThree },
+  { value: 'company', label: 'Compañía', icon: Buildings },
   { value: 'public', label: 'Público', icon: Globe },
 ]
 
@@ -20,6 +21,7 @@ interface VisibilityControlProps {
 }
 
 export function VisibilityControl({ evaluationId, visibility, sharedTeamId, teams }: VisibilityControlProps) {
+  const toast = useToast()
   const [current, setCurrent] = useState(visibility)
   const [teamId, setTeamId] = useState(sharedTeamId ?? '')
   const [isPending, setIsPending] = useState(false)
@@ -32,7 +34,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      alert('No se pudo copiar el link. Cópialo manualmente desde la barra de direcciones.')
+      toast.error('No se pudo copiar el link. Cópialo manualmente desde la barra de direcciones.')
     }
   }
 
@@ -49,7 +51,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
       if (nextTeamId) setTeamId(nextTeamId)
       router.refresh()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'No se pudo actualizar la visibilidad.')
+      toast.error(err instanceof Error ? err.message : 'No se pudo actualizar la visibilidad.')
     } finally {
       setIsPending(false)
     }

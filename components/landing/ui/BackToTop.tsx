@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUp } from 'lucide-react'
+import { ArrowUp } from '@phosphor-icons/react'
 
 export function BackToTop() {
     const [isVisible, setIsVisible] = useState(false)
@@ -56,7 +56,7 @@ export function BackToTop() {
                     "
                     aria-label="Volver arriba"
                 >
-                    <ArrowUp size={22} strokeWidth={2.5} />
+                    <ArrowUp size={22} weight="bold" />
                 </motion.button>
             )}
         </AnimatePresence>

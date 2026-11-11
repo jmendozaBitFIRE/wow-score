@@ -4,8 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { removeMemberAction, resendInviteAction } from '@/lib/actions/team'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/toast'
 
 export function MemberActions({ memberId, pending }: { memberId: string; pending: boolean }) {
+  const toast = useToast()
   const [isPending, setIsPending] = useState<'remove' | 'resend' | null>(null)
   const router = useRouter()
 
@@ -15,7 +17,7 @@ export function MemberActions({ memberId, pending }: { memberId: string; pending
       await action()
       router.refresh()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Ocurrió un error.')
+      toast.error(err instanceof Error ? err.message : 'Ocurrió un error.')
     } finally {
       setIsPending(null)
     }

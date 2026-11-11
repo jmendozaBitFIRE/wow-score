@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { List, X } from '@phosphor-icons/react'
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
 
 const NAV_LINKS = [
@@ -92,18 +92,18 @@ export function LandingHeader() {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile List Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="xl:hidden -mr-2 flex h-11 w-11 items-center justify-center text-white/80 hover:text-white transition-colors"
             aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={isOpen}
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <X size={24} /> : <List size={24} />}
           </button>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* Mobile Dropdown List */}
         <AnimatePresence>
           {isOpen && (
             <motion.div

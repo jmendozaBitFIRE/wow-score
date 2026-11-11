@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Check } from 'lucide-react'
+import { Check } from '@phosphor-icons/react'
 import type { StripePlan } from '@/lib/stripe'
 
 // ── TYPES ────────────────────────────────────────────────────────────────────
@@ -139,7 +139,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 function FeatureItem({ text }: { text: string }) {
   return (
     <li className="flex items-start gap-3 mb-3.5">
-      <Check size={18} className="text-flame shrink-0 mt-0.5" strokeWidth={3} />
+      <Check size={18} className="text-flame shrink-0 mt-0.5" />
       <span className="text-sm font-medium text-paper leading-relaxed">{text}</span>
     </li>
   )

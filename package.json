@@ -18,7 +18,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.40.0",
-    "lucide-react": "^1.14.0",
     "mammoth": "^1.13.0",
     "next": "16.2.4",
     "openai": "^6.35.0",

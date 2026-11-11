@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { CreditCard, Calendar, CheckCircle2, AlertTriangle, ArrowLeft, Receipt, ExternalLink } from 'lucide-react'
+import { CreditCard, CalendarBlank, CheckCircle, Warning, ArrowLeft, Receipt, ArrowSquareOut } from '@phosphor-icons/react/ssr'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CancelButton } from './CancelButton'
@@ -147,7 +147,7 @@ export default async function SubscriptionPage() {
 
       {errorMsg && (
         <div className="p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-950/30 dark:bg-amber-950/10 text-sm flex gap-2 items-center">
-          <AlertTriangle size={18} className="shrink-0 text-amber-600" />
+          <Warning size={18} className="shrink-0 text-amber-600" />
           <span>{errorMsg}</span>
         </div>
       )}
@@ -159,7 +159,7 @@ export default async function SubscriptionPage() {
           <div className="space-y-4">
             {company.subscription_status === 'trialing' && (
               <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-flame-text text-sm flex gap-3 items-start shadow-sm">
-                <AlertTriangle size={20} className="shrink-0 mt-0.5" />
+                <Warning size={20} className="shrink-0 mt-0.5" />
                 <p>
                   Te quedan <strong>{trialDaysLeft} {trialDaysLeft === 1 ? 'día' : 'días'}</strong> de tu periodo de prueba.
                   Si no utilizas tu crédito en este tiempo, se eliminará y se cobrará a tu tarjeta automáticamente.
@@ -177,12 +177,12 @@ export default async function SubscriptionPage() {
               <div>
                 {hasActiveSub && !cancelAtPeriodEnd ? (
                   <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-emerald-500/20">
-                    <CheckCircle2 size={12} />
+                    <CheckCircle size={12} />
                     Activa (Renovación automática)
                   </span>
                 ) : hasActiveSub && cancelAtPeriodEnd ? (
                   <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-amber-500/20">
-                    <AlertTriangle size={12} />
+                    <Warning size={12} />
                     Cancela próximamente
                   </span>
                 ) : (
@@ -216,7 +216,7 @@ export default async function SubscriptionPage() {
                 </div>
 
                 <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                  <Calendar size={16} className="text-zinc-400" />
+                  <CalendarBlank size={16} className="text-zinc-400" />
                   <span>
                     {cancelAtPeriodEnd
                       ? `Tu plan expira el ${formatStripeDate(periodEnd)}`
@@ -346,7 +346,7 @@ export default async function SubscriptionPage() {
                           className="inline-flex items-center gap-1 text-xs text-flame-text hover:text-ink underline font-medium"
                         >
                           Ver Recibo
-                          <ExternalLink size={12} />
+                          <ArrowSquareOut size={12} />
                         </a>
                       ) : (
                         <span className="text-xs text-muted-foreground">-</span>

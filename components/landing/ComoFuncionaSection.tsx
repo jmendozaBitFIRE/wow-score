@@ -3,27 +3,27 @@
 import Link from 'next/link'
 import { Fragment, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Upload, Sliders, BarChart3 } from 'lucide-react'
+import { UploadSimple, SlidersHorizontal, ChartBar } from '@phosphor-icons/react'
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const STEPS = [
   {
     number: '01',
-    icon: Upload,
+    icon: UploadSimple,
     title: 'Sube tu pieza',
     description:
       'Arrastra o selecciona la imagen de tu anuncio. Aceptamos cualquier formato publicitario.',
   },
   {
     number: '02',
-    icon: Sliders,
+    icon: SlidersHorizontal,
     title: 'Elige medio y objetivo',
     description:
       'Selecciona el canal (TV, Digital, OOH...) y el objetivo de tu campaña (Branding, Ventas, Lanzamiento...).',
   },
   {
     number: '03',
-    icon: BarChart3,
+    icon: ChartBar,
     title: 'Recibe tu WOW Score',
     description:
       'Obtén un análisis en 10 dimensiones con fortalezas, oportunidades y veredicto ejecutivo.',
@@ -188,7 +188,7 @@ function StepNode({ step }: { step: StepData }) {
 
       {/* Circle node */}
       <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-ink border-2 border-flame/50 flex items-center justify-center shadow-[0_0_24px_rgba(246,101,2,0.2)]">
-        <Icon size={28} className="text-flame md:w-8 md:h-8" strokeWidth={1.75} />
+        <Icon size={28} className="text-flame md:w-8 md:h-8" />
 
         {/* Number badge */}
         <span className="absolute -top-1.5 -right-1.5 min-w-[26px] h-[26px] px-1 flex items-center justify-center rounded-full bg-flame text-paper text-[10px] font-bold tracking-wide shadow-[0_4px_12px_rgba(246,101,2,0.4)]">

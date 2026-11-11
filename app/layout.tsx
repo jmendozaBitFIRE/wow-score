@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/components/ui/toast";
 
 const syne = Syne({
   variable: "--font-display",
@@ -31,7 +32,7 @@ export default function RootLayout({
       lang="es"
       className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col"><ToastProvider>{children}</ToastProvider></body>
     </html>
   );
 }

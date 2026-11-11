@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowLeft, Lock, Calendar } from 'lucide-react'
+import { ArrowLeft, Lock, CalendarBlank } from '@phosphor-icons/react/ssr'
 import { LandingPageShell } from '@/components/landing/LandingPageShell'
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
@@ -127,7 +127,7 @@ export default function PrivacidadPage() {
             <div className="relative flex h-1.5 w-1.5">
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-flame" />
             </div>
-            <Lock size={12} strokeWidth={2.5} />
+            <Lock size={12} weight="bold" />
             Documento legal
           </div>
 
@@ -139,7 +139,7 @@ export default function PrivacidadPage() {
 
           {/* Date */}
           <div className="flex items-center gap-2 text-sm text-paper/70 font-medium">
-            <Calendar size={15} className="text-flame" />
+            <CalendarBlank size={15} className="text-flame" />
             <span>Última actualización: 16 de abril de 2026</span>
           </div>
         </header>

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ImageOff, FileText, Lock, UsersRound, Building2, Globe } from 'lucide-react'
+import { ImageBroken, FileText, Lock, UsersThree, Buildings, Globe } from '@phosphor-icons/react/ssr'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buildVisibilityOrFilter } from '@/lib/visibility'
@@ -25,8 +25,8 @@ interface Evaluation {
 
 const VISIBILITY_ICON: Record<Visibility, typeof Lock> = {
   private: Lock,
-  team: UsersRound,
-  company: Building2,
+  team: UsersThree,
+  company: Buildings,
   public: Globe,
 }
 
@@ -147,7 +147,7 @@ export default async function HistoryPage() {
                   />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                    <ImageOff size={20} />
+                    <ImageBroken size={20} />
                   </div>
                 )}
               </div>

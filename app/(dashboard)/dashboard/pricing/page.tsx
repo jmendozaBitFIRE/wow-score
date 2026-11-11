@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import type { StripePlan } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/client'
+import { useToast } from '@/components/ui/toast'
 
 const PLANS = [
   {
@@ -28,6 +29,7 @@ const PLANS = [
 ]
 
 export default function PricingPage() {
+  const toast = useToast()
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
   const [isPending, startTransition] = useTransition()
   const [loadingPlan, setLoadingPlan] = useState<StripePlan | null>(null)
@@ -116,7 +118,7 @@ export default function PricingPage() {
         if (!res.ok) throw new Error(data.error ?? 'Error al iniciar el pago')
         if (data.url) router.push(data.url)
       } catch (err) {
-        alert(err instanceof Error ? err.message : 'Error inesperado')
+        toast.error(err instanceof Error ? err.message : 'Error inesperado')
       } finally {
         setLoadingPlan(null)
       }

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, X } from 'lucide-react'
+import { List, X } from '@phosphor-icons/react'
 import { SignOut } from '@phosphor-icons/react'
 import { SidebarNav } from '@/components/dashboard/SidebarNav'
 import { signOutAction } from '@/lib/actions/auth'
@@ -72,7 +72,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
           aria-haspopup="dialog"
           className="flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
         >
-          <Menu size={22} />
+          <List size={22} />
         </button>
       </header>
 

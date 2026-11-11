@@ -3,7 +3,7 @@ import { setCompanyStatus } from '@/lib/actions/admin'
 import Link from 'next/link'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { Building2, ExternalLink } from 'lucide-react'
+import { Buildings, ArrowSquareOut } from '@phosphor-icons/react/ssr'
 
 export const metadata = { title: 'Clientes — Admin WowScore' }
 
@@ -54,7 +54,7 @@ export default async function ClientsPage() {
             {!companies?.length && (
               <tr>
                 <td colSpan={6} className="px-6 py-12 text-center text-zinc-500">
-                  <Building2 className="mx-auto mb-2 text-zinc-300" size={32} />
+                  <Buildings className="mx-auto mb-2 text-zinc-300" size={32} />
                   No hay empresas registradas
                 </td>
               </tr>
@@ -104,7 +104,7 @@ export default async function ClientsPage() {
                       )}
                       <Link href={`/admin/clients/${company.id}`} className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex items-center gap-1')}>
                         Ver detalle
-                        <ExternalLink size={12} />
+                        <ArrowSquareOut size={12} />
                       </Link>
                     </div>
                   </td>

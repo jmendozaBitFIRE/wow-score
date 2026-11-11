@@ -3,25 +3,25 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { usePrefersReducedMotion } from './ui/usePrefersReducedMotion'
-import { Tv, Radio, Building2, Monitor, Globe, Newspaper, Film, type LucideIcon, } from 'lucide-react'
+import { Television, Radio, Buildings, Monitor, Globe, Newspaper, FilmStrip, type Icon } from '@phosphor-icons/react'
 
 // ── TYPES ────────────────────────────────────────────────────────────────────
 interface Medio {
   id: string
   name: string
-  icon: LucideIcon
+  icon: Icon
   description: string
 }
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const MEDIOS: Medio[] = [
-  { id: 'tv', name: 'TV', icon: Tv, description: 'Televisión abierta y de paga' },
+  { id: 'tv', name: 'TV', icon: Television, description: 'Televisión abierta y de paga' },
   { id: 'radio', name: 'Radio', icon: Radio, description: 'AM, FM y streaming' },
-  { id: 'ooh', name: 'OOH', icon: Building2, description: 'Exterior tradicional' },
+  { id: 'ooh', name: 'OOH', icon: Buildings, description: 'Exterior tradicional' },
   { id: 'dooh', name: 'DOOH', icon: Monitor, description: 'Exterior digital' },
   { id: 'digital', name: 'Digital', icon: Globe, description: 'Web, social y apps' },
   { id: 'impresos', name: 'Impresos', icon: Newspaper, description: 'Prensa y revistas' },
-  { id: 'cine', name: 'Cine', icon: Film, description: 'Pantallas cinematográficas' },
+  { id: 'cine', name: 'Cine', icon: FilmStrip, description: 'Pantallas cinematográficas' },
 ]
 
 // ── ANIMATION VARIANTS ────────────────────────────────────────────────────────
@@ -53,8 +53,8 @@ function MedioCard({ medio }: { medio: Medio }) {
           <div className="relative shrink-0">
             <div className="absolute inset-0 w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-flame/20 blur-lg group-hover:bg-flame/40 transition duration-500" />
             <div className="relative w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-flame/25 to-flame/10 border border-flame/40 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition duration-500">
-              <Icon size={20} className="md:hidden text-flame" strokeWidth={1.75} />
-              <Icon size={22} className="hidden md:block text-flame" strokeWidth={1.75} />
+              <Icon size={20} className="md:hidden text-flame" />
+              <Icon size={22} className="hidden md:block text-flame" />
             </div>
           </div>
 

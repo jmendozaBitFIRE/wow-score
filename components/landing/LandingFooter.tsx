@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Mail, Phone, ArrowUpRight } from 'lucide-react'
+import { Envelope, Phone, ArrowUpRight } from '@phosphor-icons/react'
 
 // ── ICONS ────────────────────────────────────────────────────────────────────
 const LinkedinIcon = ({ size = 18 }: { size?: number }) => (
@@ -190,7 +190,7 @@ function FooterContact() {
           className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-flame/10 hover:border-flame/30 transition duration-300"
         >
           <div className="w-8 h-8 rounded-full bg-flame/10 border border-flame/20 flex items-center justify-center shrink-0 group-hover:bg-flame group-hover:border-flame transition-colors">
-            <Mail size={14} className="text-flame group-hover:text-ink transition-colors" />
+            <Envelope size={14} className="text-flame group-hover:text-ink transition-colors" />
           </div>
           <div className="flex flex-col">
             <span className="text-[10px] text-paper font-medium leading-tight">Escríbenos</span>

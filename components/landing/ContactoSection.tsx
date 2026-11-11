@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Mail, Phone, Send } from 'lucide-react'
+import { Envelope, Phone, PaperPlaneRight } from '@phosphor-icons/react'
+import { useToast } from '@/components/ui/toast'
 
 const LinkedinIcon = ({ size = 18 }: { size?: number }) => (
     <svg
@@ -130,6 +131,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 }
 
 export function ContactoSection() {
+  const toast = useToast()
   const sectionRef = useRef<HTMLElement>(null)
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' })
   const [agreed, setAgreed] = useState(false)
@@ -137,7 +139,7 @@ export function ContactoSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Aquí iría la lógica de envío del formulario (ej. fetch a una API)
-    alert("Formulario enviado con éxito.")
+    toast.success("Formulario enviado con éxito.")
   }
 
   return (
@@ -235,7 +237,7 @@ export function ContactoSection() {
                 className="mt-4 w-full bg-flame hover:bg-flame-strong disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed  text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 Enviar mensaje
-                <Send size={16} />
+                <PaperPlaneRight size={16} />
               </button>
             </form>
           </motion.div>
@@ -254,7 +256,7 @@ export function ContactoSection() {
               <div className="flex flex-col gap-6 mb-12">
                 <a href="mailto:hola@wowscore.com" className="flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-flame/20 group-hover:border-flame/50 transition-colors">
-                    <Mail size={20} className="text-flame" />
+                    <Envelope size={20} className="text-flame" />
                   </div>
                   <div>
                     <p className="text-xs text-paper mb-1">Correo electrónico</p>
