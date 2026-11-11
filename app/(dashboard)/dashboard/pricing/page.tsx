@@ -203,7 +203,7 @@ export default function PricingPage() {
           return (
             <div
               key={plan.key}
-              className={`rounded-xl border p-8 flex flex-col gap-6 relative transition-all ${
+              className={`rounded-xl border p-8 flex flex-col gap-6 relative transition ${
                 isCurrentActive
                   ? 'border-flame bg-flame/5 shadow-lg shadow-flame/5 ring-1 ring-flame'
                   : 'bg-card'

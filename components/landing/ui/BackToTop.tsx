@@ -51,7 +51,7 @@ export function BackToTop() {
                         flex items-center justify-center
                         rounded-2xl
                         shadow-[0_8px_24px_rgba(246,101,2,0.15)]
-                        transition-all duration-300
+                        transition duration-300
                         touch-manipulation
                     "
                     aria-label="Volver arriba"

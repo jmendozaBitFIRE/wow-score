@@ -44,15 +44,15 @@ function MedioCard({ medio }: { medio: Medio }) {
 
   return (
     <div className="group relative shrink-0 w-[220px] md:w-[300px] flex">
-      <div className="relative flex-1 bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 md:p-6 transition-all duration-500 hover:border-flame/40 hover:from-white/[0.08] hover:to-white/[0.03] hover:shadow-[0_20px_60px_rgba(246,101,2,0.15)] overflow-hidden">
+      <div className="relative flex-1 bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 md:p-6 transition duration-500 hover:border-flame/40 hover:from-white/[0.08] hover:to-white/[0.03] hover:shadow-[0_20px_60px_rgba(246,101,2,0.15)] overflow-hidden">
         {/* Hover glow */}
         <div className="absolute -top-20 -right-20 w-48 h-48 bg-flame/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
         <div className="relative z-10 flex items-center gap-3 md:gap-4 h-full">
           {/* Icon */}
           <div className="relative shrink-0">
-            <div className="absolute inset-0 w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-flame/20 blur-lg group-hover:bg-flame/40 transition-all duration-500" />
-            <div className="relative w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-flame/25 to-flame/10 border border-flame/40 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+            <div className="absolute inset-0 w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-flame/20 blur-lg group-hover:bg-flame/40 transition duration-500" />
+            <div className="relative w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-gradient-to-br from-flame/25 to-flame/10 border border-flame/40 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition duration-500">
               <Icon size={20} className="md:hidden text-flame" strokeWidth={1.75} />
               <Icon size={22} className="hidden md:block text-flame" strokeWidth={1.75} />
             </div>

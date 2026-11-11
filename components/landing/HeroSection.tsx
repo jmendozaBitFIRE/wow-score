@@ -370,13 +370,13 @@ function HeroActions() {
     <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4">
       <Link
         href="/register"
-        className="bg-flame text-on-flame font-bold tracking-[0.01em] px-8 py-4 rounded-xl text-[19px] hover:bg-flame-strong transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_12px_32px_rgba(246,101,2,0.3)] hover:-translate-y-0.5 inline-flex items-center"
+        className="bg-flame text-on-flame font-bold tracking-[0.01em] px-8 py-4 rounded-xl text-[19px] hover:bg-flame-strong transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_12px_32px_rgba(246,101,2,0.3)] hover:-translate-y-0.5 inline-flex items-center"
       >
         Evalúa ahora gratis →
       </Link>
       <a
         href="#como-funciona"
-        className="bg-flame/25 border border-flame/80 text-white font-bold tracking-[0.01em] px-6 py-4 rounded-xl text-[19px] transition-all duration-200 inline-flex items-center gap-1.5 hover:bg-flame/20 hover:border-flame/40 hover:shadow-[0_8px_20px_rgba(246,101,2,0.1)] hover:-translate-y-0.5"
+        className="bg-flame/25 border border-flame/80 text-white font-bold tracking-[0.01em] px-6 py-4 rounded-xl text-[19px] transition duration-200 inline-flex items-center gap-1.5 hover:bg-flame/20 hover:border-flame/40 hover:shadow-[0_8px_20px_rgba(246,101,2,0.1)] hover:-translate-y-0.5"
       >
         Ver cómo funciona →
       </a> 

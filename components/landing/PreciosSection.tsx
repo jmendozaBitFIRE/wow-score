@@ -239,7 +239,7 @@ export function PreciosSection() {
                 <button
                   key={label}
                   onClick={() => setAnnual(isAnual)}
-                  className={`relative flex min-h-11 items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 z-10 ${
+                  className={`relative flex min-h-11 items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition duration-300 z-10 ${
                     active ? 'text-ink' : 'text-white hover:text-white'
                   }`}
                 >
@@ -296,7 +296,7 @@ export function PreciosSection() {
 
             <Link
               href="/register"
-              className="block w-full text-center bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm px-6 py-4 rounded-xl transition-all duration-200"
+              className="block w-full text-center bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm px-6 py-4 rounded-xl transition duration-200"
             >
               Valida tu creatividad →
             </Link>
@@ -334,7 +334,7 @@ export function PreciosSection() {
 
             <Link
               href="/register"
-              className="block w-full text-center bg-flame-deep hover:bg-flame-deep-hover text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5"
+              className="block w-full text-center bg-flame-deep hover:bg-flame-deep-hover text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5"
             >
               Mi equipo necesita esto →
             </Link>

@@ -129,7 +129,7 @@ export default async function HistoryPage() {
             <Link
               key={ev.id}
               href={`/results/${ev.id}`}
-              className="rounded-xl border bg-card flex gap-3 sm:gap-4 p-3 sm:p-4 items-start cursor-pointer transition-all duration-200 hover:shadow-[0_4px_16px_rgba(29,29,27,0.10)] hover:-translate-y-0.5 hover:border-[var(--color-flame)] block"
+              className="rounded-xl border bg-card flex gap-3 sm:gap-4 p-3 sm:p-4 items-start cursor-pointer transition duration-200 hover:shadow-[0_4px_16px_rgba(29,29,27,0.10)] hover:-translate-y-0.5 hover:border-[var(--color-flame)] block"
             >
               {/* Thumbnail */}
               <div className="relative h-14 w-14 sm:h-16 sm:w-24 shrink-0 rounded-md overflow-hidden bg-muted">

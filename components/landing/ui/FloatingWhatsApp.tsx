@@ -27,7 +27,7 @@ export function FloatingWhatsApp() {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             whileHover={{ scale: 1.1 }}
-            className="relative group p-4 bg-[#25D366] text-white rounded-full shadow-[0_12px_32px_rgba(37,211,102,0.35)] transition-all"
+            className="relative group p-4 bg-[#25D366] text-white rounded-full shadow-[0_12px_32px_rgba(37,211,102,0.35)] transition"
             aria-label="Hablar por WhatsApp"
         >
             {/* Pulsing effect */}

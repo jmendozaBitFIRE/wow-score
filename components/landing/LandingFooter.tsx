@@ -121,7 +121,7 @@ function FooterLogo() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={label}
-              className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all duration-300 text-paper hover:scale-105"
+              className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition duration-300 text-paper hover:scale-105"
             >
               <Icon size={16} />
             </a>
@@ -162,7 +162,7 @@ function FooterColumn({
                 <span>{label}</span>
                 <ArrowUpRight
                   size={13}
-                  className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
+                  className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition duration-200"
                 />
               </LinkComponent>
             </li>
@@ -187,7 +187,7 @@ function FooterContact() {
         {/* Email */}
         <a
           href="mailto:hola@wowscore.com"
-          className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-flame/10 hover:border-flame/30 transition-all duration-300"
+          className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-flame/10 hover:border-flame/30 transition duration-300"
         >
           <div className="w-8 h-8 rounded-full bg-flame/10 border border-flame/20 flex items-center justify-center shrink-0 group-hover:bg-flame group-hover:border-flame transition-colors">
             <Mail size={14} className="text-flame group-hover:text-ink transition-colors" />
@@ -203,7 +203,7 @@ function FooterContact() {
         {/* Phone */}
         <a
           href="tel:+1234567890"
-          className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-flame/10 hover:border-flame/30 transition-all duration-300"
+          className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-flame/10 hover:border-flame/30 transition duration-300"
         >
           <div className="w-8 h-8 rounded-full bg-flame/10 border border-flame/20 flex items-center justify-center shrink-0 group-hover:bg-flame group-hover:border-flame transition-colors">
             <Phone size={14} className="text-flame group-hover:text-ink transition-colors" />

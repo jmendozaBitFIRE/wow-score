@@ -129,7 +129,7 @@ export default async function DashboardPage() {
               <Link
                 key={ev.id}
                 href={`/results/${ev.id}`}
-                className="group block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden hover:shadow-lg transition-all"
+                className="group block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden hover:shadow-lg transition"
               >
                 <div className="relative aspect-video bg-muted overflow-hidden">
                   {ev.signedUrl && getScriptExtension(ev.image_url) !== null ? (

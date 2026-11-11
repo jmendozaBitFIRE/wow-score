@@ -173,7 +173,7 @@ export function ContactoSection() {
                     type="text"
                     id="name"
                     required
-                    className="bg-ink border border-white/40 focus:border-flame text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
+                    className="bg-ink border border-white/40 focus:border-flame focus-visible:ring-2 focus-visible:ring-flame/50 text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
                     placeholder="Tu nombre y apellido"
                   />
                 </div>
@@ -183,7 +183,7 @@ export function ContactoSection() {
                     type="email"
                     id="email"
                     required
-                    className="bg-ink border border-white/40 focus:border-flame text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
+                    className="bg-ink border border-white/40 focus:border-flame focus-visible:ring-2 focus-visible:ring-flame/50 text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
                     placeholder="tu@correo.com"
                   />
                 </div>
@@ -195,7 +195,7 @@ export function ContactoSection() {
                   type="tel"
                   id="phone"
                   required
-                  className="bg-ink border border-white/40 focus:border-flame text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
+                  className="bg-ink border border-white/40 focus:border-flame focus-visible:ring-2 focus-visible:ring-flame/50 text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
                   placeholder="+1 (234) 567-890"
                 />
               </div>
@@ -206,7 +206,7 @@ export function ContactoSection() {
                   id="message"
                   required
                   rows={4}
-                  className="bg-ink border border-white/40 focus:border-flame text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full resize-none"
+                  className="bg-ink border border-white/40 focus:border-flame focus-visible:ring-2 focus-visible:ring-flame/50 text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full resize-none"
                   placeholder="¿En qué podemos ayudarte?"
                 />
               </div>
@@ -232,7 +232,7 @@ export function ContactoSection() {
               <button
                 type="submit"
                 disabled={!agreed}
-                className="mt-4 w-full bg-flame-deep hover:bg-flame-deep-hover disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed  text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                className="mt-4 w-full bg-flame-deep hover:bg-flame-deep-hover disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed  text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 Enviar mensaje
                 <Send size={16} />
@@ -286,7 +286,7 @@ export function ContactoSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all text-white/80"
+                  className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition text-white/80"
                 >
                   <InstagramIcon size={18} />
                 </a>
@@ -295,7 +295,7 @@ export function ContactoSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
-                  className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all text-white/80"
+                  className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition text-white/80"
                 >
                   <LinkedinIcon size={18} />
                 </a>

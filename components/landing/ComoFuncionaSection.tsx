@@ -368,7 +368,7 @@ function SectionCTA({ isInView }: { isInView: boolean }) {
     >
       <Link
         href="/register"
-        className="bg-flame text-on-flame font-bold tracking-[0.01em] px-8 py-4 rounded-xl text-[19px] hover:bg-flame-strong transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_12px_32px_rgba(246,101,2,0.3)] hover:-translate-y-0.5 inline-flex items-center"
+        className="bg-flame text-on-flame font-bold tracking-[0.01em] px-8 py-4 rounded-xl text-[19px] hover:bg-flame-strong transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_12px_32px_rgba(246,101,2,0.3)] hover:-translate-y-0.5 inline-flex items-center"
       >
         Analiza tu primera pieza →
       </Link>

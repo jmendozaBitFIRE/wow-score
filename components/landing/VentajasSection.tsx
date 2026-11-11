@@ -112,8 +112,8 @@ const lineVariants = {
 function VentajaIcon({ Icon }: { Icon: LucideIcon }) {
   return (
     <div className="relative shrink-0">
-      <div className="absolute inset-0 w-12 h-12 rounded-2xl bg-flame/20 blur-lg group-hover:bg-flame/40 transition-all duration-500" />
-      <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-flame/25 to-flame/10 border border-flame/40 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 active:scale-110 active:rotate-3 transition-all duration-500">
+      <div className="absolute inset-0 w-12 h-12 rounded-2xl bg-flame/20 blur-lg group-hover:bg-flame/40 transition duration-500" />
+      <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-flame/25 to-flame/10 border border-flame/40 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 active:scale-110 active:rotate-3 transition duration-500">
         <Icon size={22} className="text-flame" strokeWidth={1.75} />
       </div>
     </div>
@@ -127,7 +127,7 @@ function VentajaCard({ ventaja, index }: { ventaja: Ventaja; index: number }) {
   const Icon = ventaja.icon
 
   return (
-    <div className="relative bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-5 lg:p-6 transition-all duration-500 hover:border-flame/40 hover:from-white/[0.08] hover:to-white/[0.03] hover:shadow-[0_20px_60px_rgba(246,101,2,0.15)] active:border-flame/40 active:from-white/[0.08] active:to-white/[0.03] active:shadow-[0_20px_60px_rgba(246,101,2,0.15)] overflow-hidden">
+    <div className="relative bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-5 lg:p-6 transition duration-500 hover:border-flame/40 hover:from-white/[0.08] hover:to-white/[0.03] hover:shadow-[0_20px_60px_rgba(246,101,2,0.15)] active:border-flame/40 active:from-white/[0.08] active:to-white/[0.03] active:shadow-[0_20px_60px_rgba(246,101,2,0.15)] overflow-hidden">
       {/* Hover/Active glow */}
       <div className="absolute -top-20 -right-20 w-64 h-64 bg-flame/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
@@ -159,7 +159,7 @@ function VentajaCard({ ventaja, index }: { ventaja: Ventaja; index: number }) {
 function VentajaNumber({ index }: { index: number }) {
   return (
     <div className="relative" aria-hidden="true">
-      <span className="font-heading font-black text-[120px] leading-none text-transparent bg-clip-text bg-gradient-to-br from-flame/40 to-flame/5 select-none">
+      <span className="font-heading font-black text-[120px] leading-none text-flame/20 select-none">
         {index + 1}
       </span>
       <div className="absolute inset-0 w-full h-full bg-[radial-gradient(circle,rgba(246,101,2,0.15),transparent_70%)] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
@@ -309,7 +309,7 @@ export function VentajasSection() {
         >
          <Link
         href="/register"
-        className="bg-flame text-on-flame font-bold tracking-[0.01em] px-8 py-4 rounded-xl text-[19px] hover:bg-flame-strong transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_12px_32_rgba(246,101,2,0.3)] hover:-translate-y-0.5 inline-flex items-center"
+        className="bg-flame text-on-flame font-bold tracking-[0.01em] px-8 py-4 rounded-xl text-[19px] hover:bg-flame-strong transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_12px_32_rgba(246,101,2,0.3)] hover:-translate-y-0.5 inline-flex items-center"
       >
        Empieza sin costo →
       </Link>
