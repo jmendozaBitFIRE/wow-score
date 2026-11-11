@@ -15,8 +15,7 @@ export function CTAFinalSection() {
             fontWeight: 500,
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
-            color: 'white',
-            opacity: 0.8,
+            color: 'var(--color-on-flame)',
             marginBottom: '20px',
           }}
         >
@@ -30,7 +29,7 @@ export function CTAFinalSection() {
             fontWeight: 800,
             fontSize: 'clamp(32px, 5vw, 52px)',
             lineHeight: 1.1,
-            color: 'white',
+            color: 'var(--color-on-flame)',
             marginBottom: '24px',
           }}
         >
@@ -43,8 +42,7 @@ export function CTAFinalSection() {
           style={{
             fontFamily: 'var(--font-body)',
             fontSize: '18px',
-            color: 'white',
-            opacity: 0.85,
+            color: 'var(--color-on-flame)',
             lineHeight: 1.65,
             maxWidth: '480px',
             margin: '0 auto 40px',
@@ -60,8 +58,8 @@ export function CTAFinalSection() {
           className="cta-final-btn"
           style={{
             display: 'inline-block',
-            background: 'white',
-            color: 'var(--color-flame)',
+            background: 'var(--color-ink)',
+            color: 'var(--color-paper)',
             fontFamily: 'var(--font-display)',
             fontWeight: 600,
             fontSize: '17px',
@@ -80,8 +78,7 @@ export function CTAFinalSection() {
           style={{
             fontFamily: 'var(--font-body)',
             fontSize: '13px',
-            color: 'white',
-            opacity: 0.7,
+            color: 'var(--color-on-flame)',
             marginTop: '16px',
           }}
         >

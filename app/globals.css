@@ -4,6 +4,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  /* Brand: one orange. Fills use flame, text on light surfaces uses flame-text. */
+  --color-flame: #F66502;        /* fills, accents, orange text on dark (5.4:1 on ink) */
+  --color-flame-hover: #FF7A1A;  /* hover/lighter fill; ink text on it is 6.5:1 */
+  --color-flame-text: #B84A00;   /* orange text on light surfaces (5.0:1 on paper) */
+  --color-on-flame: #1D1D1B;     /* text on flame fills (5.4:1); white would be 3.1:1 */
+  --color-ink: #1D1D1B;
+  --color-paper: #FBFBFB;
+  --color-mist: #D8DADD;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -56,7 +67,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: #F66502;
-  --primary-foreground: oklch(0.985 0 0);
+  --primary-foreground: #1D1D1B;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -65,7 +76,7 @@
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --input: #858583; /* 3.6:1 on paper: field edges meet WCAG 1.4.11 */
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
@@ -74,14 +85,7 @@
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
 
-  /* ── Brand palette ────────────────────────────── */
-  --color-flame: #F66502;
-  --color-ember: #F04601;
-
-  /* ── Neutrals ────────────────────────────────── */
-  --color-ink: #1D1D1B;
-  --color-mist: #D8DADD;
-  --color-paper: #FBFBFB;
+  /* Brand palette and neutrals live in @theme above. */
 
   /* ── Functional tokens ───────────────────────── */
   --color-bg: #FBFBFB;
@@ -91,13 +95,14 @@
   --color-text-inverse: #FBFBFB;
   --color-border: #D8DADD;
   --color-border-focus: #F66502;
+  --color-input-border: #858583;
   --color-error: #DC2626;
   --color-success: #16A34A;
 
   /* ── Brand gradients ─────────────────────────── */
-  --gradient-brand: linear-gradient(135deg, #F66502 0%, #F04601 100%);
+  --gradient-brand: linear-gradient(135deg, #F66502 0%, #FF7A1A 100%);
   --gradient-brand-subtle: linear-gradient(135deg,
-    rgba(246,101,2,0.08) 0%, rgba(240,70,1,0.08) 100%);
+    rgba(246,101,2,0.08) 0%, rgba(255,122,26,0.08) 100%);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -167,9 +172,9 @@
 
 .btn-primary {
   background: var(--gradient-brand);
-  color: var(--color-text-inverse);
+  color: var(--color-on-flame);
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 10px;
   padding: 12px 24px;
   border: none;
@@ -187,8 +192,8 @@
 
 .btn-secondary {
   background: transparent;
-  color: var(--color-flame);
-  border: 1.5px solid var(--color-flame);
+  color: var(--color-flame-text);
+  border: 1.5px solid var(--color-flame-text);
   border-radius: 10px;
   padding: 12px 24px;
   font-weight: 500;
@@ -209,7 +214,7 @@
 .input-field {
   width: 100%;
   background: var(--color-paper);
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid var(--color-input-border);
   border-radius: 10px;
   padding: 12px 16px 12px 44px;
   font-family: var(--font-body);
@@ -220,7 +225,7 @@
 }
 .input-field:focus {
   border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(246,101,2,0.12);
+  box-shadow: 0 0 0 3px rgba(246,101,2,0.25);
 }
 .input-field::placeholder {
   color: var(--color-text-secondary);
@@ -265,7 +270,7 @@
   transition: color 0.2s;
 }
 .input-icon-right:hover {
-  color: var(--color-flame);
+  color: var(--color-flame-text);
 }
 .input-icon-right:focus-visible {
   outline: 2px solid var(--color-border-focus);
@@ -318,7 +323,7 @@
 }
 
 .nav-link-active {
-  color: var(--color-flame);
+  color: var(--color-flame-text);
   background: var(--gradient-brand-subtle);
   border-left-color: var(--color-flame);
 }
@@ -346,7 +351,7 @@
 }
 
 .progress-fill {
-  background: linear-gradient(90deg, var(--color-flame), var(--color-ember));
+  background: linear-gradient(90deg, var(--color-flame), var(--color-flame-hover));
   animation: progress-advance 8s ease-out forwards;
   height: 100%;
   border-radius: 9999px;
@@ -411,8 +416,8 @@
   transition: all 0.2s ease;
 }
 .medio-pill:hover {
-  border-color: var(--color-flame);
-  color: var(--color-flame);
+  border-color: var(--color-flame-text);
+  color: var(--color-flame-text);
 }
 
 /* ── Landing: CTA final button ─────────────────────────── */

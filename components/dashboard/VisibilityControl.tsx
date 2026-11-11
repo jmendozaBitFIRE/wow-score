@@ -68,7 +68,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
             className={[
               'flex-1 flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50',
               current === value
-                ? 'border-primary bg-primary/10 text-primary'
+                ? 'border-primary bg-primary/10 text-flame-text'
                 : 'border-border text-muted-foreground hover:bg-muted',
             ].join(' ')}
           >

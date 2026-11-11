@@ -69,7 +69,7 @@ export function LoginForm({ registered }: { registered: boolean }) {
             <Link
               href="/forgot-password"
               className="text-xs font-medium hover:underline"
-              style={{ color: 'var(--color-flame)' }}
+              style={{ color: 'var(--color-flame-text)' }}
             >
               ¿Olvidaste tu contraseña?
             </Link>
@@ -93,7 +93,7 @@ export function LoginForm({ registered }: { registered: boolean }) {
         <Link
           href="/register"
           className="font-medium hover:underline"
-          style={{ color: 'var(--color-flame)' }}
+          style={{ color: 'var(--color-flame-text)' }}
         >
           Regístrate
         </Link>

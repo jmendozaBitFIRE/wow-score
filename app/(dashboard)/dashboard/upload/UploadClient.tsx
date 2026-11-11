@@ -313,7 +313,7 @@ export function UploadClient({
       {/* ── Mensaje de suscripción requerida ── */}
       {!hasActiveOrTrial && (
         <div className="rounded-xl border bg-card p-8 flex flex-col items-center text-center space-y-4 reveal reveal-2 mt-8">
-          <div className="bg-orange-500/10 p-4 rounded-full text-orange-600 mb-2">
+          <div className="bg-flame/10 p-4 rounded-full text-flame-text mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
           <h2 className="text-xl font-semibold">Suscripción requerida</h2>
@@ -322,7 +322,7 @@ export function UploadClient({
           </p>
           <div className="pt-4">
             <Link href="/dashboard/pricing">
-              <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-3 sm:py-2 h-auto">
+              <Button className="bg-flame hover:bg-flame-hover text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto">
                 Ver planes y precios
               </Button>
             </Link>
@@ -333,7 +333,7 @@ export function UploadClient({
       {/* ── Mensaje Trial Consumido ── */}
       {isTrialExhausted && (
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-8 flex flex-col items-center text-center space-y-4 reveal reveal-2 mt-8">
-          <div className="bg-primary/20 p-4 rounded-full text-primary mb-2">
+          <div className="bg-primary/20 p-4 rounded-full text-flame-text mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
           </div>
           <h2 className="text-xl font-semibold">Crédito de prueba consumido</h2>
@@ -354,8 +354,8 @@ export function UploadClient({
 
       {/* ── Mensaje Créditos Mensuales Agotados ── */}
       {isMonthlyExhausted && (
-        <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-8 flex flex-col items-center text-center space-y-4 reveal reveal-2 mt-8">
-          <div className="bg-orange-500/20 p-4 rounded-full text-orange-600 mb-2">
+        <div className="rounded-xl border border-flame/20 bg-flame/5 p-8 flex flex-col items-center text-center space-y-4 reveal reveal-2 mt-8">
+          <div className="bg-flame/20 p-4 rounded-full text-flame-text mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           </div>
           <h2 className="text-xl font-semibold">Créditos agotados</h2>
@@ -367,7 +367,7 @@ export function UploadClient({
 
       {/* ── Mensaje Días de Prueba ── */}
       {subscriptionStatus === 'trialing' && trialCredits > 0 && (
-        <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-primary text-sm flex gap-3 items-start reveal reveal-1 shadow-sm">
+        <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-flame-text text-sm flex gap-3 items-start reveal reveal-1 shadow-sm">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <p>
             Te quedan <strong>{trialDaysLeft} {trialDaysLeft === 1 ? 'día' : 'días'}</strong> de tu periodo de prueba.
@@ -416,7 +416,7 @@ export function UploadClient({
           <div>
             <p className="text-sm font-medium">
               Arrastra tu imagen o guion aquí o{' '}
-              <span className="text-primary underline underline-offset-2">selecciona un archivo</span>
+              <span className="text-flame-text underline underline-offset-2">selecciona un archivo</span>
             </p>
             <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP, o PDF/DOC/DOCX/TXT (guion) · Máx. 5 MB</p>
           </div>

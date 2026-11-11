@@ -39,18 +39,18 @@ export function BackToTop() {
                     whileTap={{ scale: 0.9 }}
                     className="
                         p-3.5
-                        bg-[#1D1D1B]
-                        border border-[#F97303]/30
-                        text-[#F97303]
+                        bg-ink
+                        border border-flame/30
+                        text-flame
                         /* PC: hover al pasar el cursor */
-                        hover:bg-[#F97303] hover:text-[#1D1D1B]
+                        hover:bg-flame hover:text-ink
                         /* Móvil/Tablet: al tocar (active) y al enfocar (focus) */
-                        active:bg-[#F97303] active:text-[#1D1D1B]
-                        focus:bg-[#F97303] focus:text-[#1D1D1B]
+                        active:bg-flame active:text-ink
+                        focus:bg-flame focus:text-ink
                         focus:outline-none
                         flex items-center justify-center
                         rounded-2xl
-                        shadow-[0_8px_24px_rgba(249,115,3,0.15)]
+                        shadow-[0_8px_24px_rgba(246,101,2,0.15)]
                         transition-all duration-300
                         touch-manipulation
                     "

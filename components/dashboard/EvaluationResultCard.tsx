@@ -18,8 +18,8 @@ const OBJETIVO_LABEL: Record<string, string> = { Promocion: 'Promoción' }
 function label(key: string) { return OBJETIVO_LABEL[key] ?? key }
 
 function scoreColor(score: number) {
-  if (score >= 75) return 'text-green-600 dark:text-green-400'
-  if (score >= 50) return 'text-yellow-600 dark:text-yellow-400'
+  if (score >= 75) return 'text-green-700 dark:text-green-400'
+  if (score >= 50) return 'text-yellow-700 dark:text-yellow-400'
   return 'text-destructive'
 }
 
@@ -79,7 +79,7 @@ export function EvaluationResultCard({
       {targetFitScore != null && (
         <div className="rounded-xl border bg-card p-4 flex items-center justify-between reveal reveal-2">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Target Fit Score</p>
-          <p className="text-lg font-bold text-primary">{targetFitScore}</p>
+          <p className="text-lg font-bold text-flame-text">{targetFitScore}</p>
         </div>
       )}
 
@@ -108,7 +108,7 @@ export function EvaluationResultCard({
               <ul className="space-y-1.5">
                 {fortalezas.map((f, i) => (
                   <li key={i} className="text-xs flex gap-2">
-                    <span className="text-primary mt-0.5">✓</span>
+                    <span className="text-flame-text mt-0.5">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}

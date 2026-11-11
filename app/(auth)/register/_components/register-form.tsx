@@ -94,7 +94,7 @@ export function RegisterForm() {
         <Link
           href="/login"
           className="font-medium hover:underline"
-          style={{ color: 'var(--color-flame)' }}
+          style={{ color: 'var(--color-flame-text)' }}
         >
           Inicia sesión
         </Link>

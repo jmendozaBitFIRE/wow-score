@@ -73,11 +73,11 @@ function SectionBadge() {
     <motion.div
      id="contacto"
       variants={headerItemVariants}
-      className="inline-flex items-center gap-2.5 bg-[#F97303]/10 border border-[#F97303]/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-[#F97303] mb-5 select-none"
+      className="inline-flex items-center gap-2.5 bg-flame/10 border border-flame/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-flame mb-5 select-none"
     >
       <div className="relative flex h-1.5 w-1.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F97303] opacity-75" />
-        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#F97303]" />
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-flame opacity-75" />
+        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-flame" />
       </div>
       ¿Hablamos?
     </motion.div>
@@ -96,10 +96,10 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 
       <motion.h2
   variants={headerItemVariants}
-  className="font-heading font-bold text-[clamp(32px,4.5vw,48px)] leading-[1.05] tracking-[-2px] text-[#FBFBFB] mb-5"
+  className="font-heading font-bold text-[clamp(32px,4.5vw,48px)] leading-[1.05] tracking-[-2px] text-paper mb-5"
 >
   Estamos listos para <br />
-  <span className="text-[#F97303] relative inline-block">
+  <span className="text-flame relative inline-block">
     ayudarte
     <svg
       className="absolute -bottom-2 left-0 w-full"
@@ -110,7 +110,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
     >
       <path
         d="M2 9C50 3 150 3 298 9"
-        stroke="#F97303"
+        stroke="var(--color-flame)"
         strokeWidth="3"
         strokeLinecap="round"
         className="opacity-60"
@@ -121,7 +121,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 
       <motion.p
         variants={headerItemVariants}
-        className="text-base text-[#FBFBFB] max-w-[500px] mx-auto leading-relaxed"
+        className="text-base text-paper max-w-[500px] mx-auto leading-relaxed"
       >
         Escríbenos y nuestro equipo se pondrá en contacto contigo lo antes posible para resolver tus dudas.
       </motion.p>
@@ -144,11 +144,11 @@ export function ContactoSection() {
     <section
       id="contacto"
       ref={sectionRef}
-      className="relative bg-[#1D1D1D] text-[#FBFBFB] py-20 md:py-28 overflow-hidden"
+      className="relative bg-ink text-paper py-20 md:py-28 overflow-hidden"
     >
       {/* Background accents */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(249,115,3,0.06)_0%,transparent_70%)] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(249,115,3,0.04),transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(246,101,2,0.06)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(246,101,2,0.04),transparent_70%)] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
         <SectionHeader isInView={isInView} />
@@ -173,40 +173,40 @@ export function ContactoSection() {
                     type="text"
                     id="name"
                     required
-                    className="bg-[#1D1D1D] border border-white/10 focus:border-[#F97303] text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
+                    className="bg-ink border border-white/40 focus:border-flame text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
                     placeholder="Tu nombre y apellido"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="email" className="text-sm font-medium text-[#fbfbfb]">Correo electrónico</label>
+                  <label htmlFor="email" className="text-sm font-medium text-paper">Correo electrónico</label>
                   <input
                     type="email"
                     id="email"
                     required
-                    className="bg-[#1D1D1D] border border-white/10 focus:border-[#F97303] text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
+                    className="bg-ink border border-white/40 focus:border-flame text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
                     placeholder="tu@correo.com"
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="phone" className="text-sm font-medium text-[#fbfbfb]">Teléfono</label>
+                <label htmlFor="phone" className="text-sm font-medium text-paper">Teléfono</label>
                 <input
                   type="tel"
                   id="phone"
                   required
-                  className="bg-[#1D1D1D] border border-white/10 focus:border-[#F97303] text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
+                  className="bg-ink border border-white/40 focus:border-flame text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full"
                   placeholder="+1 (234) 567-890"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="message" className="text-sm font-medium text-[#fbfbfb]">Mensaje</label>
+                <label htmlFor="message" className="text-sm font-medium text-paper">Mensaje</label>
                 <textarea
                   id="message"
                   required
                   rows={4}
-                  className="bg-[#1D1D1D] border border-white/10 focus:border-[#F97303] text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full resize-none"
+                  className="bg-ink border border-white/40 focus:border-flame text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors w-full resize-none"
                   placeholder="¿En qué podemos ayudarte?"
                 />
               </div>
@@ -218,11 +218,11 @@ export function ContactoSection() {
                   checked={agreed}
                   onChange={(e) => setAgreed(e.target.checked)}
                   required
-                  className="mt-1 w-4 h-4 rounded border-white/20 bg-transparent text-[#F97303] focus:ring-[#F97303]"
+                  className="mt-1 w-4 h-4 rounded border-white/20 bg-transparent text-flame focus:ring-flame"
                 />
-                <label htmlFor="privacy" className="text-sm text-[#fbfbfb] leading-relaxed">
+                <label htmlFor="privacy" className="text-sm text-paper leading-relaxed">
                   He leído y acepto la{' '}
-                  <Link href="/politica-de-privacidad" className="text-[#F97303] hover:underline underline-offset-2">
+                  <Link href="/politica-de-privacidad" className="text-flame hover:underline underline-offset-2">
                     política de privacidad
                   </Link>
                   .
@@ -232,7 +232,7 @@ export function ContactoSection() {
               <button
                 type="submit"
                 disabled={!agreed}
-                className="mt-4 w-full bg-[#F97303] hover:bg-[#ff8c20] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed  text-white font-bold text-sm px-6 py-4 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(249,115,3,0.15)] hover:shadow-[0_8px_24px_rgba(249,115,3,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                className="mt-4 w-full bg-flame hover:bg-flame-hover disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed  text-on-flame font-bold text-sm px-6 py-4 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 Enviar mensaje
                 <Send size={16} />
@@ -243,34 +243,34 @@ export function ContactoSection() {
           {/* Información de contacto */}
           <motion.div
             variants={cardVariants}
-            className="lg:col-span-2 flex flex-col justify-between bg-gradient-to-b from-[#F97303]/10 to-transparent border border-[#F97303]/20 rounded-[24px] p-8 md:p-10 shadow-[0_0_30px_rgba(249,115,3,0.05)]"
+            className="lg:col-span-2 flex flex-col justify-between bg-gradient-to-b from-flame/10 to-transparent border border-flame/20 rounded-[24px] p-8 md:p-10 shadow-[0_0_30px_rgba(246,101,2,0.05)]"
           >
             <div>
-              <p className="text-xs font-semibold text-[#F97303] tracking-wider uppercase mb-6">
+              <p className="text-xs font-semibold text-flame tracking-wider uppercase mb-6">
                 Información directa
               </p>
               <h3 className="text-3xl font-heading font-bold mb-8 text-white">Contacta con soporte</h3>
               
               <div className="flex flex-col gap-6 mb-12">
                 <a href="mailto:hola@wowscore.com" className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-[#F97303]/20 group-hover:border-[#F97303]/50 transition-colors">
-                    <Mail size={20} className="text-[#F97303]" />
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-flame/20 group-hover:border-flame/50 transition-colors">
+                    <Mail size={20} className="text-flame" />
                   </div>
                   <div>
-                    <p className="text-xs text-[#fbfbfb] mb-1">Correo electrónico</p>
-                    <p className="text-sm font-medium text-[#fbfbfb] group-hover:text-[#F97303] transition-colors">
+                    <p className="text-xs text-paper mb-1">Correo electrónico</p>
+                    <p className="text-sm font-medium text-paper group-hover:text-flame transition-colors">
                       hola@wowscore.com
                     </p>
                   </div>
                 </a>
 
                 <a href="tel:+1234567890" className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-[#F97303]/20 group-hover:border-[#F97303]/50 transition-colors">
-                    <Phone size={20} className="text-[#F97303]" />
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-flame/20 group-hover:border-flame/50 transition-colors">
+                    <Phone size={20} className="text-flame" />
                   </div>
                   <div>
-                    <p className="text-xs text-[#fbfbfb] mb-1">Teléfono</p>
-                    <p className="text-sm font-medium text-[#fbfbfb] group-hover:text-[#F97303] transition-colors">
+                    <p className="text-xs text-paper mb-1">Teléfono</p>
+                    <p className="text-sm font-medium text-paper group-hover:text-flame transition-colors">
                       +1 (234) 567-890
                     </p>
                   </div>
@@ -279,13 +279,13 @@ export function ContactoSection() {
             </div>
 
             <div>
-              <p className="text-sm font-medium text-[#fbfbfb] mb-4">Síguenos en redes</p>
+              <p className="text-sm font-medium text-paper mb-4">Síguenos en redes</p>
               <div className="flex items-center gap-3">
                 <a
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F97303] hover:border-[#F97303] hover:text-[#1D1D1B] transition-all text-white/80"
+                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all text-white/80"
                 >
                   <InstagramIcon size={18} />
                 </a>
@@ -293,7 +293,7 @@ export function ContactoSection() {
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F97303] hover:border-[#F97303] hover:text-[#1D1D1B] transition-all text-white/80"
+                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all text-white/80"
                 >
                   <LinkedinIcon size={18} />
                 </a>

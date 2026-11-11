@@ -44,8 +44,8 @@ function label(key: string) {
 
 function scoreColor(score: number | null) {
   if (score === null) return 'text-muted-foreground'
-  if (score >= 75) return 'text-green-600 dark:text-green-400'
-  if (score >= 50) return 'text-yellow-600 dark:text-yellow-400'
+  if (score >= 75) return 'text-green-700 dark:text-green-400'
+  if (score >= 50) return 'text-yellow-700 dark:text-yellow-400'
   return 'text-destructive'
 }
 

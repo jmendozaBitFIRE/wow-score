@@ -192,7 +192,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
                 <td className="px-6 py-3 uppercase text-xs font-medium tracking-wide dark:text-zinc-100">{ev.medio}</td>
                 <td className="px-6 py-3 uppercase text-xs font-medium tracking-wide dark:text-zinc-100">{ev.objetivo}</td>
                 <td className="px-6 py-3 text-right">
-                  <span className="font-bold text-primary">{ev.score_overall ?? '—'}</span>
+                  <span className="font-bold text-flame-text">{ev.score_overall ?? '—'}</span>
                 </td>
               </tr>
             ))}

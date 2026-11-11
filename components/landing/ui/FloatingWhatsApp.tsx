@@ -39,7 +39,7 @@ export function FloatingWhatsApp() {
             </div>
 
             {/* Tooltip */}
-            <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-[#1D1D1B] text-white border border-[#F97303] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
+            <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-ink text-white border border-flame px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
                 Chatea con nosotros
             </div>
         </motion.a>

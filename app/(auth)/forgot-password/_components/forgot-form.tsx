@@ -44,7 +44,7 @@ export function ForgotForm({ success }: { success: boolean }) {
           <Link
             href="/login"
             className="block text-sm font-medium hover:underline mt-4"
-            style={{ color: 'var(--color-flame)' }}
+            style={{ color: 'var(--color-flame-text)' }}
           >
             Volver a iniciar sesión
           </Link>
@@ -78,7 +78,7 @@ export function ForgotForm({ success }: { success: boolean }) {
             <Link
               href="/login"
               className="font-medium hover:underline"
-              style={{ color: 'var(--color-flame)' }}
+              style={{ color: 'var(--color-flame-text)' }}
             >
               Iniciar sesión
             </Link>

@@ -102,16 +102,16 @@ const PRIVACY_SECTIONS = [
 // ── PAGE ─────────────────────────────────────────────────────────────────────
 export default function PrivacidadPage() {
   return (
-    <LandingPageShell mainClassName="relative min-h-screen bg-[#1D1D1B] text-[#FBFBFB] overflow-hidden pt-32 md:pt-36">
+    <LandingPageShell mainClassName="relative min-h-screen bg-ink text-paper overflow-hidden pt-32 md:pt-36">
       {/* Background accents */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(249,115,3,0.06)_0%,transparent_70%)] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(249,115,3,0.04),transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(246,101,2,0.06)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(246,101,2,0.04),transparent_70%)] pointer-events-none" />
 
       <div className="relative max-w-4xl mx-auto px-6 md:px-12 pb-16 md:pb-24">
         {/* Back link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-[#FBFBFB]/70 hover:text-[#F97303] transition-colors duration-200 mb-10 group"
+          className="inline-flex items-center gap-2 text-sm font-medium text-paper/70 hover:text-flame transition-colors duration-200 mb-10 group"
         >
           <ArrowLeft
             size={16}
@@ -123,33 +123,33 @@ export default function PrivacidadPage() {
         {/* Header */}
         <header className="mb-14 md:mb-16">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2.5 bg-[#F97303]/10 border border-[#F97303]/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-[#F97303] mb-6">
+          <div className="inline-flex items-center gap-2.5 bg-flame/10 border border-flame/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-flame mb-6">
             <div className="relative flex h-1.5 w-1.5">
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#F97303]" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-flame" />
             </div>
             <Lock size={12} strokeWidth={2.5} />
             Documento legal
           </div>
 
           {/* Title */}
-          <h1 className="font-heading font-bold text-[clamp(32px,5vw,52px)] leading-[1.05] tracking-[-2px] text-[#FBFBFB] mb-5">
+          <h1 className="font-heading font-bold text-[clamp(32px,5vw,52px)] leading-[1.05] tracking-[-2px] text-paper mb-5">
             Política de{' '}
-            <span className="text-[#F97303]">Privacidad</span>
+            <span className="text-flame">Privacidad</span>
           </h1>
 
           {/* Date */}
-          <div className="flex items-center gap-2 text-sm text-[#FBFBFB]/70 font-medium">
-            <Calendar size={15} className="text-[#F97303]" />
+          <div className="flex items-center gap-2 text-sm text-paper/70 font-medium">
+            <Calendar size={15} className="text-flame" />
             <span>Última actualización: 16 de abril de 2026</span>
           </div>
         </header>
 
         {/* Intro */}
         <div className="mb-10 p-6 rounded-2xl bg-white/[0.02] border border-white/10">
-          <p className="text-[15px] text-[#FBFBFB]/80 leading-relaxed mb-3">
-            Bienvenido a <span className="text-[#F97303] font-semibold">WOW Score</span>, una plataforma desarrollada por WOW (Clan Publicidad, S.A. de C.V.). Nos comprometemos a proteger la privacidad de nuestros usuarios y a garantizar el uso responsable de su información.
+          <p className="text-[15px] text-paper/80 leading-relaxed mb-3">
+            Bienvenido a <span className="text-flame font-semibold">WOW Score</span>, una plataforma desarrollada por WOW (Clan Publicidad, S.A. de C.V.). Nos comprometemos a proteger la privacidad de nuestros usuarios y a garantizar el uso responsable de su información.
           </p>
-          <p className="text-[15px] text-[#FBFBFB]/80 leading-relaxed">
+          <p className="text-[15px] text-paper/80 leading-relaxed">
             Al utilizar nuestra plataforma, el usuario acepta los términos de esta Política de Privacidad.
           </p>
         </div>
@@ -164,18 +164,18 @@ export default function PrivacidadPage() {
               <div className="flex gap-5">
                 {/* Number */}
                 <div className="shrink-0">
-                  <span className="font-heading font-extrabold text-[28px] md:text-[32px] leading-none text-[#F97303] tracking-[-1px]">
+                  <span className="font-heading font-extrabold text-[28px] md:text-[32px] leading-none text-flame tracking-[-1px]">
                     {number}
                   </span>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-heading font-bold text-xl md:text-2xl text-[#FBFBFB] mb-3 tracking-[-0.5px]">
+                  <h2 className="font-heading font-bold text-xl md:text-2xl text-paper mb-3 tracking-[-0.5px]">
                     {title}
                   </h2>
 
-                  <p className="text-[15px] text-[#FBFBFB]/80 leading-relaxed mb-3">
+                  <p className="text-[15px] text-paper/80 leading-relaxed mb-3">
                     {content}
                   </p>
 
@@ -184,8 +184,8 @@ export default function PrivacidadPage() {
                     <ul className="flex flex-col gap-2.5 mt-3">
                       {list.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-3">
-                          <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-[#F97303] mt-2" />
-                          <span className="text-[15px] text-[#FBFBFB]/80 leading-relaxed">
+                          <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-flame mt-2" />
+                          <span className="text-[15px] text-paper/80 leading-relaxed">
                             {item}
                           </span>
                         </li>
@@ -195,9 +195,9 @@ export default function PrivacidadPage() {
 
                   {/* Important note */}
                   {note && (
-                    <div className="mt-4 p-4 rounded-xl bg-[#F97303]/10 border border-[#F97303]/25">
-                      <p className="text-[14px] text-[#FBFBFB] leading-relaxed">
-                        <span className="font-bold text-[#F97303]">Importante: </span>
+                    <div className="mt-4 p-4 rounded-xl bg-flame/10 border border-flame/25">
+                      <p className="text-[14px] text-paper leading-relaxed">
+                        <span className="font-bold text-flame">Importante: </span>
                         {note}
                       </p>
                     </div>
@@ -210,11 +210,11 @@ export default function PrivacidadPage() {
 
         {/* Footer note */}
         <div className="mt-14 pt-8 border-t border-white/10 text-center">
-          <p className="text-sm text-[#FBFBFB]/60 leading-relaxed max-w-xl mx-auto">
+          <p className="text-sm text-paper/60 leading-relaxed max-w-xl mx-auto">
             Si tienes dudas sobre nuestra política de privacidad, puedes contactarnos a{' '}
             <a
               href="mailto:correo@wow-score.com"
-              className="text-[#F97303] hover:underline underline-offset-2 font-medium"
+              className="text-flame hover:underline underline-offset-2 font-medium"
             >
               correo@wow-score.com
             </a>

@@ -142,9 +142,9 @@ export default function PricingPage() {
       )}
 
       {activePlan && activeStatus === 'active' && (
-        <div className="mb-8 p-4 rounded-xl border border-orange-200 bg-orange-50/50 dark:border-orange-950/30 dark:bg-orange-950/10 flex items-center justify-between gap-4">
+        <div className="mb-8 p-4 rounded-xl border border-flame/30 bg-flame/5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-full bg-orange-500/10 text-orange-600 flex items-center justify-center shrink-0 w-9 h-9">
+            <div className="p-2 rounded-full bg-flame/10 text-flame-text flex items-center justify-center shrink-0 w-9 h-9">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
               </svg>
@@ -156,7 +156,7 @@ export default function PricingPage() {
           </div>
           <button
             onClick={handlePortal}
-            className="text-xs font-semibold text-orange-600 hover:text-orange-700 dark:hover:text-orange-400 transition-colors"
+            className="text-xs font-semibold text-flame-text hover:text-ink transition-colors"
           >
             Gestionar suscripción →
           </button>
@@ -188,7 +188,7 @@ export default function PricingPage() {
             }`}
           >
             Anual
-            <span className="ml-1.5 text-xs font-semibold text-primary">−17%</span>
+            <span className="ml-1.5 text-xs font-semibold text-flame-text">−17%</span>
           </button>
         </div>
       </div>
@@ -205,12 +205,12 @@ export default function PricingPage() {
               key={plan.key}
               className={`rounded-xl border p-8 flex flex-col gap-6 relative transition-all ${
                 isCurrentActive
-                  ? 'border-orange-500 bg-orange-50/5 dark:bg-orange-950/10 shadow-lg shadow-orange-500/5 ring-1 ring-orange-500'
+                  ? 'border-flame bg-flame/5 shadow-lg shadow-flame/5 ring-1 ring-flame'
                   : 'bg-card'
               }`}
             >
               {isCurrentActive && (
-                <div className="absolute -top-3 right-6 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                <div className="absolute -top-3 right-6 bg-flame text-on-flame text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                   Plan Activo
                 </div>
               )}
@@ -230,7 +230,7 @@ export default function PricingPage() {
                   <li key={f} className="flex items-center gap-2 text-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 text-primary shrink-0"
+                      className="h-4 w-4 text-flame-text shrink-0"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >

@@ -58,7 +58,7 @@ export default async function SubscriptionPage() {
 
     return (
       <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
-        <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+        <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 text-flame-text flex items-center justify-center">
           <CreditCard size={24} />
         </div>
         <h1 className="text-xl font-semibold">Perteneces a {company?.name ?? 'una compañía'}</h1>
@@ -158,7 +158,7 @@ export default async function SubscriptionPage() {
         <div className="md:col-span-2 rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 flex flex-col justify-between shadow-sm">
           <div className="space-y-4">
             {company.subscription_status === 'trialing' && (
-              <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-primary text-sm flex gap-3 items-start shadow-sm">
+              <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-flame-text text-sm flex gap-3 items-start shadow-sm">
                 <AlertTriangle size={20} className="shrink-0 mt-0.5" />
                 <p>
                   Te quedan <strong>{trialDaysLeft} {trialDaysLeft === 1 ? 'día' : 'días'}</strong> de tu periodo de prueba.
@@ -210,7 +210,7 @@ export default async function SubscriptionPage() {
                         : 'Disponibles en este ciclo'}
                     </span>
                   </div>
-                  <div className="text-3xl font-bold text-primary">
+                  <div className="text-3xl font-bold text-flame-text">
                     {company.subscription_status === 'trialing' ? company.trial_credits : company.monthly_credits}
                   </div>
                 </div>
@@ -243,7 +243,7 @@ export default async function SubscriptionPage() {
                 <div>
                   <Link
                     href="/dashboard/pricing"
-                    className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-8 bg-orange-600 hover:bg-orange-700 text-white rounded-full px-5')}
+                    className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-8 bg-flame hover:bg-flame-hover text-on-flame rounded-full px-5')}
                   >
                     Ver planes disponibles
                   </Link>
@@ -343,7 +343,7 @@ export default async function SubscriptionPage() {
                           href={invoice.hosted_invoice_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 underline font-medium"
+                          className="inline-flex items-center gap-1 text-xs text-flame-text hover:text-ink underline font-medium"
                         >
                           Ver Recibo
                           <ExternalLink size={12} />
@@ -368,7 +368,7 @@ export default async function SubscriptionPage() {
       <div className="flex justify-center pt-4">
         <Link
           href="/dashboard/pricing"
-          className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-9 bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-2')}
+          className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-9 bg-flame hover:bg-flame-hover text-on-flame rounded-full px-8 py-2')}
         >
           Ver más planes y precios
         </Link>
