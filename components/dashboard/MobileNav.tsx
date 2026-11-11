@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, X, LogOut } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
+import { SignOut } from '@phosphor-icons/react'
 import { SidebarNav } from '@/components/dashboard/SidebarNav'
 import { signOutAction } from '@/lib/actions/auth'
 
@@ -127,7 +128,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
                   type="submit"
                   className="nav-link w-full flex items-center gap-3 px-3 py-2 min-h-11 text-sm font-medium rounded-lg text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50 mt-2"
                 >
-                  <LogOut size={18} />
+                  <SignOut size={20} weight="duotone" />
                   Cerrar sesión
                 </button>
               </form>

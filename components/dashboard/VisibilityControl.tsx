@@ -58,7 +58,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
   return (
     <div className="space-y-2">
       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Visibilidad</p>
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {OPTIONS.map(({ value, label, icon: Icon }) => (
           <button
             key={value}
@@ -66,7 +66,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
             disabled={isPending}
             onClick={() => change(value, value === 'team' ? teamId || undefined : undefined)}
             className={[
-              'flex-1 flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50',
+              'flex min-w-0 min-h-11 lg:min-h-9 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50',
               current === value
                 ? 'border-primary bg-primary/10 text-flame-text'
                 : 'border-border text-muted-foreground hover:bg-muted',

@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  LogOut,
-} from 'lucide-react'
+import { SignOut } from '@phosphor-icons/react/ssr'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
@@ -53,7 +51,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               type="submit"
               className="nav-link w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50 mt-2"
             >
-              <LogOut size={18} />
+              <SignOut size={20} weight="duotone" />
               Cerrar sesión
             </button>
           </form>
