@@ -95,8 +95,8 @@ export function LandingHeader() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white/80 hover:text-white p-1 transition-colors"
-            aria-label="Toggle menu"
+            className="md:hidden -mr-2 flex h-11 w-11 items-center justify-center text-white/80 hover:text-white transition-colors"
+            aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={isOpen}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -119,7 +119,7 @@ export function LandingHeader() {
                     key={href}
                     href={href}
                     onClick={() => setIsOpen(false)}
-                    className="text-base font-medium text-white/70 hover:text-white py-1.5 transition-colors duration-200"
+                    className="text-base font-medium text-white/70 hover:text-white min-h-11 flex items-center transition-colors duration-200"
                   >
                     {label}
                   </Link>

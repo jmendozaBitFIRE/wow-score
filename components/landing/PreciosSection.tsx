@@ -239,7 +239,7 @@ export function PreciosSection() {
                 <button
                   key={label}
                   onClick={() => setAnnual(isAnual)}
-                  className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 z-10 ${
+                  className={`relative flex min-h-11 items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 z-10 ${
                     active ? 'text-ink' : 'text-white hover:text-white'
                   }`}
                 >

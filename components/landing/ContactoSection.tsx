@@ -218,7 +218,7 @@ export function ContactoSection() {
                   checked={agreed}
                   onChange={(e) => setAgreed(e.target.checked)}
                   required
-                  className="mt-1 w-4 h-4 rounded border-white/20 bg-transparent text-flame focus:ring-flame"
+                  className="mt-0.5 w-5 h-5 shrink-0 rounded border-white/20 bg-transparent text-flame focus:ring-flame"
                 />
                 <label htmlFor="privacy" className="text-sm text-paper leading-relaxed">
                   He leído y acepto la{' '}
@@ -285,7 +285,8 @@ export function ContactoSection() {
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all text-white/80"
+                  aria-label="Instagram"
+                  className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all text-white/80"
                 >
                   <InstagramIcon size={18} />
                 </a>
@@ -293,7 +294,8 @@ export function ContactoSection() {
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all text-white/80"
+                  aria-label="LinkedIn"
+                  className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all text-white/80"
                 >
                   <LinkedinIcon size={18} />
                 </a>

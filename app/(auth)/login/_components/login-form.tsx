@@ -68,7 +68,7 @@ export function LoginForm({ registered }: { registered: boolean }) {
           <div className="flex justify-end">
             <Link
               href="/forgot-password"
-              className="text-xs font-medium hover:underline"
+              className="inline-flex min-h-11 items-center text-xs font-medium hover:underline"
               style={{ color: 'var(--color-flame-text)' }}
             >
               ¿Olvidaste tu contraseña?

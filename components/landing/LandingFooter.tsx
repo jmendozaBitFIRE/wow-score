@@ -121,7 +121,7 @@ function FooterLogo() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={label}
-              className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all duration-300 text-paper hover:scale-105"
+              className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition-all duration-300 text-paper hover:scale-105"
             >
               <Icon size={16} />
             </a>
@@ -147,7 +147,7 @@ function FooterColumn({
       <p className="text-[15px] font-extrabold text-paper tracking-wider uppercase">
         {title}
       </p>
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-0 lg:gap-3">
         {links.map(({ label, href }) => {
           const isExternal = href.startsWith('http')
           const LinkComponent = isExternal ? 'a' : Link
@@ -157,7 +157,7 @@ function FooterColumn({
               <LinkComponent
                 href={href}
                 {...(isExternal && { target: '_blank', rel: 'noopener noreferrer' })}
-                className="group inline-flex items-center gap-1 text-[14px] text-paper hover:text-flame transition-colors duration-200 font-medium"
+                className="group inline-flex min-h-11 items-center gap-1 lg:min-h-0 text-[14px] text-paper hover:text-flame transition-colors duration-200 font-medium"
               >
                 <span>{label}</span>
                 <ArrowUpRight
@@ -258,17 +258,17 @@ export function LandingFooter() {
         <div className="border-t border-white/10" />
 
         {/* Bottom row: copyright + legal */}
-        <div className="pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="pt-6 pb-24 sm:pb-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <p className="text-[12px] text-paper font-medium order-2 sm:order-1">
             © {new Date().getFullYear()} WOW Score. Todos los derechos reservados.
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 order-1 sm:order-2">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-0 sm:gap-y-2 order-1 sm:order-2">
             {LEGAL_LINKS.map(({ label, href }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-[12px] text-paper hover:text-flame transition-colors duration-200 font-medium"
+                className="inline-flex min-h-11 items-center text-[12px] text-paper hover:text-flame transition-colors duration-200 font-medium sm:min-h-0"
               >
                 {label}
               </Link>

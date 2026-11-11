@@ -88,9 +88,17 @@ const ALLOWED_TYPES = [...IMAGE_TYPES, ...SCRIPT_TYPES]
 const MAX_BYTES = 5 * 1024 * 1024
 
 const selectClass =
-  'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm ' +
+  'flex h-11 lg:h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm ' +
   'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ' +
   'disabled:cursor-not-allowed disabled:opacity-50'
+
+// Opción tipo chip: el checkbox sigue siendo real (teclado y lector de pantalla);
+// el chip entero es el objetivo táctil (44px en móvil).
+const chipClass =
+  'inline-flex min-h-11 lg:min-h-9 cursor-pointer items-center gap-2 rounded-full border border-input px-3 text-sm ' +
+  'transition-colors has-[:checked]:border-flame has-[:checked]:bg-flame/10 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-flame/60 ' +
+  'has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50'
+const checkClass = 'size-4 accent-flame-deep'
 
 // Grupo de checkboxes multi-selección + "Todas" — usado por Edad y NSE.
 function MultiCheckboxGroup<T extends string>({
@@ -104,21 +112,21 @@ function MultiCheckboxGroup<T extends string>({
 }) {
   const allSelected = selected.length === options.length
   return (
-    <div className="space-y-1">
-      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{label}</span>
-      <div className="flex flex-col gap-1">
-        <label className="flex items-center gap-1.5 text-xs font-medium">
+    <fieldset className="space-y-1.5 min-w-0">
+      <legend className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">{label}</legend>
+      <div className="flex flex-wrap gap-2">
+        <label className={chipClass + ' font-medium'}>
           <input
             type="checkbox"
             checked={allSelected}
             onChange={() => onChange(allSelected ? [] : options.map((o) => o.value))}
             disabled={disabled}
-            className="accent-primary"
+            className={checkClass}
           />
           Todas
         </label>
         {options.map((o) => (
-          <label key={o.value} className="flex items-center gap-1.5 text-xs">
+          <label key={o.value} className={chipClass}>
             <input
               type="checkbox"
               checked={selected.includes(o.value)}
@@ -126,13 +134,13 @@ function MultiCheckboxGroup<T extends string>({
                 onChange(selected.includes(o.value) ? selected.filter((v) => v !== o.value) : [...selected, o.value])
               }
               disabled={disabled}
-              className="accent-primary"
+              className={checkClass}
             />
             {o.label}
           </label>
         ))}
       </div>
-    </div>
+    </fieldset>
   )
 }
 
@@ -492,27 +500,27 @@ export function UploadClient({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3">
               {/* Género (multi-selección) */}
-              <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <fieldset className="space-y-1.5 min-w-0">
+                <legend className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
                   Género
-                </span>
-                <div className="flex h-9 items-center gap-3">
+                </legend>
+                <div className="flex flex-wrap gap-2">
                   {GENEROS.map((g) => (
-                    <label key={g.value} className="flex items-center gap-1.5 text-sm">
+                    <label key={g.value} className={chipClass}>
                       <input
                         type="checkbox"
                         checked={genero.includes(g.value)}
                         onChange={() => toggleGenero(g.value)}
                         disabled={isBusy}
-                        className="accent-primary"
+                        className={checkClass}
                       />
                       {g.label}
                     </label>
                   ))}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Edad (multi-selección) */}
               <MultiCheckboxGroup
@@ -534,12 +542,12 @@ export function UploadClient({
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">
-              <Button variant="outline" size="sm" onClick={reset} disabled={isBusy} className="h-11 sm:h-7 sm:shrink-0">
+              <Button variant="outline" size="sm" onClick={reset} disabled={isBusy} className="h-11 lg:h-7 sm:shrink-0">
                 Cambiar imagen
               </Button>
               <Button
                 variant="brand"
-                className="flex-1 h-11 sm:h-8"
+                className="h-11 lg:h-8 sm:flex-1"
                 onClick={handleAnalyze}
                 disabled={!canAnalyze || isBusy}
               >

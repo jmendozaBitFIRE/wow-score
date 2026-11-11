@@ -248,7 +248,7 @@ export default function PricingPage() {
               <Button
                 onClick={() => handleSubscribe(option.plan)}
                 disabled={isPending || isCurrentActive}
-                className={`w-full h-11 sm:h-8 ${
+                className={`w-full h-11 lg:h-8 ${
                   isCurrentActive
                     ? 'bg-zinc-100 text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400'
                     : ''

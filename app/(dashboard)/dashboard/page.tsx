@@ -85,7 +85,7 @@ export default async function DashboardPage() {
             <p className="text-on-flame max-w-sm">
               Sube una imagen publicitaria y obtén un análisis detallado basado en la fórmula WOW Score en segundos.
             </p>
-            <Link href="/dashboard/upload" className={cn(buttonVariants(), 'h-11 sm:h-8 bg-white text-flame-text hover:bg-zinc-100 rounded-full px-6 flex items-center gap-2 shadow-sm')}>
+            <Link href="/dashboard/upload" className={cn(buttonVariants(), 'h-11 lg:h-8 bg-white text-flame-text hover:bg-zinc-100 rounded-full px-6 flex items-center gap-2 shadow-sm')}>
               <Plus size={18} />
               Nuevo análisis
             </Link>
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
              </p>
           </div>
           <div className="mt-4">
-            <Link href="/dashboard/subscription" className={cn(buttonVariants({ variant: 'outline' }), 'h-11 sm:h-8 w-full rounded-full flex items-center justify-center gap-2 hover:border-flame hover:text-flame-text')}>
+            <Link href="/dashboard/subscription" className={cn(buttonVariants({ variant: 'outline' }), 'h-11 lg:h-8 w-full rounded-full flex items-center justify-center gap-2 hover:border-flame hover:text-flame-text')}>
               Gestionar plan
               <ArrowRight size={16} />
             </Link>

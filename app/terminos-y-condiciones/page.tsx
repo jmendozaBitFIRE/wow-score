@@ -80,7 +80,7 @@ export default function TerminosPage() {
         {/* Back link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-paper/70 hover:text-flame transition-colors duration-200 mb-10 group"
+          className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-paper/70 hover:text-flame transition-colors duration-200 mb-10 group"
         >
           <ArrowLeft
             size={16}

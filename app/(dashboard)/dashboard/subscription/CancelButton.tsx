@@ -39,7 +39,7 @@ export function CancelButton() {
           <Button
             variant="destructive"
             size="sm"
-            className="h-11 sm:h-7"
+            className="h-11 lg:h-7"
             onClick={handleCancel}
             disabled={isPending}
           >
@@ -48,7 +48,7 @@ export function CancelButton() {
           <Button
             variant="outline"
             size="sm"
-            className="h-11 sm:h-7"
+            className="h-11 lg:h-7"
             onClick={() => setShowConfirm(false)}
             disabled={isPending}
           >
@@ -62,7 +62,7 @@ export function CancelButton() {
   return (
     <Button
       variant="outline"
-      className="h-11 sm:h-8 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-950/30 dark:hover:bg-red-950/20"
+      className="h-11 lg:h-8 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-950/30 dark:hover:bg-red-950/20"
       onClick={() => setShowConfirm(true)}
     >
       Cancelar suscripción
