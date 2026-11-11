@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# impeccable skill: runtime engine binary and caches (downloaded on first use)
+.claude/skills/impeccable/scripts/bin/
+**/.impeccable/hook.cache.json
+.impeccable/live/
