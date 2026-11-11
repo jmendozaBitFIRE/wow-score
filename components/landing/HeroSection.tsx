@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePrefersReducedMotion } from './ui/usePrefersReducedMotion'
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const METRICS = [
@@ -55,6 +56,7 @@ const lineVariants = {
  */
 function ScrollIndicator() {
   const [isVisible, setIsVisible] = useState(true)
+  const reduceMotion = usePrefersReducedMotion()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,7 +78,7 @@ function ScrollIndicator() {
           transition={{ duration: 0.4, delay: 1.5 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 cursor-pointer"
           onClick={() => {
-            document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })
+            document.getElementById('como-funciona')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
           }}
         >
           {/* Text label */}
@@ -87,7 +89,7 @@ function ScrollIndicator() {
           {/* Animated mouse icon */}
           <div className="relative w-6 h-10 md:w-7 md:h-11 border-2 border-white/30 rounded-full flex justify-center">
             <motion.div
-              animate={{
+              animate={reduceMotion ? undefined : {
                 y: [0, 12, 0],
                 opacity: [1, 0.3, 1],
               }}
@@ -102,7 +104,7 @@ function ScrollIndicator() {
           
           {/* Small chevron arrow */}
           <motion.div
-            animate={{ y: [0, 4, 0] }}
+            animate={reduceMotion ? undefined : { y: [0, 4, 0] }}
             transition={{
               duration: 1.8,
               repeat: Infinity,
@@ -191,10 +193,15 @@ function AnimatedBackground() {
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY }
     }
-    window.addEventListener('mousemove', handleMouseMove)
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window.addEventListener('mousemove', handleMouseMove)
+    }
+
+    // Con movimiento reducido se dibuja un solo cuadro estático, sin loop ni seguimiento del cursor
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     // Animation loop
-    let animationFrameId: number
+    let animationFrameId = 0
     const animate = () => {
       // Clear canvas with semi-transparent background for trail effect
       ctx.fillStyle = 'rgba(29, 29, 27, 0.02)'
@@ -296,7 +303,7 @@ function AnimatedBackground() {
         ctx.stroke()
       }
 
-      animationFrameId = requestAnimationFrame(animate)
+      if (!reduceMotion) animationFrameId = requestAnimationFrame(animate)
     }
 
     animate()
@@ -405,9 +412,12 @@ function MetricRow({ label, value, isGreen }: MetricRowProps) {
  * ScoreCard renders the mock advertising analysis dashboard.
  */
 function ScoreCard() {
-  const [score, setScore] = useState(0)
+  const reduceMotion = usePrefersReducedMotion()
+  const [animatedScore, setScore] = useState(0)
+  const score = reduceMotion ? 87 : animatedScore
 
   useEffect(() => {
+    if (reduceMotion) return
     const timer = setTimeout(() => {
       let startTimestamp: number | null = null
       const duration = 1600
@@ -426,7 +436,7 @@ function ScoreCard() {
     }, 800)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [reduceMotion])
 
   return (
     <motion.div

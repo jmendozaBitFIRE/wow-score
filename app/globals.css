@@ -460,3 +460,40 @@
 .footer-legal-link:hover {
   opacity: 0.9;
 }
+
+/* ── Movimiento reducido ───────────────────────────────────────
+   Se quita el desplazamiento y los loops decorativos; se conservan
+   los cambios de opacidad, el progreso y los spinners de carga,
+   que comunican estado. */
+@keyframes fadeOnly {
+  from { opacity: 0 }
+  to   { opacity: 1 }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .page-transition,
+  .reveal {
+    animation-name: fadeOnly;
+    animation-duration: 0.2s;
+    animation-delay: 0s;
+  }
+
+  .animate-ping,
+  .bounce-arrow,
+  .hero-card-float {
+    animation: none;
+  }
+
+  .scan-line {
+    display: none;
+  }
+
+  .skeleton {
+    animation: none;
+    background: var(--color-mist);
+  }
+}

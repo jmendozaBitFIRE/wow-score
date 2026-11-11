@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { usePrefersReducedMotion } from './ui/usePrefersReducedMotion'
 import { Tv, Radio, Building2, Monitor, Globe, Newspaper, Film, type LucideIcon, } from 'lucide-react'
 
 // ── TYPES ────────────────────────────────────────────────────────────────────
@@ -76,6 +77,7 @@ function MedioCard({ medio }: { medio: Medio }) {
  * SliderTrack - Pista del slider con animación infinita continua
  */
 function SliderTrack() {
+  const reduceMotion = usePrefersReducedMotion()
   const [isDesktop, setIsDesktop] = useState(false)
   // Triplicamos los medios para asegurar un loop completamente seamless
   const duplicatedMedios = [...MEDIOS, ...MEDIOS, ...MEDIOS]
@@ -90,6 +92,24 @@ function SliderTrack() {
   }, [])
 
   const duration = isDesktop ? 40 : 20
+
+  // Movimiento reducido: sin loop automático; la fila se recorre con scroll o teclado.
+  if (reduceMotion) {
+    return (
+      <div
+        className="overflow-x-auto"
+        tabIndex={0}
+        role="region"
+        aria-label="Medios compatibles"
+      >
+        <div className="flex items-stretch gap-3 md:gap-6 w-max py-4 px-6 md:px-12">
+          {MEDIOS.map((medio) => (
+            <MedioCard key={medio.id} medio={medio} />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="relative overflow-hidden">

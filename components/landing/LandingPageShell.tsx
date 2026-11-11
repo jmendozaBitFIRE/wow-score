@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import { LandingFloatingActions } from './LandingFloatingActions'
 import { LandingFooter } from './LandingFooter'
 import { LandingHeader } from './LandingHeader'
+import { MotionProvider } from './ui/MotionProvider'
 
 type LandingPageShellProps = {
   children: ReactNode
@@ -13,11 +14,11 @@ export function LandingPageShell({
   mainClassName = 'page-transition',
 }: LandingPageShellProps) {
   return (
-    <>
+    <MotionProvider>
       <LandingHeader />
       <main className={mainClassName}>{children}</main>
       <LandingFooter />
       <LandingFloatingActions />
-    </>
+    </MotionProvider>
   )
 }
