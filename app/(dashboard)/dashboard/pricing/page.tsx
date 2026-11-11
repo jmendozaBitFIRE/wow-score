@@ -210,7 +210,7 @@ export default function PricingPage() {
               }`}
             >
               {isCurrentActive && (
-                <div className="absolute -top-3 right-6 bg-flame-deep text-on-flame text-xs font-bold tracking-[0.01em] px-3 py-1 rounded-full shadow-sm">
+                <div className="absolute -top-3 right-6 bg-flame text-on-flame text-xs font-bold tracking-[0.01em] px-3 py-1 rounded-full shadow-sm">
                   Plan Activo
                 </div>
               )}

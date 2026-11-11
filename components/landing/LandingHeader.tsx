@@ -46,7 +46,7 @@ export function LandingHeader() {
             : 'bg-transparent border-b border-transparent py-8'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 xl:px-12 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-90 transition-all duration-300">
             <Image
@@ -60,7 +60,7 @@ export function LandingHeader() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden xl:flex items-center gap-8">
             {NAV_LINKS.map(({ label, href }) => (
               <Link
                 key={href}
@@ -73,7 +73,7 @@ export function LandingHeader() {
           </nav>
 
           {/* Action Buttons (Desktop) */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden xl:flex items-center gap-6">
             <Link
               href="/login"
               className={`bg-flame/25 border border-flame/80 text-white font-semibold rounded-xl inline-flex items-center gap-1.5 transition-all duration-300 hover:bg-flame/20 hover:border-flame/40 hover:shadow-[0_6px_20px_rgba(246,101,2,0.1)] hover:-translate-y-0.5 ${
@@ -86,7 +86,7 @@ export function LandingHeader() {
             </Link>
             <Link
               href="/register"
-              className={`bg-flame-deep text-on-flame font-bold tracking-[0.01em] hover:bg-flame-deep-hover rounded-xl transition-all duration-300 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_6px_20px_rgba(246,101,2,0.1)] hover:-translate-y-0.5 ${scrolled ? 'text-sm px-6 py-2.5' : 'text-base px-8 py-3.5'}`}
+              className={`bg-flame text-on-flame font-bold tracking-[0.01em] hover:bg-flame-strong rounded-xl transition-all duration-300 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_6px_20px_rgba(246,101,2,0.1)] hover:-translate-y-0.5 ${scrolled ? 'text-sm px-6 py-2.5' : 'text-base px-8 py-3.5'}`}
             >
               Crear cuenta  →
             </Link>
@@ -95,7 +95,7 @@ export function LandingHeader() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden -mr-2 flex h-11 w-11 items-center justify-center text-white/80 hover:text-white transition-colors"
+            className="xl:hidden -mr-2 flex h-11 w-11 items-center justify-center text-white/80 hover:text-white transition-colors"
             aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={isOpen}
           >
@@ -111,7 +111,7 @@ export function LandingHeader() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: 'easeInOut' }}
-              className="absolute top-full left-0 right-0 bg-ink backdrop-blur-lg border-b border-white/10 px-6 py-8 flex flex-col gap-6 md:hidden shadow-2xl overflow-hidden"
+              className="absolute top-full left-0 right-0 bg-ink backdrop-blur-lg border-b border-white/10 px-6 py-8 flex flex-col gap-6 xl:hidden shadow-2xl overflow-hidden"
             >
               <div className="flex flex-col gap-4">
                 {NAV_LINKS.map(({ label, href }) => (
@@ -140,7 +140,7 @@ export function LandingHeader() {
                 <Link
                   href="/register"
                   onClick={() => setIsOpen(false)}
-                  className="w-full bg-flame-deep text-on-flame hover:bg-flame-deep-hover text-center font-bold tracking-[0.01em] py-3 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)]"
+                  className="w-full bg-flame text-on-flame hover:bg-flame-strong text-center font-bold tracking-[0.01em] py-3 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)]"
                 >
                   Crear cuenta →
                 </Link>

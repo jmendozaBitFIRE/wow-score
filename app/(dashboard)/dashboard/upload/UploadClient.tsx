@@ -98,7 +98,7 @@ const chipClass =
   'inline-flex min-h-11 lg:min-h-9 cursor-pointer items-center gap-2 rounded-full border border-input px-3 text-sm ' +
   'transition-colors has-[:checked]:border-flame has-[:checked]:bg-flame/10 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-flame/60 ' +
   'has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50'
-const checkClass = 'size-4 accent-flame-deep'
+const checkClass = 'size-4 accent-flame'
 
 // Grupo de checkboxes multi-selección + "Todas" — usado por Edad y NSE.
 function MultiCheckboxGroup<T extends string>({
@@ -330,7 +330,7 @@ export function UploadClient({
           </p>
           <div className="pt-4">
             <Link href="/dashboard/pricing">
-              <Button className="bg-flame-deep hover:bg-flame-deep-hover text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto">
+              <Button className="bg-flame hover:bg-flame-strong text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto">
                 Ver planes y precios
               </Button>
             </Link>
@@ -352,7 +352,7 @@ export function UploadClient({
             <Button 
               onClick={authorizeCharge} 
               disabled={isAuthorizing}
-              className="bg-flame-deep hover:bg-flame-deep-hover text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto text-base font-semibold"
+              className="bg-flame hover:bg-flame-strong text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto text-base font-semibold"
             >
               {isAuthorizing ? 'Autorizando...' : 'Autorizar Cobro'}
             </Button>

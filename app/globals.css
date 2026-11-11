@@ -9,10 +9,8 @@
   --color-flame: #F66502;        /* fills, accents, orange text on dark (5.4:1 on ink) */
   --color-flame-hover: #FF7A1A;  /* hover/lighter fill; ink text on it is 6.5:1 */
   --color-flame-text: #B84A00;   /* orange text on light surfaces (5.0:1 on paper) */
-  --color-flame-deep: #C94B00;   /* button/badge fill under white text (4.7:1) */
-  --color-flame-deep-hover: #B04100; /* hover of deep fills; darkens so white keeps 5.8:1 */
-  --color-flame-strong: #E05800; /* hover of vivid flame fills under LARGE white text (3.8:1) */
-  --color-on-flame: #FFFFFF;     /* text on flame fills. Vivid flame (3.1:1) only for large bold text (>=18.7px) */
+  --color-flame-strong: #E05800; /* hover/pressed of flame button fills */
+  --color-on-flame: #FFFFFF;     /* text on flame fills (brand decision: white on the vivid orange) */
   --color-ink: #1D1D1B;
   --color-paper: #FBFBFB;
   --color-mist: #D8DADD;
@@ -103,7 +101,7 @@
   --color-success: #16A34A;
 
   /* ── Brand gradients ─────────────────────────── */
-  --gradient-brand: linear-gradient(135deg, #C94B00 0%, #B04100 100%); /* carries white text */
+  --gradient-brand: linear-gradient(135deg, #F66502 0%, #F04601 100%);
   --gradient-brand-subtle: linear-gradient(135deg,
     rgba(246,101,2,0.08) 0%, rgba(246,101,2,0.08) 100%);
   --sidebar: oklch(0.985 0 0);
@@ -184,7 +182,7 @@
   border: none;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-  box-shadow: 0 4px 14px rgba(201,75,0,0.3);
+  box-shadow: 0 4px 14px rgba(246,101,2,0.3);
 }
 .btn-primary:hover {
   transform: translateY(-1px);

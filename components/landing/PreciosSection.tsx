@@ -252,7 +252,7 @@ export function PreciosSection() {
                   )}
                   {label}
                   {isAnual && (
-                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full transition-colors ${active ? 'bg-flame-deep text-on-flame' : 'bg-white/10 text-white'}`}>
+                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full transition-colors ${active ? 'bg-flame text-on-flame' : 'bg-white/10 text-white'}`}>
                       -20%
                     </span>
                   )}
@@ -308,7 +308,7 @@ export function PreciosSection() {
             className="relative flex flex-col bg-gradient-to-b from-flame/10 to-transparent border-2 border-flame rounded-[24px] p-8 md:p-10 shadow-[0_0_30px_rgba(246,101,2,0.15)]"
           >
             {/* Badge Más popular */}
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-flame-deep to-flame-deep-hover text-on-flame text-[11px] font-bold tracking-wider uppercase px-4 py-1.5 rounded-full shadow-[0_4px_12px_rgba(246,101,2,0.3)]">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-flame to-flame-strong text-on-flame text-[11px] font-bold tracking-wider uppercase px-4 py-1.5 rounded-full shadow-[0_4px_12px_rgba(246,101,2,0.3)]">
               Más popular
             </div>
 
@@ -334,7 +334,7 @@ export function PreciosSection() {
 
             <Link
               href="/register"
-              className="block w-full text-center bg-flame-deep hover:bg-flame-deep-hover text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5"
+              className="block w-full text-center bg-flame hover:bg-flame-strong text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5"
             >
               Mi equipo necesita esto →
             </Link>
