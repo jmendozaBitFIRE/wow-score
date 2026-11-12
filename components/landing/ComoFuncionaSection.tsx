@@ -3,27 +3,27 @@
 import Link from 'next/link'
 import { Fragment, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Upload, Sliders, BarChart3 } from 'lucide-react'
+import { UploadSimple, SlidersHorizontal, ChartBar } from '@phosphor-icons/react'
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const STEPS = [
   {
     number: '01',
-    icon: Upload,
+    icon: UploadSimple,
     title: 'Sube tu pieza',
     description:
       'Arrastra o selecciona la imagen de tu anuncio. Aceptamos cualquier formato publicitario.',
   },
   {
     number: '02',
-    icon: Sliders,
+    icon: SlidersHorizontal,
     title: 'Elige medio y objetivo',
     description:
       'Selecciona el canal (TV, Digital, OOH...) y el objetivo de tu campaña (Branding, Ventas, Lanzamiento...).',
   },
   {
     number: '03',
-    icon: BarChart3,
+    icon: ChartBar,
     title: 'Recibe tu WOW Score',
     description:
       'Obtén un análisis en 10 dimensiones con fortalezas, oportunidades y veredicto ejecutivo.',
@@ -115,11 +115,11 @@ function SectionBadge() {
   return (
     <motion.div
       variants={headerItemVariants}
-      className="inline-flex items-center gap-2.5 bg-[#F97303]/10 border border-[#F97303]/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-[#F97303] mb-5 select-none"
+      className="inline-flex items-center gap-2.5 bg-flame/10 border border-flame/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-flame mb-5 select-none"
     >
       <div className="relative flex h-1.5 w-1.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F97303] opacity-75" />
-        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#F97303]" />
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-flame opacity-75" />
+        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-flame" />
       </div>
       Proceso simple
     </motion.div>
@@ -141,11 +141,11 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 
      <motion.h2
   variants={headerItemVariants}
-  className="font-heading font-bold text-[clamp(32px,4.5vw,48px)] leading-[1.05] tracking-[-2px] text-[#FBFBFB] mb-5"
+  className="font-heading font-bold text-[clamp(32px,4.5vw,48px)] leading-[1.05] tracking-[-2px] text-paper mb-5"
 >
   Analiza en{' '}
     <br />
-  <span className="text-[#F97303] relative inline-block">
+  <span className="text-flame relative inline-block">
     3 pasos
     <svg
       className="absolute -bottom-2 left-0 w-full"
@@ -156,7 +156,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
     >
       <path
         d="M2 9C50 3 150 3 298 9"
-        stroke="#F97303"
+        stroke="var(--color-flame)"
         strokeWidth="3"
         strokeLinecap="round"
         className="opacity-60"
@@ -167,7 +167,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 
       <motion.p
         variants={headerItemVariants}
-        className="text-base text-[#FBFBFB] max-w-[500px] mx-auto leading-relaxed"
+        className="text-base text-paper max-w-[500px] mx-auto leading-relaxed"
       >
         De la pieza a los insights en menos de 30 segundos.
       </motion.p>
@@ -184,14 +184,14 @@ function StepNode({ step }: { step: StepData }) {
   return (
     <div className="relative flex flex-col items-center">
       {/* Outer glow ring */}
-      <div className="absolute inset-0 m-auto w-20 h-20 md:w-[88px] md:h-[88px] rounded-full bg-[#F97303]/10 blur-md pointer-events-none" />
+      <div className="absolute inset-0 m-auto w-20 h-20 md:w-[88px] md:h-[88px] rounded-full bg-flame/10 blur-md pointer-events-none" />
 
       {/* Circle node */}
-      <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#1D1D1D] border-2 border-[#F97303]/50 flex items-center justify-center shadow-[0_0_24px_rgba(249,115,3,0.2)]">
-        <Icon size={28} className="text-[#F97303] md:w-8 md:h-8" strokeWidth={1.75} />
+      <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-ink border-2 border-flame/50 flex items-center justify-center shadow-[0_0_24px_rgba(246,101,2,0.2)]">
+        <Icon size={28} className="text-flame md:w-8 md:h-8" />
 
         {/* Number badge */}
-        <span className="absolute -top-1.5 -right-1.5 min-w-[26px] h-[26px] px-1 flex items-center justify-center rounded-full bg-[#F97303] text-[#FBFBFB] text-[10px] font-bold tracking-wide shadow-[0_4px_12px_rgba(249,115,3,0.4)]">
+        <span className="absolute -top-1.5 -right-1.5 min-w-[26px] h-[26px] px-1 flex items-center justify-center rounded-full bg-flame text-paper text-[10px] font-bold tracking-wide shadow-[0_4px_12px_rgba(246,101,2,0.4)]">
           {step.number}
         </span>
       </div>
@@ -204,11 +204,11 @@ function StepNode({ step }: { step: StepData }) {
  */
 function StepCard({ step }: { step: StepData }) {
   return (
-    <div className="mt-5 md:mt-6 w-full bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[20px] md:rounded-[24px] p-5 md:p-6 text-center transition-colors duration-300 hover:border-[#F97303]/25 hover:bg-white/[0.05]">
-      <h3 className="font-heading font-bold text-base md:text-lg text-[#FBFBFB] mb-2">
+    <div className="mt-5 md:mt-6 w-full bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[20px] md:rounded-[24px] p-5 md:p-6 text-center transition-colors duration-300 hover:border-flame/25 hover:bg-white/[0.05]">
+      <h3 className="font-heading font-bold text-base md:text-lg text-paper mb-2">
         {step.title}
       </h3>
-      <p className="text-sm text-[#FBFBFB] leading-relaxed">
+      <p className="text-sm text-paper leading-relaxed">
         {step.description}
       </p>
     </div>
@@ -240,12 +240,12 @@ function HorizontalConnector() {
       {/* Track */}
       <div className="relative w-full h-[2px] bg-white/10 rounded-full overflow-visible">
         {/* Animated fill */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#F97303] via-[#F97303]/70 to-[#F97303]/30 rounded-full" />
+        <div className="absolute inset-0 bg-gradient-to-r from-flame via-flame/70 to-flame/30 rounded-full" />
 
         {/* Traveling dot */}
         <motion.span
           variants={connectorDotHorizontalVariants}
-          className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#F97303] shadow-[0_0_8px_rgba(249,115,3,0.8)]"
+          className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-flame shadow-[0_0_8px_rgba(246,101,2,0.8)]"
         />
       </div>
 
@@ -256,7 +256,7 @@ function HorizontalConnector() {
         height="14"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#F97303"
+        stroke="var(--color-flame)"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -279,10 +279,10 @@ function VerticalConnector() {
       aria-hidden
     >
       <div className="relative w-[2px] h-10 bg-white/10 rounded-full overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F97303] to-[#F97303]/30 rounded-full" />
+        <div className="absolute inset-0 bg-gradient-to-b from-flame to-flame/30 rounded-full" />
         <motion.span
           variants={connectorDotVerticalVariants}
-          className="absolute left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#F97303] shadow-[0_0_8px_rgba(249,115,3,0.8)]"
+          className="absolute left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-flame shadow-[0_0_8px_rgba(246,101,2,0.8)]"
         />
       </div>
       <svg
@@ -291,7 +291,7 @@ function VerticalConnector() {
         height="12"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#F97303"
+        stroke="var(--color-flame)"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -368,7 +368,7 @@ function SectionCTA({ isInView }: { isInView: boolean }) {
     >
       <Link
         href="/register"
-        className="bg-[#F97303] text-white font-bold px-8 py-4 rounded-xl text-sm hover:bg-[#ff8c20] transition-all duration-200 shadow-[0_4px_14px_rgba(249,115,3,0.15)] hover:shadow-[0_12px_32px_rgba(249,115,3,0.3)] hover:-translate-y-0.5 inline-flex items-center"
+        className="bg-flame text-on-flame font-bold tracking-[0.01em] px-8 py-4 rounded-xl text-[19px] hover:bg-flame-strong transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_12px_32px_rgba(246,101,2,0.3)] hover:-translate-y-0.5 inline-flex items-center"
       >
         Analiza tu primera pieza →
       </Link>
@@ -386,11 +386,11 @@ export function ComoFuncionaSection() {
     <section
       id="como-funciona"
       ref={sectionRef}
-      className="relative bg-[#1D1D1D] text-[#FBFBFB] py-20 md:py-28 overflow-hidden"
+      className="relative bg-ink text-paper py-20 md:py-28 overflow-hidden"
     >
       {/* Background accents */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(249,115,3,0.06)_0%,transparent_70%)] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(249,115,3,0.04),transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(246,101,2,0.06)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(246,101,2,0.04),transparent_70%)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <SectionHeader isInView={isInView} />

@@ -5,7 +5,7 @@ import { getScriptExtension } from '@/lib/extract-text'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, ArrowRight, History, Sparkles, ImageOff, FileText } from 'lucide-react'
+import { Plus, ArrowRight, ClockCounterClockwise, Sparkle, ImageBroken, FileText } from '@phosphor-icons/react/ssr'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -60,8 +60,8 @@ export default async function DashboardPage() {
   })
 
   const stats = [
-    { label: 'Evaluaciones totales', value: '12', icon: History },
-    { label: 'Promedio WOW Score', value: '78', icon: Sparkles },
+    { label: 'Evaluaciones totales', value: '12', icon: ClockCounterClockwise },
+    { label: 'Promedio WOW Score', value: '78', icon: Sparkle },
   ]
 
   return (
@@ -77,21 +77,21 @@ export default async function DashboardPage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div 
-          className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl p-6 sm:p-8 text-white shadow-lg shadow-orange-500/20"
+          className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl p-6 sm:p-8 text-on-flame shadow-lg shadow-flame/20"
           style={{ background: 'var(--gradient-brand)' }}
         >
           <div className="relative z-10 space-y-4">
             <h2 className="text-2xl font-bold">Analiza tu próxima pieza</h2>
-            <p className="text-white/80 max-w-sm">
+            <p className="text-on-flame max-w-sm">
               Sube una imagen publicitaria y obtén un análisis detallado basado en la fórmula WOW Score en segundos.
             </p>
-            <Link href="/dashboard/upload" className={cn(buttonVariants(), 'h-11 sm:h-8 bg-white text-orange-600 hover:bg-zinc-100 rounded-full px-6 flex items-center gap-2 shadow-sm')}>
+            <Link href="/dashboard/upload" className={cn(buttonVariants(), 'h-11 lg:h-8 bg-white text-flame-text hover:bg-ink hover:text-white [a]:hover:bg-ink rounded-full px-6 flex items-center gap-2 shadow-sm transition-colors')}>
               <Plus size={18} />
               Nuevo análisis
             </Link>
           </div>
           <div className="absolute top-0 right-0 p-8 opacity-15 transform translate-x-1/4 -translate-y-1/4">
-             <Sparkles size={160} />
+             <Sparkle size={160} />
           </div>
         </div>
 
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
              </p>
           </div>
           <div className="mt-4">
-            <Link href="/dashboard/subscription" className={cn(buttonVariants({ variant: 'outline' }), 'h-11 sm:h-8 w-full rounded-full flex items-center justify-center gap-2 hover:border-orange-500 hover:text-orange-600')}>
+            <Link href="/dashboard/subscription" className={cn(buttonVariants({ variant: 'outline' }), 'h-11 lg:h-8 w-full rounded-full flex items-center justify-center gap-2 hover:border-flame hover:text-flame-text')}>
               Gestionar plan
               <ArrowRight size={16} />
             </Link>
@@ -117,7 +117,7 @@ export default async function DashboardPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-semibold">Análisis recientes</h3>
-          <Link href="/dashboard/history" className={cn(buttonVariants({ variant: 'ghost' }), 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 flex items-center gap-1 text-sm')}>
+          <Link href="/dashboard/history" className={cn(buttonVariants({ variant: 'ghost' }), 'text-flame-text hover:text-ink hover:bg-flame/10 flex items-center gap-1 text-sm')}>
             Ver todo
             <ArrowRight size={14} />
           </Link>
@@ -129,7 +129,7 @@ export default async function DashboardPage() {
               <Link
                 key={ev.id}
                 href={`/results/${ev.id}`}
-                className="group block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden hover:shadow-lg transition-all"
+                className="group block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden hover:shadow-lg transition"
               >
                 <div className="relative aspect-video bg-muted overflow-hidden">
                   {ev.signedUrl && getScriptExtension(ev.image_url) !== null ? (
@@ -146,11 +146,11 @@ export default async function DashboardPage() {
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                      <ImageOff size={28} />
+                      <ImageBroken size={28} />
                     </div>
                   )}
-                  <div className="absolute top-2 right-2 bg-white/90 dark:bg-black/90 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1.5 shadow-sm border border-orange-100">
-                    <span className="text-sm font-bold text-orange-600">{ev.score_overall}</span>
+                  <div className="absolute top-2 right-2 bg-white/90 dark:bg-black/90 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1.5 shadow-sm border border-flame/20">
+                    <span className="text-sm font-bold text-flame-text">{ev.score_overall}</span>
                     <span className="text-[10px] font-medium text-zinc-500 uppercase">WOW</span>
                   </div>
                 </div>
@@ -169,9 +169,9 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed p-12 text-center space-y-3 bg-zinc-50/50 dark:bg-zinc-900/20">
-            <History className="mx-auto text-zinc-300 dark:text-zinc-700" size={40} />
+            <ClockCounterClockwise className="mx-auto text-zinc-300 dark:text-zinc-700" size={40} />
             <p className="text-zinc-500 dark:text-zinc-400">Aún no has realizado ningún análisis.</p>
-            <Link href="/dashboard/upload" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'rounded-full border-orange-200 text-orange-600 hover:bg-orange-50')}>
+            <Link href="/dashboard/upload" className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'rounded-full border-flame/40 text-flame-text hover:bg-flame/10')}>
               Empezar ahora
             </Link>
           </div>

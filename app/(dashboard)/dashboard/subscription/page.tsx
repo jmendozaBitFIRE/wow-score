@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { CreditCard, Calendar, CheckCircle2, AlertTriangle, ArrowLeft, Receipt, ExternalLink } from 'lucide-react'
+import { CreditCard, CalendarBlank, CheckCircle, Warning, ArrowLeft, Receipt, ArrowSquareOut } from '@phosphor-icons/react/ssr'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CancelButton } from './CancelButton'
@@ -58,7 +58,7 @@ export default async function SubscriptionPage() {
 
     return (
       <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
-        <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+        <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 text-flame-text flex items-center justify-center">
           <CreditCard size={24} />
         </div>
         <h1 className="text-xl font-semibold">Perteneces a {company?.name ?? 'una compañía'}</h1>
@@ -147,7 +147,7 @@ export default async function SubscriptionPage() {
 
       {errorMsg && (
         <div className="p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-950/30 dark:bg-amber-950/10 text-sm flex gap-2 items-center">
-          <AlertTriangle size={18} className="shrink-0 text-amber-600" />
+          <Warning size={18} className="shrink-0 text-amber-600" />
           <span>{errorMsg}</span>
         </div>
       )}
@@ -158,8 +158,8 @@ export default async function SubscriptionPage() {
         <div className="md:col-span-2 rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 flex flex-col justify-between shadow-sm">
           <div className="space-y-4">
             {company.subscription_status === 'trialing' && (
-              <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-primary text-sm flex gap-3 items-start shadow-sm">
-                <AlertTriangle size={20} className="shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-flame-text text-sm flex gap-3 items-start shadow-sm">
+                <Warning size={20} className="shrink-0 mt-0.5" />
                 <p>
                   Te quedan <strong>{trialDaysLeft} {trialDaysLeft === 1 ? 'día' : 'días'}</strong> de tu periodo de prueba.
                   Si no utilizas tu crédito en este tiempo, se eliminará y se cobrará a tu tarjeta automáticamente.
@@ -177,12 +177,12 @@ export default async function SubscriptionPage() {
               <div>
                 {hasActiveSub && !cancelAtPeriodEnd ? (
                   <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-emerald-500/20">
-                    <CheckCircle2 size={12} />
+                    <CheckCircle size={12} />
                     Activa (Renovación automática)
                   </span>
                 ) : hasActiveSub && cancelAtPeriodEnd ? (
                   <span className="bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-amber-500/20">
-                    <AlertTriangle size={12} />
+                    <Warning size={12} />
                     Cancela próximamente
                   </span>
                 ) : (
@@ -210,13 +210,13 @@ export default async function SubscriptionPage() {
                         : 'Disponibles en este ciclo'}
                     </span>
                   </div>
-                  <div className="text-3xl font-bold text-primary">
+                  <div className="text-3xl font-bold text-flame-text">
                     {company.subscription_status === 'trialing' ? company.trial_credits : company.monthly_credits}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                  <Calendar size={16} className="text-zinc-400" />
+                  <CalendarBlank size={16} className="text-zinc-400" />
                   <span>
                     {cancelAtPeriodEnd
                       ? `Tu plan expira el ${formatStripeDate(periodEnd)}`
@@ -243,7 +243,7 @@ export default async function SubscriptionPage() {
                 <div>
                   <Link
                     href="/dashboard/pricing"
-                    className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-8 bg-orange-600 hover:bg-orange-700 text-white rounded-full px-5')}
+                    className={cn(buttonVariants({ variant: 'default' }), 'h-11 lg:h-8 bg-flame hover:bg-flame-strong text-on-flame rounded-full px-5')}
                   >
                     Ver planes disponibles
                   </Link>
@@ -343,10 +343,10 @@ export default async function SubscriptionPage() {
                           href={invoice.hosted_invoice_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 underline font-medium"
+                          className="inline-flex items-center gap-1 text-xs text-flame-text hover:text-ink underline font-medium"
                         >
                           Ver Recibo
-                          <ExternalLink size={12} />
+                          <ArrowSquareOut size={12} />
                         </a>
                       ) : (
                         <span className="text-xs text-muted-foreground">-</span>
@@ -368,7 +368,7 @@ export default async function SubscriptionPage() {
       <div className="flex justify-center pt-4">
         <Link
           href="/dashboard/pricing"
-          className={cn(buttonVariants({ variant: 'default' }), 'h-11 sm:h-9 bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-2')}
+          className={cn(buttonVariants({ variant: 'default' }), 'h-11 lg:h-9 bg-flame hover:bg-flame-strong text-on-flame rounded-full px-8 py-2')}
         >
           Ver más planes y precios
         </Link>

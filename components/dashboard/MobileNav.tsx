@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, X, LogOut } from 'lucide-react'
+import { List, X } from '@phosphor-icons/react'
+import { SignOut } from '@phosphor-icons/react'
 import { SidebarNav } from '@/components/dashboard/SidebarNav'
 import { signOutAction } from '@/lib/actions/auth'
 
@@ -60,7 +61,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
       {/* Top bar — solo móvil/tablet, oculta en desktop (lg:) donde vive el sidebar fijo */}
       <header className="no-print lg:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-white px-4 py-3 dark:bg-zinc-950 dark:border-zinc-800">
         <Link href="/dashboard" className="flex items-center">
-          <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" priority />
+          <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" priority />
         </Link>
         <button
           ref={openerRef}
@@ -71,7 +72,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
           aria-haspopup="dialog"
           className="flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
         >
-          <Menu size={22} />
+          <List size={22} />
         </button>
       </header>
 
@@ -96,7 +97,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
                 onClick={() => setOpen(false)}
                 className="flex items-center"
               >
-                <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
+                <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
               </Link>
               <button
                 ref={closeRef}
@@ -127,7 +128,7 @@ export function MobileNav({ isAdmin, userEmail }: MobileNavProps) {
                   type="submit"
                   className="nav-link w-full flex items-center gap-3 px-3 py-2 min-h-11 text-sm font-medium rounded-lg text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50 mt-2"
                 >
-                  <LogOut size={18} />
+                  <SignOut size={20} weight="duotone" />
                   Cerrar sesión
                 </button>
               </form>

@@ -18,8 +18,8 @@ const OBJETIVO_LABEL: Record<string, string> = { Promocion: 'Promoción' }
 function label(key: string) { return OBJETIVO_LABEL[key] ?? key }
 
 function scoreColor(score: number) {
-  if (score >= 75) return 'text-green-600 dark:text-green-400'
-  if (score >= 50) return 'text-yellow-600 dark:text-yellow-400'
+  if (score >= 75) return 'text-green-700 dark:text-green-400'
+  if (score >= 50) return 'text-yellow-700 dark:text-yellow-400'
   return 'text-destructive'
 }
 
@@ -51,9 +51,11 @@ export function EvaluationResultCard({
     <>
       {/* Encabezado con logo — solo visible al imprimir/descargar PDF */}
       <div className="hidden print:flex items-center gap-2 mb-2">
-        <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
+        <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
       </div>
 
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start print:grid-cols-1">
+      <div className="space-y-4 min-w-0">
       {/* Imagen o guion + score */}
       <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2">
         <div className="relative aspect-video bg-muted">
@@ -79,7 +81,7 @@ export function EvaluationResultCard({
       {targetFitScore != null && (
         <div className="rounded-xl border bg-card p-4 flex items-center justify-between reveal reveal-2">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Target Fit Score</p>
-          <p className="text-lg font-bold text-primary">{targetFitScore}</p>
+          <p className="text-lg font-bold text-flame-text">{targetFitScore}</p>
         </div>
       )}
 
@@ -99,16 +101,18 @@ export function EvaluationResultCard({
         </div>
       )}
 
+      </div>
+      <div className="space-y-4 min-w-0">
       {/* Fortalezas y oportunidades */}
       {((fortalezas?.length ?? 0) > 0 || (oportunidades?.length ?? 0) > 0) && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 reveal reveal-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 reveal reveal-4">
           {fortalezas && fortalezas.length > 0 && (
             <div className="rounded-xl border bg-card p-4 space-y-2">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Fortalezas</p>
               <ul className="space-y-1.5">
                 {fortalezas.map((f, i) => (
                   <li key={i} className="text-xs flex gap-2">
-                    <span className="text-primary mt-0.5">✓</span>
+                    <span className="text-flame-text mt-0.5">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
@@ -148,6 +152,9 @@ export function EvaluationResultCard({
           <p className="text-sm leading-relaxed">{sugerenciaAlternativa}</p>
         </div>
       )}
+
+      </div>
+      </div>
 
       {/* Costo/tokens — solo visible para admins (ver costInfo arriba) */}
       {costInfo && (

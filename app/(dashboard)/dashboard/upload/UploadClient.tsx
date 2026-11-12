@@ -88,9 +88,17 @@ const ALLOWED_TYPES = [...IMAGE_TYPES, ...SCRIPT_TYPES]
 const MAX_BYTES = 5 * 1024 * 1024
 
 const selectClass =
-  'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm ' +
+  'flex h-11 lg:h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm ' +
   'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ' +
   'disabled:cursor-not-allowed disabled:opacity-50'
+
+// Opción tipo chip: el checkbox sigue siendo real (teclado y lector de pantalla);
+// el chip entero es el objetivo táctil (44px en móvil).
+const chipClass =
+  'inline-flex min-h-11 lg:min-h-9 cursor-pointer items-center gap-2 rounded-full border border-ink/30 bg-card px-3 text-sm hover:border-ink/50 ' +
+  'transition-colors has-[:checked]:border-flame has-[:checked]:bg-flame/10 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-flame/60 ' +
+  'has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50'
+const checkClass = 'size-4 accent-flame'
 
 // Grupo de checkboxes multi-selección + "Todas" — usado por Edad y NSE.
 function MultiCheckboxGroup<T extends string>({
@@ -104,21 +112,21 @@ function MultiCheckboxGroup<T extends string>({
 }) {
   const allSelected = selected.length === options.length
   return (
-    <div className="space-y-1">
-      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{label}</span>
-      <div className="flex flex-col gap-1">
-        <label className="flex items-center gap-1.5 text-xs font-medium">
+    <fieldset className="space-y-1.5 min-w-0">
+      <legend className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">{label}</legend>
+      <div className="flex flex-wrap gap-2">
+        <label className={chipClass + ' font-medium'}>
           <input
             type="checkbox"
             checked={allSelected}
             onChange={() => onChange(allSelected ? [] : options.map((o) => o.value))}
             disabled={disabled}
-            className="accent-primary"
+            className={checkClass}
           />
           Todas
         </label>
         {options.map((o) => (
-          <label key={o.value} className="flex items-center gap-1.5 text-xs">
+          <label key={o.value} className={chipClass}>
             <input
               type="checkbox"
               checked={selected.includes(o.value)}
@@ -126,13 +134,13 @@ function MultiCheckboxGroup<T extends string>({
                 onChange(selected.includes(o.value) ? selected.filter((v) => v !== o.value) : [...selected, o.value])
               }
               disabled={disabled}
-              className="accent-primary"
+              className={checkClass}
             />
             {o.label}
           </label>
         ))}
       </div>
-    </div>
+    </fieldset>
   )
 }
 
@@ -302,7 +310,7 @@ export function UploadClient({
 
   // ── Render ────────────────────────────────────────────────
   return (
-    <div className="max-w-xl mx-auto px-4 py-12 space-y-6">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6">
       <div className="reveal reveal-1">
         <h1 className="text-2xl font-semibold mb-1">Analizar creatividad</h1>
         <p className="text-sm text-muted-foreground">
@@ -313,7 +321,7 @@ export function UploadClient({
       {/* ── Mensaje de suscripción requerida ── */}
       {!hasActiveOrTrial && (
         <div className="rounded-xl border bg-card p-8 flex flex-col items-center text-center space-y-4 reveal reveal-2 mt-8">
-          <div className="bg-orange-500/10 p-4 rounded-full text-orange-600 mb-2">
+          <div className="bg-flame/10 p-4 rounded-full text-flame-text mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
           <h2 className="text-xl font-semibold">Suscripción requerida</h2>
@@ -322,7 +330,7 @@ export function UploadClient({
           </p>
           <div className="pt-4">
             <Link href="/dashboard/pricing">
-              <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 py-3 sm:py-2 h-auto">
+              <Button className="bg-flame hover:bg-flame-strong text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto">
                 Ver planes y precios
               </Button>
             </Link>
@@ -333,7 +341,7 @@ export function UploadClient({
       {/* ── Mensaje Trial Consumido ── */}
       {isTrialExhausted && (
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-8 flex flex-col items-center text-center space-y-4 reveal reveal-2 mt-8">
-          <div className="bg-primary/20 p-4 rounded-full text-primary mb-2">
+          <div className="bg-primary/20 p-4 rounded-full text-flame-text mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
           </div>
           <h2 className="text-xl font-semibold">Crédito de prueba consumido</h2>
@@ -344,7 +352,7 @@ export function UploadClient({
             <Button 
               onClick={authorizeCharge} 
               disabled={isAuthorizing}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 py-3 sm:py-2 h-auto text-base font-semibold"
+              className="bg-flame hover:bg-flame-strong text-on-flame rounded-full px-8 py-3 sm:py-2 h-auto text-base font-semibold"
             >
               {isAuthorizing ? 'Autorizando...' : 'Autorizar Cobro'}
             </Button>
@@ -354,8 +362,8 @@ export function UploadClient({
 
       {/* ── Mensaje Créditos Mensuales Agotados ── */}
       {isMonthlyExhausted && (
-        <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 p-8 flex flex-col items-center text-center space-y-4 reveal reveal-2 mt-8">
-          <div className="bg-orange-500/20 p-4 rounded-full text-orange-600 mb-2">
+        <div className="rounded-xl border border-flame/20 bg-flame/5 p-8 flex flex-col items-center text-center space-y-4 reveal reveal-2 mt-8">
+          <div className="bg-flame/20 p-4 rounded-full text-flame-text mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           </div>
           <h2 className="text-xl font-semibold">Créditos agotados</h2>
@@ -367,7 +375,7 @@ export function UploadClient({
 
       {/* ── Mensaje Días de Prueba ── */}
       {subscriptionStatus === 'trialing' && trialCredits > 0 && (
-        <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-primary text-sm flex gap-3 items-start reveal reveal-1 shadow-sm">
+        <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-flame-text text-sm flex gap-3 items-start reveal reveal-1 shadow-sm">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <p>
             Te quedan <strong>{trialDaysLeft} {trialDaysLeft === 1 ? 'día' : 'días'}</strong> de tu periodo de prueba.
@@ -416,7 +424,7 @@ export function UploadClient({
           <div>
             <p className="text-sm font-medium">
               Arrastra tu imagen o guion aquí o{' '}
-              <span className="text-primary underline underline-offset-2">selecciona un archivo</span>
+              <span className="text-flame-text underline underline-offset-2">selecciona un archivo</span>
             </p>
             <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP, o PDF/DOC/DOCX/TXT (guion) · Máx. 5 MB</p>
           </div>
@@ -436,9 +444,9 @@ export function UploadClient({
 
       {/* ── Preview + controles (después de seleccionar) ── */}
       {preview && state.status !== 'done' && !isAnalyzing && (
-        <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2">
+        <div className="rounded-xl border overflow-hidden bg-card reveal reveal-2 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
           {/* Imagen o guion */}
-          <div className="relative aspect-video bg-muted">
+          <div className="relative aspect-video bg-muted lg:aspect-auto lg:min-h-[420px]">
             <CreativePreview src={preview} isText={isTextFile} alt="Preview" />
             {isUploading && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
@@ -451,7 +459,7 @@ export function UploadClient({
           </div>
 
           {/* Dropdowns + botón */}
-          <div className="p-4 space-y-4">
+          <div className="p-4 lg:p-6 space-y-4 lg:border-l">
             <div className="grid grid-cols-2 gap-3">
               {/* Medio */}
               <div className="space-y-1">
@@ -492,27 +500,31 @@ export function UploadClient({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="rounded-xl border border-ink/20 bg-muted/40 p-3 sm:p-4 space-y-4">
+              <div>
+                <p className="text-sm font-semibold">Target</p>
+                <p className="text-xs text-muted-foreground">¿A quién va dirigida la pieza? Elige género, edad y NSE.</p>
+              </div>
               {/* Género (multi-selección) */}
-              <div className="space-y-1">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <fieldset className="space-y-1.5 min-w-0">
+                <legend className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
                   Género
-                </span>
-                <div className="flex h-9 items-center gap-3">
+                </legend>
+                <div className="flex flex-wrap gap-2">
                   {GENEROS.map((g) => (
-                    <label key={g.value} className="flex items-center gap-1.5 text-sm">
+                    <label key={g.value} className={chipClass}>
                       <input
                         type="checkbox"
                         checked={genero.includes(g.value)}
                         onChange={() => toggleGenero(g.value)}
                         disabled={isBusy}
-                        className="accent-primary"
+                        className={checkClass}
                       />
                       {g.label}
                     </label>
                   ))}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Edad (multi-selección) */}
               <MultiCheckboxGroup
@@ -534,12 +546,12 @@ export function UploadClient({
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">
-              <Button variant="outline" size="sm" onClick={reset} disabled={isBusy} className="h-11 sm:h-7 sm:shrink-0">
+              <Button variant="outline" size="sm" onClick={reset} disabled={isBusy} className="h-11 lg:h-7 sm:shrink-0">
                 Cambiar imagen
               </Button>
               <Button
                 variant="brand"
-                className="flex-1 h-11 sm:h-8"
+                className="h-11 lg:h-8 sm:flex-1"
                 onClick={handleAnalyze}
                 disabled={!canAnalyze || isBusy}
               >

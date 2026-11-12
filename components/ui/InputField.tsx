@@ -1,13 +1,13 @@
 'use client'
 
-import type { LucideIcon } from 'lucide-react'
+import type { Icon } from '@phosphor-icons/react'
 
 interface InputFieldProps {
   label: string
   name: string
   type: 'text' | 'email' | 'password' | 'number'
   placeholder: string
-  icon: LucideIcon
+  icon: Icon
   error?: string
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void

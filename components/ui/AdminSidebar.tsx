@@ -3,11 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Building2, Tag, LayoutDashboard, LogOut } from 'lucide-react'
+import { Buildings, CurrencyCircleDollar, SquaresFour, SignOut } from '@phosphor-icons/react'
 
 const navItems = [
-  { label: 'Clientes', href: '/admin/clients',  icon: Building2     },
-  { label: 'Precios',  href: '/admin/pricing',   icon: Tag           },
+  { label: 'Clientes', href: '/admin/clients',  icon: Buildings },
+  { label: 'Precios',  href: '/admin/pricing',   icon: CurrencyCircleDollar },
 ]
 
 interface AdminSidebarProps {
@@ -22,7 +22,7 @@ export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
     <aside className="w-64 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex flex-col">
       <div className="p-6">
         <Link href="/admin/clients" className="flex items-center gap-2">
-          <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
+          <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
           <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
         </Link>
       </div>
@@ -40,7 +40,7 @@ export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
                   : 'text-[var(--color-text-secondary)] hover:bg-zinc-100 hover:text-[var(--color-text-primary)] dark:hover:bg-zinc-900 dark:hover:text-zinc-50'
               }`}
             >
-              <Icon size={18} />
+              <Icon size={20} weight={isActive ? 'fill' : 'duotone'} />
               {label}
             </Link>
           )
@@ -58,7 +58,7 @@ export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
                     : 'text-[var(--color-text-secondary)] hover:bg-zinc-100 hover:text-[var(--color-text-primary)] dark:hover:bg-zinc-900 dark:hover:text-zinc-50'
                 }`}
               >
-                <LayoutDashboard size={18} />
+                <SquaresFour size={20} weight={isActive ? 'fill' : 'duotone'} />
                 Ir al dashboard
               </Link>
             )
@@ -81,7 +81,7 @@ export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
             type="submit"
             className="nav-link w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50 mt-2"
           >
-            <LogOut size={18} />
+            <SignOut size={20} weight="duotone" />
             Cerrar sesión
           </button>
         </form>

@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { X, Trash2 } from 'lucide-react'
+import { X, Trash } from '@phosphor-icons/react'
 import { toggleTeamMemberAction, deleteTeamAction } from '@/lib/actions/teams'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/toast'
 
 interface TeamCardProps {
   teamId: string
@@ -15,6 +16,7 @@ interface TeamCardProps {
 }
 
 export function TeamCard({ teamId, name, members, nonMembers, isOwner }: TeamCardProps) {
+  const toast = useToast()
   const [isPending, setIsPending] = useState(false)
   const [selected, setSelected] = useState('')
   const router = useRouter()
@@ -25,7 +27,7 @@ export function TeamCard({ teamId, name, members, nonMembers, isOwner }: TeamCar
       await action()
       router.refresh()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Ocurrió un error.')
+      toast.error(err instanceof Error ? err.message : 'Ocurrió un error.')
     } finally {
       setIsPending(false)
     }
@@ -46,7 +48,7 @@ export function TeamCard({ teamId, name, members, nonMembers, isOwner }: TeamCar
             className="text-muted-foreground hover:text-destructive disabled:opacity-50"
             aria-label={`Eliminar equipo ${name}`}
           >
-            <Trash2 size={14} />
+            <Trash size={14} />
           </button>
         )}
       </div>

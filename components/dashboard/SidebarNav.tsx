@@ -3,19 +3,21 @@
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  LayoutDashboard,
-  Upload,
-  History,
+  SquaresFour,
+  Sparkle,
+  ClockCounterClockwise,
+  UsersThree,
   CreditCard,
   Tag,
-  Users,
-} from 'lucide-react'
+  UserCircle,
+  GearSix,
+} from '@phosphor-icons/react'
 
 const navItems = [
-  { label: 'Inicio',      href: '/dashboard',         icon: LayoutDashboard, exact: true  },
-  { label: 'Analizar',    href: '/dashboard/upload',  icon: Upload,          exact: false },
-  { label: 'Historial',   href: '/dashboard/history', icon: History,         exact: false },
-  { label: 'Equipo',      href: '/dashboard/team',    icon: Users,           exact: false },
+  { label: 'Inicio',      href: '/dashboard',         icon: SquaresFour, exact: true  },
+  { label: 'Analizar',    href: '/dashboard/upload',  icon: Sparkle,         exact: false },
+  { label: 'Historial',   href: '/dashboard/history', icon: ClockCounterClockwise, exact: false },
+  { label: 'Equipo',      href: '/dashboard/team',    icon: UsersThree,      exact: false },
   { label: 'Suscripción', href: '/dashboard/subscription', icon: CreditCard,      exact: false },
   { label: 'Planes y Precios', href: '/dashboard/pricing', icon: Tag,         exact: false },
 ]
@@ -51,7 +53,7 @@ export function SidebarNav({ isAdmin = false }: SidebarNavProps) {
                   : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50',
               ].join(' ')}
             >
-              <Icon size={18} className={isActive ? 'text-flame' : ''} />
+              <Icon size={20} weight={isActive ? 'fill' : 'duotone'} className={isActive ? 'text-flame-text' : ''} />
               {item.label}
             </Link>
           )
@@ -104,10 +106,11 @@ export function SidebarNav({ isAdmin = false }: SidebarNavProps) {
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 background: !inAdminMode ? 'var(--gradient-brand)' : 'transparent',
-                color: !inAdminMode ? 'white' : 'var(--color-text-secondary)',
+                color: !inAdminMode ? 'var(--color-on-flame)' : 'var(--color-text-secondary)',
               }}
             >
-              👤 Cliente
+              <UserCircle size={16} weight="duotone" aria-hidden />
+              Cliente
             </button>
 
             {/* Botón Admin */}
@@ -128,10 +131,11 @@ export function SidebarNav({ isAdmin = false }: SidebarNavProps) {
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 background: inAdminMode ? 'var(--gradient-brand)' : 'transparent',
-                color: inAdminMode ? 'white' : 'var(--color-text-secondary)',
+                color: inAdminMode ? 'var(--color-on-flame)' : 'var(--color-text-secondary)',
               }}
             >
-              ⚙️ Admin
+              <GearSix size={16} weight="duotone" aria-hidden />
+              Admin
             </button>
           </div>
         </div>

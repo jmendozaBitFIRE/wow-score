@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Mail, Phone, ArrowUpRight } from 'lucide-react'
+import { Envelope, Phone, ArrowUpRight } from '@phosphor-icons/react'
 
 // ── ICONS ────────────────────────────────────────────────────────────────────
 const LinkedinIcon = ({ size = 18 }: { size?: number }) => (
@@ -100,17 +100,17 @@ function FooterLogo() {
     <motion.div variants={itemVariants} className="flex flex-col gap-5">
       {/* Brand mark */}
       <Link href="/" className="flex items-center group w-fit hover:opacity-80 transition-opacity">
-        <Image src="/logo-full.png" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
+        <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-8 w-auto" />
       </Link>
 
       {/* Description */}
-      <p className="text-[14px] text-[#FBFBFB] leading-relaxed max-w-[280px]">
+      <p className="text-[14px] text-paper leading-relaxed max-w-[280px]">
         La fórmula impulsada por IA que mide la creatividad publicitaria en 10 dimensiones. Analiza tus piezas, descubre su verdadero potencial y toma decisiones más inteligentes.
       </p>
 
       {/* Social links */}
       <div className="flex flex-col gap-3">
-        <p className="text-[13px] font-bold text-[#FBFBFB] tracking-wider uppercase">
+        <p className="text-[13px] font-bold text-paper tracking-wider uppercase">
           Síguenos
         </p>
         <div className="flex items-center gap-2.5">
@@ -121,7 +121,7 @@ function FooterLogo() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={label}
-              className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#F97303] hover:border-[#F97303] hover:text-[#1D1D1B] transition-all duration-300 text-[#FBFBFB] hover:scale-105"
+              className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-flame hover:border-flame hover:text-ink transition duration-300 text-paper hover:scale-105"
             >
               <Icon size={16} />
             </a>
@@ -144,10 +144,10 @@ function FooterColumn({
 }) {
   return (
     <motion.div variants={itemVariants} className="flex flex-col gap-4">
-      <p className="text-[15px] font-extrabold text-[#FBFBFB] tracking-wider uppercase">
+      <p className="text-[15px] font-extrabold text-paper tracking-wider uppercase">
         {title}
       </p>
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-0 lg:gap-3">
         {links.map(({ label, href }) => {
           const isExternal = href.startsWith('http')
           const LinkComponent = isExternal ? 'a' : Link
@@ -157,12 +157,12 @@ function FooterColumn({
               <LinkComponent
                 href={href}
                 {...(isExternal && { target: '_blank', rel: 'noopener noreferrer' })}
-                className="group inline-flex items-center gap-1 text-[14px] text-[#FBFBFB] hover:text-[#F97303] transition-colors duration-200 font-medium"
+                className="group inline-flex min-h-11 items-center gap-1 lg:min-h-0 text-[14px] text-paper hover:text-flame transition-colors duration-200 font-medium"
               >
                 <span>{label}</span>
                 <ArrowUpRight
                   size={13}
-                  className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
+                  className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition duration-200"
                 />
               </LinkComponent>
             </li>
@@ -187,14 +187,14 @@ function FooterContact() {
         {/* Email */}
         <a
           href="mailto:hola@wowscore.com"
-          className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-[#F97303]/10 hover:border-[#F97303]/30 transition-all duration-300"
+          className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-flame/10 hover:border-flame/30 transition duration-300"
         >
-          <div className="w-8 h-8 rounded-full bg-[#F97303]/10 border border-[#F97303]/20 flex items-center justify-center shrink-0 group-hover:bg-[#F97303] group-hover:border-[#F97303] transition-colors">
-            <Mail size={14} className="text-[#F97303] group-hover:text-[#1D1D1B] transition-colors" />
+          <div className="w-8 h-8 rounded-full bg-flame/10 border border-flame/20 flex items-center justify-center shrink-0 group-hover:bg-flame group-hover:border-flame transition-colors">
+            <Envelope size={14} className="text-flame group-hover:text-ink transition-colors" />
           </div>
           <div className="flex flex-col">
-            <span className="text-[10px] text-[#FBFBFB] font-medium leading-tight">Escríbenos</span>
-            <span className="text-[12px] text-[#FBFBFB] font-semibold group-hover:text-[#F97303] transition-colors whitespace-nowrap">
+            <span className="text-[10px] text-paper font-medium leading-tight">Escríbenos</span>
+            <span className="text-[12px] text-paper font-semibold group-hover:text-flame transition-colors whitespace-nowrap">
               hola@wowscore.com
             </span>
           </div>
@@ -203,14 +203,14 @@ function FooterContact() {
         {/* Phone */}
         <a
           href="tel:+1234567890"
-          className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-[#F97303]/10 hover:border-[#F97303]/30 transition-all duration-300"
+          className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 hover:bg-flame/10 hover:border-flame/30 transition duration-300"
         >
-          <div className="w-8 h-8 rounded-full bg-[#F97303]/10 border border-[#F97303]/20 flex items-center justify-center shrink-0 group-hover:bg-[#F97303] group-hover:border-[#F97303] transition-colors">
-            <Phone size={14} className="text-[#F97303] group-hover:text-[#1D1D1B] transition-colors" />
+          <div className="w-8 h-8 rounded-full bg-flame/10 border border-flame/20 flex items-center justify-center shrink-0 group-hover:bg-flame group-hover:border-flame transition-colors">
+            <Phone size={14} className="text-flame group-hover:text-ink transition-colors" />
           </div>
           <div className="flex flex-col">
-            <span className="text-[10px] text-[#FBFBFB] font-medium leading-tight">Llámanos</span>
-            <span className="text-[12px] text-[#FBFBFB] font-semibold group-hover:text-[#F97303] transition-colors whitespace-nowrap">
+            <span className="text-[10px] text-paper font-medium leading-tight">Llámanos</span>
+            <span className="text-[12px] text-paper font-semibold group-hover:text-flame transition-colors whitespace-nowrap">
               +1 (234) 567-890
             </span>
           </div>
@@ -228,10 +228,10 @@ export function LandingFooter() {
   return (
     <footer
       ref={footerRef}
-      className="relative bg-[#1D1D1B] text-[#FBFBFB] overflow-hidden border-t border-white/10"
+      className="relative bg-ink text-paper overflow-hidden border-t border-white/10"
     >
       {/* Subtle top glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[radial-gradient(ellipse,rgba(249,115,3,0.06)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[radial-gradient(ellipse,rgba(246,101,2,0.06)_0%,transparent_70%)] pointer-events-none" />
 
       <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-20">
         {/* Main grid */}
@@ -258,17 +258,17 @@ export function LandingFooter() {
         <div className="border-t border-white/10" />
 
         {/* Bottom row: copyright + legal */}
-        <div className="pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <p className="text-[12px] text-[#FBFBFB] font-medium order-2 sm:order-1">
+        <div className="pt-6 pb-24 sm:pb-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-[12px] text-paper font-medium order-2 sm:order-1">
             © {new Date().getFullYear()} WOW Score. Todos los derechos reservados.
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 order-1 sm:order-2">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-0 sm:gap-y-2 order-1 sm:order-2">
             {LEGAL_LINKS.map(({ label, href }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-[12px] text-[#FBFBFB] hover:text-[#F97303] transition-colors duration-200 font-medium"
+                className="inline-flex min-h-11 items-center text-[12px] text-paper hover:text-flame transition-colors duration-200 font-medium sm:min-h-0"
               >
                 {label}
               </Link>

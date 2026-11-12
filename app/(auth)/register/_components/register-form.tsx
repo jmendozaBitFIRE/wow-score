@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import Link from 'next/link'
-import { User, Building2, Mail } from 'lucide-react'
+import { User, Buildings, Envelope } from '@phosphor-icons/react'
 import { registerAction } from '@/lib/actions/auth'
 import { FormCard } from '@/components/ui/FormCard'
 import { InputField } from '@/components/ui/InputField'
@@ -50,7 +50,7 @@ export function RegisterForm() {
           name="company_name"
           type="text"
           placeholder="Mi Empresa"
-          icon={Building2}
+          icon={Buildings}
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
           required
@@ -61,7 +61,7 @@ export function RegisterForm() {
           name="email"
           type="email"
           placeholder="maria@empresa.com"
-          icon={Mail}
+          icon={Envelope}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -94,7 +94,7 @@ export function RegisterForm() {
         <Link
           href="/login"
           className="font-medium hover:underline"
-          style={{ color: 'var(--color-flame)' }}
+          style={{ color: 'var(--color-flame-text)' }}
         >
           Inicia sesión
         </Link>

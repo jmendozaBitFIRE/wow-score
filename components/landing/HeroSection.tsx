@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePrefersReducedMotion } from './ui/usePrefersReducedMotion'
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const METRICS = [
@@ -55,6 +56,7 @@ const lineVariants = {
  */
 function ScrollIndicator() {
   const [isVisible, setIsVisible] = useState(true)
+  const reduceMotion = usePrefersReducedMotion()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,7 +78,7 @@ function ScrollIndicator() {
           transition={{ duration: 0.4, delay: 1.5 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 cursor-pointer"
           onClick={() => {
-            document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })
+            document.getElementById('como-funciona')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
           }}
         >
           {/* Text label */}
@@ -87,7 +89,7 @@ function ScrollIndicator() {
           {/* Animated mouse icon */}
           <div className="relative w-6 h-10 md:w-7 md:h-11 border-2 border-white/30 rounded-full flex justify-center">
             <motion.div
-              animate={{
+              animate={reduceMotion ? undefined : {
                 y: [0, 12, 0],
                 opacity: [1, 0.3, 1],
               }}
@@ -96,13 +98,13 @@ function ScrollIndicator() {
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}
-              className="w-1 h-2 md:w-1.5 md:h-2.5 bg-[#F97303] rounded-full mt-2"
+              className="w-1 h-2 md:w-1.5 md:h-2.5 bg-flame rounded-full mt-2"
             />
           </div>
           
           {/* Small chevron arrow */}
           <motion.div
-            animate={{ y: [0, 4, 0] }}
+            animate={reduceMotion ? undefined : { y: [0, 4, 0] }}
             transition={{
               duration: 1.8,
               repeat: Infinity,
@@ -181,7 +183,7 @@ function AnimatedBackground() {
           size: Math.random() * 2 + 1,
           opacity: Math.random() * 0.5 + 0.1,
           targetOpacity: Math.random() * 0.5 + 0.1,
-          color: Math.random() > 0.5 ? '#F97303' : '#4ade80',
+          color: Math.random() > 0.5 ? '#F66502' : '#4ade80',
         })
       }
     }
@@ -191,10 +193,16 @@ function AnimatedBackground() {
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY }
     }
-    window.addEventListener('mousemove', handleMouseMove)
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window.addEventListener('mousemove', handleMouseMove)
+    }
+
+    // Con movimiento reducido se dibuja un solo cuadro estático, sin loop ni seguimiento del cursor
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     // Animation loop
-    let animationFrameId: number
+    let animationFrameId = 0
+    let isRunning = false
     const animate = () => {
       // Clear canvas with semi-transparent background for trail effect
       ctx.fillStyle = 'rgba(29, 29, 27, 0.02)'
@@ -271,7 +279,7 @@ function AnimatedBackground() {
         ctx.translate(canvas.width / 2 + Math.sin(time + i) * 200, canvas.height / 2 + Math.cos(time + i * 1.5) * 200)
         ctx.rotate(time + i * Math.PI / 3)
         
-        ctx.strokeStyle = `rgba(249, 115, 3, ${0.05 + Math.sin(time + i) * 0.03})`
+        ctx.strokeStyle = `rgba(246, 101, 2, ${0.05 + Math.sin(time + i) * 0.03})`
         ctx.lineWidth = 1
         ctx.beginPath()
         for (let j = 0; j < 6; j++) {
@@ -296,15 +304,32 @@ function AnimatedBackground() {
         ctx.stroke()
       }
 
-      animationFrameId = requestAnimationFrame(animate)
+      if (!reduceMotion && isRunning) animationFrameId = requestAnimationFrame(animate)
     }
 
-    animate()
+    // El loop solo corre mientras el hero es visible: fuera de pantalla gastaba ~16% del hilo principal.
+    const start = () => {
+      if (isRunning) return
+      isRunning = true
+      animationFrameId = requestAnimationFrame(animate)
+    }
+    const stop = () => {
+      isRunning = false
+      cancelAnimationFrame(animationFrameId)
+    }
+    animate() // primer cuadro (único con movimiento reducido)
+    const observer = new IntersectionObserver(([entry]) => {
+      if (reduceMotion) return
+      if (entry.isIntersecting) start()
+      else stop()
+    })
+    observer.observe(canvas)
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
       window.removeEventListener('mousemove', handleMouseMove)
-      cancelAnimationFrame(animationFrameId)
+      stop()
+      observer.disconnect()
     }
   }, [])
 
@@ -326,11 +351,11 @@ function HeroBadge() {
   return (
     <motion.div
       variants={itemVariants}
-      className="inline-flex items-center gap-2.5 bg-[#F97303]/10 border border-[#F97303]/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-[#F97303] mb-2 select-none"
+      className="inline-flex items-center gap-2.5 bg-flame/10 border border-flame/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-flame mb-2 select-none"
     >
       <div className="relative flex h-1.5 w-1.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F97303] opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#F97303]"></span>
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-flame opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-flame"></span>
       </div>
       Powered by IA · Fórmula WOW Score
     </motion.div>
@@ -345,13 +370,13 @@ function HeroActions() {
     <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4">
       <Link
         href="/register"
-        className="bg-[#F97303] text-white font-bold px-8 py-4 rounded-xl text-sm hover:bg-[#ff8c20] transition-all duration-200 shadow-[0_4px_14px_rgba(249,115,3,0.15)] hover:shadow-[0_12px_32px_rgba(249,115,3,0.3)] hover:-translate-y-0.5 inline-flex items-center"
+        className="bg-flame text-on-flame font-bold tracking-[0.01em] px-8 py-4 rounded-xl text-[19px] hover:bg-flame-strong transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_12px_32px_rgba(246,101,2,0.3)] hover:-translate-y-0.5 inline-flex items-center"
       >
         Evalúa ahora gratis →
       </Link>
       <a
         href="#como-funciona"
-        className="bg-[#F97303]/25 border border-[#F97303]/80 text-white font-bold px-6 py-4 rounded-xl text-sm transition-all duration-200 inline-flex items-center gap-1.5 hover:bg-[#F97303]/20 hover:border-[#F97303]/40 hover:shadow-[0_8px_20px_rgba(249,115,3,0.1)] hover:-translate-y-0.5"
+        className="bg-flame/25 border border-flame/80 text-white font-bold tracking-[0.01em] px-6 py-4 rounded-xl text-[19px] transition duration-200 inline-flex items-center gap-1.5 hover:bg-flame/20 hover:border-flame/40 hover:shadow-[0_8px_20px_rgba(246,101,2,0.1)] hover:-translate-y-0.5"
       >
         Ver cómo funciona →
       </a> 
@@ -366,8 +391,8 @@ function HeroTrust() {
   return (
     <motion.div variants={itemVariants} className="flex flex-wrap gap-5  mb-6">
       {TRUST_ITEMS.map((item) => (
-        <div key={item} className="flex items-center gap-1.5 text-xs text-[#FBFBFB] font-medium">
-          <span className="text-[#F97303] font-bold text-sm">✓</span>
+        <div key={item} className="flex items-center gap-1.5 text-xs text-paper font-medium">
+          <span className="text-flame font-bold text-sm">✓</span>
           {item}
         </div>
       ))}
@@ -387,13 +412,13 @@ interface MetricRowProps {
 function MetricRow({ label, value, isGreen }: MetricRowProps) {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="text-[12px] text-[#fbfbfb] w-[110px] shrink-0 font-medium">{label}</span>
+      <span className="text-[12px] text-paper w-[110px] shrink-0 font-medium">{label}</span>
       <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
         <motion.div
           initial={{ width: '0%' }}
           animate={{ width: `${value}%` }}
           transition={{ delay: 0.8, duration: 1.4, ease: [0.4, 0, 0.2, 1] }}
-          className={`h-full rounded-full ${isGreen ? 'bg-[#4ade80]' : 'bg-[#F97303]'}`}
+          className={`h-full rounded-full ${isGreen ? 'bg-[#4ade80]' : 'bg-flame'}`}
         />
       </div>
       <span className="text-[12px] font-bold text-white w-6 text-right select-none">{value}</span>
@@ -405,9 +430,12 @@ function MetricRow({ label, value, isGreen }: MetricRowProps) {
  * ScoreCard renders the mock advertising analysis dashboard.
  */
 function ScoreCard() {
-  const [score, setScore] = useState(0)
+  const reduceMotion = usePrefersReducedMotion()
+  const [animatedScore, setScore] = useState(0)
+  const score = reduceMotion ? 87 : animatedScore
 
   useEffect(() => {
+    if (reduceMotion) return
     const timer = setTimeout(() => {
       let startTimestamp: number | null = null
       const duration = 1600
@@ -426,7 +454,7 @@ function ScoreCard() {
     }, 800)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [reduceMotion])
 
   return (
     <motion.div
@@ -436,12 +464,12 @@ function ScoreCard() {
       className="relative w-full max-w-[420px] bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[28px] p-8 shadow-[0_25px_80px_rgba(0,0,0,0.55)] overflow-hidden"
     >
       {/* Top right gradient glow */}
-      <div className="absolute -top-[60px] -right-[60px] w-[180px] h-[180px] bg-[radial-gradient(circle,rgba(249,115,3,0.12),transparent_70%)] pointer-events-none" />
+      <div className="absolute -top-[60px] -right-[60px] w-[180px] h-[180px] bg-[radial-gradient(circle,rgba(246,101,2,0.12),transparent_70%)] pointer-events-none" />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <span className="text-xs text-[#FBFBFB] font-medium">OOH · Branding</span>
-        <span className="bg-[#F97303]/10 border border-[#F97303]/20 text-[#FBFBFB] text-[11px] font-semibold px-2.5 py-0.5 rounded-full tracking-wider">
+        <span className="text-xs text-paper font-medium">OOH · Branding</span>
+        <span className="bg-flame/10 border border-flame/20 text-paper text-[11px] font-semibold px-2.5 py-0.5 rounded-full tracking-wider">
           WOW Score
         </span>
       </div>
@@ -449,11 +477,11 @@ function ScoreCard() {
       {/* Score Row */}
       <div className="flex items-end justify-between mb-6">
         <div>
-          <div className="text-[13px] text-[#FBFBFB] font-semibold mb-1">WOW Score</div>
-          <div className="font-heading text-8xl font-extrabold text-[#F97303] leading-none tracking-[-3px]">
+          <div className="text-[13px] text-paper font-semibold mb-1">WOW Score</div>
+          <div className="font-heading text-8xl font-extrabold text-flame leading-none tracking-[-3px]">
             {score}
           </div>
-          <div className="text-[13px] text-[#FBFBFB] mt-1">/ 100 puntos</div>
+          <div className="text-[13px] text-paper mt-1">/ 100 puntos</div>
         </div>
       </div>
 
@@ -475,7 +503,7 @@ function ScoreCard() {
       </div>
 
       {/* Footer */}
-      <div className="mt-5 pt-4 border-t border-white/10 flex items-center gap-2 text-xs text-[#fbfbfb]">
+      <div className="mt-5 pt-4 border-t border-white/10 flex items-center gap-2 text-xs text-paper">
         <div className="relative flex h-1.5 w-1.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4ade80] opacity-75"></span>
           <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#4ade80]"></span>
@@ -491,13 +519,13 @@ export function HeroSection() {
   return (
     <section
       id="inicio"
-      className="relative min-h-screen bg-[#1D1D1B] text-white overflow-hidden flex items-center pt-40 pb-16 lg:pt-32 lg:pb-16 select-text"
+      className="relative min-h-screen bg-ink text-white overflow-hidden flex items-center pt-40 pb-16 lg:pt-32 lg:pb-16 select-text"
     >
       {/* Animated Canvas Background */}
       <AnimatedBackground />
 
       {/* Radial Glow Effect (kept for additional depth) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-[radial-gradient(circle,rgba(249,115,3,0.08)_0%,rgba(249,115,3,0.02)_40%,transparent_75%)] blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-[radial-gradient(circle,rgba(246,101,2,0.08)_0%,rgba(246,101,2,0.02)_40%,transparent_75%)] blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 w-full">
         <motion.div
@@ -516,18 +544,18 @@ export function HeroSection() {
             >
               ¿Tu publicidad<br />
               realmente<br />
-              <span className="relative inline-block text-[#F97303] not-italic">
+              <span className="relative inline-block text-flame not-italic">
                 impacta?
                 <motion.span
                   variants={lineVariants}
-                  className="absolute bottom-1 left-0 right-0 h-[3px] bg-[#F97303] rounded-full origin-left"
+                  className="absolute bottom-1 left-0 right-0 h-[3px] bg-flame rounded-full origin-left"
                 />
               </span>
             </motion.h1>
 
             <motion.p
               variants={itemVariants}
-              className="text-base text-[#FBFBFB] max-w-[480px] leading-relaxed mb-9"
+              className="text-base text-paper max-w-[480px] leading-relaxed mb-9"
             >
               Sube tu pieza publicitaria, selecciona el medio y objetivo, y obtén un análisis detallado basado en 10 dimensiones de creatividad. Decisiones más inteligentes. Campañas que conectan.
             </motion.p>

@@ -27,7 +27,7 @@ export function FloatingWhatsApp() {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             whileHover={{ scale: 1.1 }}
-            className="relative group p-4 bg-[#25D366] text-white rounded-full shadow-[0_12px_32px_rgba(37,211,102,0.35)] transition-all"
+            className="relative group p-4 bg-[#25D366] text-white rounded-full shadow-[0_12px_32px_rgba(37,211,102,0.35)] transition"
             aria-label="Hablar por WhatsApp"
         >
             {/* Pulsing effect */}
@@ -39,7 +39,7 @@ export function FloatingWhatsApp() {
             </div>
 
             {/* Tooltip */}
-            <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-[#1D1D1B] text-white border border-[#F97303] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
+            <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-ink text-white border border-flame px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
                 Chatea con nosotros
             </div>
         </motion.a>

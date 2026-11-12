@@ -86,7 +86,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   const isTextCreative = getScriptExtension(evaluation.image_url) !== null
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-12 space-y-4">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-4">
       {/* Header */}
       <div className="reveal reveal-1">
         <Link href="/dashboard/history" className="no-print text-xs text-muted-foreground hover:text-foreground transition-colors">

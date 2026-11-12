@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Check } from 'lucide-react'
+import { Check } from '@phosphor-icons/react'
 import type { StripePlan } from '@/lib/stripe'
 
 // ── TYPES ────────────────────────────────────────────────────────────────────
@@ -74,11 +74,11 @@ function SectionBadge() {
   return (
     <motion.div
       variants={headerItemVariants}
-      className="inline-flex items-center gap-2.5 bg-[#F97303]/10 border border-[#F97303]/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-[#F97303] mb-5 select-none"
+      className="inline-flex items-center gap-2.5 bg-flame/10 border border-flame/25 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-wider uppercase text-flame mb-5 select-none"
     >
       <div className="relative flex h-1.5 w-1.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F97303] opacity-75" />
-        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#F97303]" />
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-flame opacity-75" />
+        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-flame" />
       </div>
       Transparencia total
     </motion.div>
@@ -100,10 +100,10 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 
       <motion.h2
         variants={headerItemVariants}
-        className="font-heading font-bold text-[clamp(32px,4.5vw,48px)] leading-[1.05] tracking-[-2px] text-[#FBFBFB] mb-5"
+        className="font-heading font-bold text-[clamp(32px,4.5vw,48px)] leading-[1.05] tracking-[-2px] text-paper mb-5"
       >
         Planes simples, <br />
-        <span className="text-[#F97303] relative inline-block">
+        <span className="text-flame relative inline-block">
           valor claro
           <svg
             className="absolute -bottom-2 left-0 w-full"
@@ -114,7 +114,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
           >
             <path
               d="M2 9C50 3 150 3 298 9"
-              stroke="#F97303"
+              stroke="var(--color-flame)"
               strokeWidth="3"
               strokeLinecap="round"
               className="opacity-60"
@@ -125,7 +125,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 
       <motion.p
         variants={headerItemVariants}
-        className="text-base text-[#FBFBFB] max-w-[500px] mx-auto leading-relaxed"
+        className="text-base text-paper max-w-[500px] mx-auto leading-relaxed"
       >
         Cancela cuando quieras. Sin letra chica ni sorpresas ocultas.
       </motion.p>
@@ -139,8 +139,8 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
 function FeatureItem({ text }: { text: string }) {
   return (
     <li className="flex items-start gap-3 mb-3.5">
-      <Check size={18} className="text-[#F97303] shrink-0 mt-0.5" strokeWidth={3} />
-      <span className="text-sm font-medium text-[#FBFBFB] leading-relaxed">{text}</span>
+      <Check size={18} className="text-flame shrink-0 mt-0.5" />
+      <span className="text-sm font-medium text-paper leading-relaxed">{text}</span>
     </li>
   )
 }
@@ -215,11 +215,11 @@ export function PreciosSection() {
     <section
       id="precios"
       ref={sectionRef}
-      className="relative bg-[#1D1D1D] text-[#FBFBFB] py-20 md:py-28 overflow-hidden"
+      className="relative bg-ink text-paper py-20 md:py-28 overflow-hidden"
     >
       {/* Background accents */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(249,115,3,0.06)_0%,transparent_70%)] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(249,115,3,0.04),transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(246,101,2,0.06)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(246,101,2,0.04),transparent_70%)] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
         <SectionHeader isInView={isInView} />
@@ -239,8 +239,8 @@ export function PreciosSection() {
                 <button
                   key={label}
                   onClick={() => setAnnual(isAnual)}
-                  className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 z-10 ${
-                    active ? 'text-[#1D1D1B]' : 'text-white hover:text-white'
+                  className={`relative flex min-h-11 items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition duration-300 z-10 ${
+                    active ? 'text-ink' : 'text-white hover:text-white'
                   }`}
                 >
                   {active && (
@@ -252,7 +252,7 @@ export function PreciosSection() {
                   )}
                   {label}
                   {isAnual && (
-                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full transition-colors ${active ? 'bg-[#F97303] text-white' : 'bg-white/10 text-white'}`}>
+                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full transition-colors ${active ? 'bg-flame text-on-flame' : 'bg-white/10 text-white'}`}>
                       -20%
                     </span>
                   )}
@@ -296,7 +296,7 @@ export function PreciosSection() {
 
             <Link
               href="/register"
-              className="block w-full text-center bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm px-6 py-4 rounded-xl transition-all duration-200"
+              className="block w-full text-center bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm px-6 py-4 rounded-xl transition duration-200"
             >
               Valida tu creatividad →
             </Link>
@@ -305,14 +305,14 @@ export function PreciosSection() {
           {/* Card Team */}
           <motion.div
             variants={cardVariants}
-            className="relative flex flex-col bg-gradient-to-b from-[#F97303]/10 to-transparent border-2 border-[#F97303] rounded-[24px] p-8 md:p-10 shadow-[0_0_30px_rgba(249,115,3,0.15)]"
+            className="relative flex flex-col bg-gradient-to-b from-flame/10 to-transparent border-2 border-flame rounded-[24px] p-8 md:p-10 shadow-[0_0_30px_rgba(246,101,2,0.15)]"
           >
             {/* Badge Más popular */}
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#F97303] to-[#F04601] text-white text-[11px] font-bold tracking-wider uppercase px-4 py-1.5 rounded-full shadow-[0_4px_12px_rgba(249,115,3,0.3)]">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-flame to-flame-strong text-on-flame text-[11px] font-bold tracking-wider uppercase px-4 py-1.5 rounded-full shadow-[0_4px_12px_rgba(246,101,2,0.3)]">
               Más popular
             </div>
 
-            <p className="text-xs font-semibold text-[#F97303] tracking-wider uppercase mb-5">
+            <p className="text-xs font-semibold text-flame tracking-wider uppercase mb-5">
               Para agencias y equipos
             </p>
 
@@ -334,7 +334,7 @@ export function PreciosSection() {
 
             <Link
               href="/register"
-              className="block w-full text-center bg-[#F97303] hover:bg-[#ff8c20] text-white font-bold text-sm px-6 py-4 rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(249,115,3,0.15)] hover:shadow-[0_8px_24px_rgba(249,115,3,0.25)] hover:-translate-y-0.5"
+              className="block w-full text-center bg-flame hover:bg-flame-strong text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5"
             >
               Mi equipo necesita esto →
             </Link>
@@ -346,7 +346,7 @@ export function PreciosSection() {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: 0.7 }}
-          className="text-center text-sm font-medium text-[#FBFBFB] flex items-center justify-center gap-2"
+          className="text-center text-sm font-medium text-paper flex items-center justify-center gap-2"
         >
           <span>💳</span> Sin tarjeta de crédito para empezar · Pago seguro con Stripe
         </motion.p>

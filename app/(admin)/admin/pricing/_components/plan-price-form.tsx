@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { updatePlanPrice } from '@/lib/actions/admin'
 import { Button } from '@/components/ui/button'
-import { Check, Loader2 } from 'lucide-react'
+import { Check, CircleNotch } from '@phosphor-icons/react'
 
 interface PlanPrice {
   id: string
@@ -83,7 +83,7 @@ export function PlanPriceForm({ plan }: { plan: PlanPrice }) {
 
         <Button type="submit" size="sm" disabled={isPending} className="min-w-[120px]">
           {isPending ? (
-            <><Loader2 size={14} className="animate-spin mr-1.5" />Guardando…</>
+            <><CircleNotch size={14} className="animate-spin mr-1.5" />Guardando…</>
           ) : saved ? (
             <><Check size={14} className="mr-1.5" />Guardado</>
           ) : (

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Users, UsersRound } from 'lucide-react'
+import { Users, UsersThree } from '@phosphor-icons/react/ssr'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { InviteMemberForm } from '@/components/dashboard/InviteMemberForm'
@@ -84,7 +84,7 @@ export default async function TeamPage() {
     <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12 space-y-6">
       <div>
         <h1 className="text-2xl font-semibold mb-1 flex items-center gap-2">
-          <Users size={22} className="text-primary" />
+          <Users size={22} className="text-flame-text" />
           Equipo
         </h1>
         <p className="text-sm text-muted-foreground">
@@ -139,7 +139,7 @@ export default async function TeamPage() {
 
       <div className="space-y-3">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <UsersRound size={18} className="text-primary" />
+          <UsersThree size={18} className="text-flame-text" />
           Equipos
         </h2>
 

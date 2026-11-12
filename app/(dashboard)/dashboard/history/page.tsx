@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ImageOff, FileText, Lock, UsersRound, Building2, Globe } from 'lucide-react'
+import { ImageBroken, FileText, Lock, UsersThree, Buildings, Globe } from '@phosphor-icons/react/ssr'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buildVisibilityOrFilter } from '@/lib/visibility'
@@ -25,8 +25,8 @@ interface Evaluation {
 
 const VISIBILITY_ICON: Record<Visibility, typeof Lock> = {
   private: Lock,
-  team: UsersRound,
-  company: Building2,
+  team: UsersThree,
+  company: Buildings,
   public: Globe,
 }
 
@@ -44,8 +44,8 @@ function label(key: string) {
 
 function scoreColor(score: number | null) {
   if (score === null) return 'text-muted-foreground'
-  if (score >= 75) return 'text-green-600 dark:text-green-400'
-  if (score >= 50) return 'text-yellow-600 dark:text-yellow-400'
+  if (score >= 75) return 'text-green-700 dark:text-green-400'
+  if (score >= 50) return 'text-yellow-700 dark:text-yellow-400'
   return 'text-destructive'
 }
 
@@ -129,7 +129,7 @@ export default async function HistoryPage() {
             <Link
               key={ev.id}
               href={`/results/${ev.id}`}
-              className="rounded-xl border bg-card flex gap-3 sm:gap-4 p-3 sm:p-4 items-start cursor-pointer transition-all duration-200 hover:shadow-[0_4px_16px_rgba(29,29,27,0.10)] hover:-translate-y-0.5 hover:border-[var(--color-flame)] block"
+              className="rounded-xl border bg-card flex gap-3 sm:gap-4 p-3 sm:p-4 items-start cursor-pointer transition duration-200 hover:shadow-[0_4px_16px_rgba(29,29,27,0.10)] hover:-translate-y-0.5 hover:border-[var(--color-flame)] block"
             >
               {/* Thumbnail */}
               <div className="relative h-14 w-14 sm:h-16 sm:w-24 shrink-0 rounded-md overflow-hidden bg-muted">
@@ -147,7 +147,7 @@ export default async function HistoryPage() {
                   />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                    <ImageOff size={20} />
+                    <ImageBroken size={20} />
                   </div>
                 )}
               </div>

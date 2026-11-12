@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { FileText } from 'lucide-react'
+import { FileText } from '@phosphor-icons/react/ssr'
 
 // Un guion de audio no tiene nada que "ver" — se muestra un placeholder
 // en vez de intentar renderizar el .txt como imagen.

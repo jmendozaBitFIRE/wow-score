@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lock, UsersRound, Building2, Globe, Copy, Check } from 'lucide-react'
+import { Lock, UsersThree, Buildings, Globe, Copy, Check } from '@phosphor-icons/react'
 import { updateVisibilityAction, type Visibility } from '@/lib/actions/evaluations'
+import { useToast } from '@/components/ui/toast'
 
 const OPTIONS: { value: Visibility; label: string; icon: typeof Lock }[] = [
   { value: 'private', label: 'Privado', icon: Lock },
-  { value: 'team', label: 'Equipo', icon: UsersRound },
-  { value: 'company', label: 'Compañía', icon: Building2 },
+  { value: 'team', label: 'Equipo', icon: UsersThree },
+  { value: 'company', label: 'Compañía', icon: Buildings },
   { value: 'public', label: 'Público', icon: Globe },
 ]
 
@@ -20,6 +21,7 @@ interface VisibilityControlProps {
 }
 
 export function VisibilityControl({ evaluationId, visibility, sharedTeamId, teams }: VisibilityControlProps) {
+  const toast = useToast()
   const [current, setCurrent] = useState(visibility)
   const [teamId, setTeamId] = useState(sharedTeamId ?? '')
   const [isPending, setIsPending] = useState(false)
@@ -32,7 +34,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      alert('No se pudo copiar el link. Cópialo manualmente desde la barra de direcciones.')
+      toast.error('No se pudo copiar el link. Cópialo manualmente desde la barra de direcciones.')
     }
   }
 
@@ -49,7 +51,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
       if (nextTeamId) setTeamId(nextTeamId)
       router.refresh()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'No se pudo actualizar la visibilidad.')
+      toast.error(err instanceof Error ? err.message : 'No se pudo actualizar la visibilidad.')
     } finally {
       setIsPending(false)
     }
@@ -58,7 +60,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
   return (
     <div className="space-y-2">
       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Visibilidad</p>
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {OPTIONS.map(({ value, label, icon: Icon }) => (
           <button
             key={value}
@@ -66,9 +68,9 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
             disabled={isPending}
             onClick={() => change(value, value === 'team' ? teamId || undefined : undefined)}
             className={[
-              'flex-1 flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50',
+              'flex min-w-0 min-h-11 lg:min-h-9 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50',
               current === value
-                ? 'border-primary bg-primary/10 text-primary'
+                ? 'border-primary bg-primary/10 text-flame-text'
                 : 'border-border text-muted-foreground hover:bg-muted',
             ].join(' ')}
           >

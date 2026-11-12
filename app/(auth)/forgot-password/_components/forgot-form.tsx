@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import Link from 'next/link'
-import { Mail } from 'lucide-react'
+import { Envelope } from '@phosphor-icons/react'
 import { forgotPasswordAction } from '@/lib/actions/auth'
 import { FormCard } from '@/components/ui/FormCard'
 import { InputField } from '@/components/ui/InputField'
@@ -44,7 +44,7 @@ export function ForgotForm({ success }: { success: boolean }) {
           <Link
             href="/login"
             className="block text-sm font-medium hover:underline mt-4"
-            style={{ color: 'var(--color-flame)' }}
+            style={{ color: 'var(--color-flame-text)' }}
           >
             Volver a iniciar sesión
           </Link>
@@ -56,7 +56,7 @@ export function ForgotForm({ success }: { success: boolean }) {
             name="email"
             type="email"
             placeholder="maria@empresa.com"
-            icon={Mail}
+            icon={Envelope}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -78,7 +78,7 @@ export function ForgotForm({ success }: { success: boolean }) {
             <Link
               href="/login"
               className="font-medium hover:underline"
-              style={{ color: 'var(--color-flame)' }}
+              style={{ color: 'var(--color-flame-text)' }}
             >
               Iniciar sesión
             </Link>

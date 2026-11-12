@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import Link from 'next/link'
-import { Mail } from 'lucide-react'
+import { Envelope } from '@phosphor-icons/react'
 import { loginAction } from '@/lib/actions/auth'
 import { FormCard } from '@/components/ui/FormCard'
 import { InputField } from '@/components/ui/InputField'
@@ -50,7 +50,7 @@ export function LoginForm({ registered }: { registered: boolean }) {
           name="email"
           type="email"
           placeholder="maria@empresa.com"
-          icon={Mail}
+          icon={Envelope}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -68,8 +68,8 @@ export function LoginForm({ registered }: { registered: boolean }) {
           <div className="flex justify-end">
             <Link
               href="/forgot-password"
-              className="text-xs font-medium hover:underline"
-              style={{ color: 'var(--color-flame)' }}
+              className="inline-flex min-h-11 items-center text-xs font-medium hover:underline"
+              style={{ color: 'var(--color-flame-text)' }}
             >
               ¿Olvidaste tu contraseña?
             </Link>
@@ -93,7 +93,7 @@ export function LoginForm({ registered }: { registered: boolean }) {
         <Link
           href="/register"
           className="font-medium hover:underline"
-          style={{ color: 'var(--color-flame)' }}
+          style={{ color: 'var(--color-flame-text)' }}
         >
           Regístrate
         </Link>

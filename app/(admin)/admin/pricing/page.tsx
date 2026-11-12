@@ -1,6 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { PlanPriceForm } from './_components/plan-price-form'
-import { Tag } from 'lucide-react'
+import { Tag } from '@phosphor-icons/react/ssr'
 
 export const metadata = { title: 'Precios — Admin WowScore' }
 

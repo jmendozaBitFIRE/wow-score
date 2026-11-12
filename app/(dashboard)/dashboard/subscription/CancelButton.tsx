@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { cancelSubscriptionAction } from '@/lib/actions/subscription'
 import { Button } from '@/components/ui/button'
-import { AlertTriangle } from 'lucide-react'
+import { Warning } from '@phosphor-icons/react'
+import { useToast } from '@/components/ui/toast'
 
 export function CancelButton() {
+  const toast = useToast()
   const [isPending, setIsPending] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const router = useRouter()
@@ -15,11 +17,11 @@ export function CancelButton() {
     setIsPending(true)
     try {
       await cancelSubscriptionAction()
-      alert('Suscripción cancelada exitosamente. Estará activa hasta el final del periodo facturado actual.')
+      toast.success('Suscripción cancelada exitosamente. Estará activa hasta el final del periodo facturado actual.')
       setShowConfirm(false)
       router.refresh()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Ocurrió un error al cancelar.')
+      toast.error(err instanceof Error ? err.message : 'Ocurrió un error al cancelar.')
     } finally {
       setIsPending(false)
     }
@@ -29,7 +31,7 @@ export function CancelButton() {
     return (
       <div className="p-4 rounded-xl border border-red-200 bg-red-50 dark:border-red-950/30 dark:bg-red-950/10 space-y-3">
         <div className="flex items-center gap-2 text-red-800 dark:text-red-400">
-          <AlertTriangle size={18} />
+          <Warning size={18} />
           <span className="font-semibold text-sm">¿Confirmar cancelación?</span>
         </div>
         <p className="text-xs text-red-700/80 dark:text-red-400/80">
@@ -39,7 +41,7 @@ export function CancelButton() {
           <Button
             variant="destructive"
             size="sm"
-            className="h-11 sm:h-7"
+            className="h-11 lg:h-7"
             onClick={handleCancel}
             disabled={isPending}
           >
@@ -48,7 +50,7 @@ export function CancelButton() {
           <Button
             variant="outline"
             size="sm"
-            className="h-11 sm:h-7"
+            className="h-11 lg:h-7"
             onClick={() => setShowConfirm(false)}
             disabled={isPending}
           >
@@ -62,7 +64,7 @@ export function CancelButton() {
   return (
     <Button
       variant="outline"
-      className="h-11 sm:h-8 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-950/30 dark:hover:bg-red-950/20"
+      className="h-11 lg:h-8 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-950/30 dark:hover:bg-red-950/20"
       onClick={() => setShowConfirm(true)}
     >
       Cancelar suscripción

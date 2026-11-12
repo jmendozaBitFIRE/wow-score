@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Star } from 'lucide-react'
+import { Star } from '@phosphor-icons/react'
 import { rateEvaluationAction } from '@/lib/actions/ratings'
 
 export function RatingWidget({ evaluationId }: { evaluationId: string }) {
@@ -36,7 +36,8 @@ export function RatingWidget({ evaluationId }: { evaluationId: string }) {
         >
           <Star
             size={20}
-            className={(rating ?? 0) >= value ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}
+            weight={(rating ?? 0) >= value ? 'fill' : 'regular'}
+            className={(rating ?? 0) >= value ? 'text-yellow-400' : 'text-muted-foreground'}
           />
         </button>
       ))}

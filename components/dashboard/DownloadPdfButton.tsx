@@ -1,6 +1,6 @@
 'use client'
 
-import { Download } from 'lucide-react'
+import { DownloadSimple } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 
 // ponytail: usa el diálogo de impresión nativo del navegador ("Guardar como PDF")
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 export function DownloadPdfButton() {
   return (
     <Button variant="outline" size="sm" className="no-print" onClick={() => window.print()}>
-      <Download className="size-4" />
+      <DownloadSimple className="size-4" />
       Descargar PDF
     </Button>
   )

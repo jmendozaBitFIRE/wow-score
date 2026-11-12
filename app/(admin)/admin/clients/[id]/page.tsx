@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from '@phosphor-icons/react/ssr'
 
 export const metadata = { title: 'Detalle de cliente — Admin WowScore' }
 
@@ -192,7 +192,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
                 <td className="px-6 py-3 uppercase text-xs font-medium tracking-wide dark:text-zinc-100">{ev.medio}</td>
                 <td className="px-6 py-3 uppercase text-xs font-medium tracking-wide dark:text-zinc-100">{ev.objetivo}</td>
                 <td className="px-6 py-3 text-right">
-                  <span className="font-bold text-primary">{ev.score_overall ?? '—'}</span>
+                  <span className="font-bold text-flame-text">{ev.score_overall ?? '—'}</span>
                 </td>
               </tr>
             ))}
