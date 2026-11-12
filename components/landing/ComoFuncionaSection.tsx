@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Fragment, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { UploadSimple, SlidersHorizontal, ChartBar } from '@phosphor-icons/react'
+import { UploadSimple, SlidersHorizontal, Target, ChartBar } from '@phosphor-icons/react'
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const STEPS = [
@@ -23,10 +23,17 @@ const STEPS = [
   },
   {
     number: '03',
+    icon: Target,
+    title: 'Selecciona tu target',
+    description:
+      'Define género, edad y NSE de tu audiencia para evaluar si tu pieza le habla a quien debe.',
+  },
+  {
+    number: '04',
     icon: ChartBar,
     title: 'Recibe tu WOW Score',
     description:
-      'Obtén un análisis en 10 dimensiones con fortalezas, oportunidades y veredicto ejecutivo.',
+      'Obtén tu WOW Score en 10 dimensiones y tu Target Fit Score, con fortalezas, oportunidades y veredicto ejecutivo.',
   },
 ] as const
 
@@ -146,7 +153,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
   Analiza en{' '}
     <br />
   <span className="text-flame relative inline-block">
-    3 pasos
+    4 pasos
     <svg
       className="absolute -bottom-2 left-0 w-full"
       viewBox="0 0 300 12"
