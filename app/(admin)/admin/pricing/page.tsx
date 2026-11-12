@@ -19,9 +19,9 @@ export default async function PricingAdminPage() {
     .order('stripe_price_id')
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Precios</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Precios</h1>
         <p className="text-zinc-500 dark:text-zinc-400 mt-1">
           Gestiona los planes y sus Stripe Price IDs.
         </p>
@@ -34,16 +34,16 @@ export default async function PricingAdminPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {plans?.map((plan) => (
           <div
             key={plan.id}
-            className={`rounded-xl border bg-white dark:bg-zinc-950 p-6 space-y-4 transition-opacity ${
+            className={`rounded-xl border bg-white dark:bg-zinc-950 p-4 sm:p-6 space-y-4 min-w-0 transition-opacity ${
               plan.is_active ? 'border-zinc-200 dark:border-zinc-800' : 'border-dashed opacity-60'
             }`}
           >
-            <div className="flex items-start justify-between">
-              <div>
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div className="min-w-0">
                 <h2 className="text-base font-semibold dark:text-zinc-100">{plan.display_name}</h2>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                   {PLAN_DESCRIPTIONS[plan.plan_key] ?? plan.plan_key}

@@ -46,39 +46,39 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
   const deactivateAction = setCompanyStatus.bind(null, company.id, 'inactive')
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-8">
-      <div className="flex items-center gap-4">
-        <Link href="/admin/clients" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex items-center gap-2')}>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto space-y-6 sm:space-y-8">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <Link href="/admin/clients" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'flex items-center gap-2 h-11 lg:h-7')}>
           <ArrowLeft size={16} />
           Volver
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">{company.name}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight break-words min-w-0">{company.name}</h1>
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.classes}`}>
           {badge.label}
         </span>
       </div>
 
       {/* Datos de la empresa */}
-      <section className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-4">
-        <div className="flex items-center justify-between">
+      <section className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-4 sm:p-6 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">Datos de la empresa</h2>
           <div className="flex gap-2">
             {isActive ? (
               <form action={deactivateAction}>
-                <Button type="submit" variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950">
+                <Button type="submit" variant="outline" size="sm" className="h-11 lg:h-7 text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950">
                   Desactivar
                 </Button>
               </form>
             ) : (
               <form action={activateAction}>
-                <Button type="submit" variant="outline" size="sm" className="text-green-600 border-green-200 hover:bg-green-50 dark:border-green-900 dark:hover:bg-green-950">
+                <Button type="submit" variant="outline" size="sm" className="h-11 lg:h-7 text-green-600 border-green-200 hover:bg-green-50 dark:border-green-900 dark:hover:bg-green-950">
                   Activar
                 </Button>
               </form>
             )}
           </div>
         </div>
-        <dl className="grid grid-cols-2 gap-4 text-sm">
+        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <div>
             <dt className="text-zinc-500 dark:text-zinc-400">Nombre</dt>
             <dd className="font-medium mt-0.5 dark:text-zinc-100">{company.name}</dd>
@@ -120,10 +120,31 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
 
       {/* Miembros */}
       <section className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden">
-        <div className="px-6 py-4 border-b dark:border-zinc-800">
+        <div className="px-4 sm:px-6 py-4 border-b dark:border-zinc-800">
           <h2 className="text-lg font-semibold">Miembros ({members?.length ?? 0})</h2>
         </div>
-        <table className="w-full text-sm">
+        <ul className="md:hidden divide-y dark:divide-zinc-800">
+          {!members?.length && <li className="px-4 py-8 text-center text-sm text-zinc-500">Sin miembros</li>}
+          {members?.map((member) => (
+            <li key={member.id} className="px-4 py-3 space-y-1">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-medium text-sm dark:text-zinc-100 min-w-0 break-words">{member.full_name}</p>
+                <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${
+                  member.role === 'owner'
+                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                    : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
+                }`}>
+                  {member.role}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 break-all">{member.email}</p>
+              <p className="text-xs text-zinc-500">
+                Alta: {new Date(member.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
+              </p>
+            </li>
+          ))}
+        </ul>
+        <table className="hidden md:table w-full text-sm">
           <thead>
             <tr className="bg-zinc-50 dark:bg-zinc-900">
               <th className="text-left px-6 py-3 font-semibold text-zinc-600 dark:text-zinc-400">Nombre</th>
@@ -164,10 +185,24 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
 
       {/* Últimas evaluaciones */}
       <section className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden">
-        <div className="px-6 py-4 border-b dark:border-zinc-800">
+        <div className="px-4 sm:px-6 py-4 border-b dark:border-zinc-800">
           <h2 className="text-lg font-semibold">Últimas evaluaciones</h2>
         </div>
-        <table className="w-full text-sm">
+        <ul className="md:hidden divide-y dark:divide-zinc-800">
+          {!evaluations?.length && <li className="px-4 py-8 text-center text-sm text-zinc-500">Sin evaluaciones</li>}
+          {evaluations?.map((ev) => (
+            <li key={ev.id} className="flex items-center justify-between gap-3 px-4 py-3">
+              <div className="min-w-0">
+                <p className="text-xs font-medium uppercase tracking-wide dark:text-zinc-100">{ev.medio} · {ev.objetivo}</p>
+                <p className="text-xs text-zinc-500">
+                  {new Date(ev.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </p>
+              </div>
+              <span className="text-lg font-bold text-flame-text">{ev.score_overall ?? '—'}</span>
+            </li>
+          ))}
+        </ul>
+        <table className="hidden md:table w-full text-sm">
           <thead>
             <tr className="bg-zinc-50 dark:bg-zinc-900">
               <th className="text-left px-6 py-3 font-semibold text-zinc-600 dark:text-zinc-400">Fecha</th>
