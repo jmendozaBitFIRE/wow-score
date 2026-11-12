@@ -30,15 +30,77 @@ export default async function ClientsPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Clientes</h1>
         <p className="text-zinc-500 dark:text-zinc-400 mt-1">
           {companies?.length ?? 0} empresas registradas
         </p>
       </div>
 
-      <div className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden">
+      {/* Hasta xl: tarjetas (1 columna en móvil, 2 en tablet). Con el sidebar de 256px la tabla de 6 columnas solo cabe desde xl */}
+      <ul className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+        {!companies?.length && (
+          <li className="md:col-span-2 rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 px-4 py-10 text-center text-zinc-500">
+            <Buildings className="mx-auto mb-2 text-zinc-300" size={32} />
+            No hay empresas registradas
+          </li>
+        )}
+        {companies?.map((company) => {
+          const status = company.subscription_status ?? 'inactive'
+          const badge = STATUS_LABELS[status] ?? STATUS_LABELS.inactive
+          const memberCount = Array.isArray(company.profiles) ? company.profiles.length : 0
+          const isActive = status === 'active'
+          const toggleAction = setCompanyStatus.bind(null, company.id, isActive ? 'inactive' : 'active')
+          return (
+            <li key={company.id} className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-4 space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <p className="font-semibold dark:text-zinc-100 break-words min-w-0">{company.name}</p>
+                <span className={`shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.classes}`}>
+                  {badge.label}
+                </span>
+              </div>
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                <div>
+                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Plan</dt>
+                  <dd className="text-zinc-700 dark:text-zinc-300">
+                    {company.subscription_plan ? PLAN_LABELS[company.subscription_plan] ?? company.subscription_plan : '—'}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Miembros</dt>
+                  <dd className="text-zinc-700 dark:text-zinc-300">{memberCount} / {company.max_members}</dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Fecha de registro</dt>
+                  <dd className="text-zinc-700 dark:text-zinc-300">
+                    {new Date(company.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </dd>
+                </div>
+              </dl>
+              <div className="grid grid-cols-2 gap-2">
+                <form action={toggleAction} className="contents">
+                  <Button
+                    type="submit"
+                    variant="outline"
+                    className={cn('h-11', isActive
+                      ? 'text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950'
+                      : 'text-green-600 border-green-200 hover:bg-green-50 dark:border-green-900 dark:hover:bg-green-950')}
+                  >
+                    {isActive ? 'Desactivar' : 'Activar'}
+                  </Button>
+                </form>
+                <Link href={`/admin/clients/${company.id}`} className={cn(buttonVariants({ variant: 'outline' }), 'h-11 flex items-center justify-center gap-1')}>
+                  Ver detalle
+                  <ArrowSquareOut size={12} />
+                </Link>
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+
+      <div className="hidden xl:block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">

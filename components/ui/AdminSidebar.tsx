@@ -15,30 +15,26 @@ interface AdminSidebarProps {
   fullName: string
 }
 
-export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
+const linkBase = 'nav-link flex items-center gap-3 px-3 py-2 min-h-11 lg:min-h-0 text-sm font-medium rounded-lg'
+const linkIdle = 'text-[var(--color-text-secondary)] hover:bg-zinc-100 hover:text-[var(--color-text-primary)] dark:hover:bg-zinc-900 dark:hover:text-zinc-50'
+
+// Navegación + bloque de usuario. Lo comparten el sidebar de escritorio y el
+// drawer móvil (AdminMobileNav); `onNavigate` cierra el drawer al elegir una ruta.
+export function AdminNavBody({ userInitial, fullName, onNavigate }: AdminSidebarProps & { onNavigate?: () => void }) {
   const pathname = usePathname()
+  const dashActive = pathname === '/dashboard' || pathname.startsWith('/dashboard/')
 
   return (
-    <aside className="w-64 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex flex-col">
-      <div className="p-6">
-        <Link href="/admin/clients" className="flex items-center gap-2">
-          <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
-          <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
-        </Link>
-      </div>
-
-      <nav className="flex-1 px-4 space-y-1">
+    <>
+      <nav className="flex-1 overflow-y-auto px-4 space-y-1">
         {navItems.map(({ label, href, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(href + '/')
           return (
             <Link
               key={href}
               href={href}
-              className={`nav-link flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg ${
-                isActive
-                  ? 'nav-link-active'
-                  : 'text-[var(--color-text-secondary)] hover:bg-zinc-100 hover:text-[var(--color-text-primary)] dark:hover:bg-zinc-900 dark:hover:text-zinc-50'
-              }`}
+              onClick={onNavigate}
+              className={`${linkBase} ${isActive ? 'nav-link-active' : linkIdle}`}
             >
               <Icon size={20} weight={isActive ? 'fill' : 'duotone'} />
               {label}
@@ -47,22 +43,14 @@ export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
         })}
 
         <div className="pt-4 border-t dark:border-zinc-800 mt-4">
-          {(() => {
-            const isActive = pathname === '/dashboard' || pathname.startsWith('/dashboard/')
-            return (
-              <Link
-                href="/dashboard"
-                className={`nav-link flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg ${
-                  isActive
-                    ? 'nav-link-active'
-                    : 'text-[var(--color-text-secondary)] hover:bg-zinc-100 hover:text-[var(--color-text-primary)] dark:hover:bg-zinc-900 dark:hover:text-zinc-50'
-                }`}
-              >
-                <SquaresFour size={20} weight={isActive ? 'fill' : 'duotone'} />
-                Ir al dashboard
-              </Link>
-            )
-          })()}
+          <Link
+            href="/dashboard"
+            onClick={onNavigate}
+            className={`${linkBase} ${dashActive ? 'nav-link-active' : linkIdle}`}
+          >
+            <SquaresFour size={20} weight={dashActive ? 'fill' : 'duotone'} />
+            Ir al dashboard
+          </Link>
         </div>
       </nav>
 
@@ -79,13 +67,28 @@ export function AdminSidebar({ userInitial, fullName }: AdminSidebarProps) {
         <form action="/auth/signout" method="post">
           <button
             type="submit"
-            className="nav-link w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50 mt-2"
+            className="nav-link w-full flex items-center gap-3 px-3 py-2 min-h-11 lg:min-h-0 text-sm font-medium rounded-lg text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50 mt-2"
           >
             <SignOut size={20} weight="duotone" />
             Cerrar sesión
           </button>
         </form>
       </div>
+    </>
+  )
+}
+
+// Sidebar fijo de escritorio (lg:). En móvil/tablet lo reemplaza AdminMobileNav.
+export function AdminSidebar(props: AdminSidebarProps) {
+  return (
+    <aside className="no-print hidden lg:flex w-64 shrink-0 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex-col">
+      <div className="p-6">
+        <Link href="/admin/clients" className="flex items-center gap-2">
+          <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
+          <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
+        </Link>
+      </div>
+      <AdminNavBody {...props} />
     </aside>
   )
 }
