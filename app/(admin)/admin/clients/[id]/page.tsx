@@ -123,7 +123,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
         <div className="px-4 sm:px-6 py-4 border-b dark:border-zinc-800">
           <h2 className="text-lg font-semibold">Miembros ({members?.length ?? 0})</h2>
         </div>
-        <ul className="md:hidden divide-y dark:divide-zinc-800">
+        <ul className="xl:hidden divide-y dark:divide-zinc-800">
           {!members?.length && <li className="px-4 py-8 text-center text-sm text-zinc-500">Sin miembros</li>}
           {members?.map((member) => (
             <li key={member.id} className="px-4 py-3 space-y-1">
@@ -144,7 +144,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
             </li>
           ))}
         </ul>
-        <table className="hidden md:table w-full text-sm">
+        <table className="hidden xl:table w-full text-sm">
           <thead>
             <tr className="bg-zinc-50 dark:bg-zinc-900">
               <th className="text-left px-6 py-3 font-semibold text-zinc-600 dark:text-zinc-400">Nombre</th>
@@ -188,7 +188,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
         <div className="px-4 sm:px-6 py-4 border-b dark:border-zinc-800">
           <h2 className="text-lg font-semibold">Últimas evaluaciones</h2>
         </div>
-        <ul className="md:hidden divide-y dark:divide-zinc-800">
+        <ul className="xl:hidden divide-y dark:divide-zinc-800">
           {!evaluations?.length && <li className="px-4 py-8 text-center text-sm text-zinc-500">Sin evaluaciones</li>}
           {evaluations?.map((ev) => (
             <li key={ev.id} className="flex items-center justify-between gap-3 px-4 py-3">
@@ -202,7 +202,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
             </li>
           ))}
         </ul>
-        <table className="hidden md:table w-full text-sm">
+        <table className="hidden xl:table w-full text-sm">
           <thead>
             <tr className="bg-zinc-50 dark:bg-zinc-900">
               <th className="text-left px-6 py-3 font-semibold text-zinc-600 dark:text-zinc-400">Fecha</th>

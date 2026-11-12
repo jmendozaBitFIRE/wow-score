@@ -38,10 +38,10 @@ export default async function ClientsPage() {
         </p>
       </div>
 
-      {/* Móvil: una tarjeta por empresa (la tabla solo cabe desde md) */}
-      <ul className="md:hidden space-y-3">
+      {/* Hasta xl: tarjetas (1 columna en móvil, 2 en tablet). Con el sidebar de 256px la tabla de 6 columnas solo cabe desde xl */}
+      <ul className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-3">
         {!companies?.length && (
-          <li className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 px-4 py-10 text-center text-zinc-500">
+          <li className="md:col-span-2 rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 px-4 py-10 text-center text-zinc-500">
             <Buildings className="mx-auto mb-2 text-zinc-300" size={32} />
             No hay empresas registradas
           </li>
@@ -100,7 +100,7 @@ export default async function ClientsPage() {
         })}
       </ul>
 
-      <div className="hidden md:block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden">
+      <div className="hidden xl:block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
