@@ -5,13 +5,19 @@ import { useRouter } from 'next/navigation'
 import { Lock, UsersThree, Buildings, Globe, Copy, Check } from '@phosphor-icons/react'
 import { updateVisibilityAction, type Visibility } from '@/lib/actions/evaluations'
 import { useToast } from '@/components/ui/toast'
+import { teamsEnabled } from '@/lib/features'
 
-const OPTIONS: { value: Visibility; label: string; icon: typeof Lock }[] = [
+const ALL_OPTIONS: { value: Visibility; label: string; icon: typeof Lock }[] = [
   { value: 'private', label: 'Privado', icon: Lock },
   { value: 'team', label: 'Equipo', icon: UsersThree },
   { value: 'company', label: 'Compañía', icon: Buildings },
   { value: 'public', label: 'Público', icon: Globe },
 ]
+
+// Sin equipos solo hay Privado y Público.
+const OPTIONS = teamsEnabled()
+  ? ALL_OPTIONS
+  : ALL_OPTIONS.filter((o) => o.value === 'private' || o.value === 'public')
 
 interface VisibilityControlProps {
   evaluationId: string
@@ -60,7 +66,7 @@ export function VisibilityControl({ evaluationId, visibility, sharedTeamId, team
   return (
     <div className="space-y-2">
       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Visibilidad</p>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div className={`grid gap-2 ${OPTIONS.length > 2 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2'}`}>
         {OPTIONS.map(({ value, label, icon: Icon }) => (
           <button
             key={value}

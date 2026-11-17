@@ -9,6 +9,7 @@ import { CreateTeamForm } from '@/components/dashboard/CreateTeamForm'
 import { TeamCard } from '@/components/dashboard/TeamCard'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { teamsEnabled } from '@/lib/features'
 
 export const metadata = { title: 'Equipo — WowScore' }
 
@@ -26,6 +27,9 @@ interface Team {
 }
 
 export default async function TeamPage() {
+  // Equipos apagado mientras las suscripciones sean individuales.
+  if (!teamsEnabled()) redirect('/dashboard')
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')

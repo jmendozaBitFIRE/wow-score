@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/require-admin'
-import type { StripePlan } from '@/lib/stripe'
 
-const VALID_PLAN_KEYS: StripePlan[] = [
-  'solo_monthly',
-  'solo_annual',
-  'team_monthly',
-  'team_annual',
-]
+// Los planes se importan desde Stripe en el admin; plan_key es un slug libre.
+const PLAN_KEY_PATTERN = /^[a-z0-9_]{2,60}$/
 
 export async function PATCH(request: Request) {
   const auth = await requireAdmin()
@@ -20,16 +15,27 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  const { plan_key, price_amount, stripe_price_id, is_active } = body as {
-    plan_key: StripePlan
+  const { plan_key, price_amount, stripe_price_id, is_active, monthly_credits } = body as {
+    plan_key: string
     price_amount: number
     stripe_price_id: string
     is_active: boolean
+    monthly_credits?: number
   }
 
-  if (!VALID_PLAN_KEYS.includes(plan_key)) {
+  if (typeof plan_key !== 'string' || !PLAN_KEY_PATTERN.test(plan_key)) {
     return NextResponse.json(
-      { error: `plan_key must be one of: ${VALID_PLAN_KEYS.join(', ')}` },
+      { error: 'plan_key must be lowercase letters, numbers or underscores' },
+      { status: 400 }
+    )
+  }
+
+  if (
+    monthly_credits !== undefined &&
+    (!Number.isInteger(monthly_credits) || monthly_credits < 0)
+  ) {
+    return NextResponse.json(
+      { error: 'monthly_credits must be a non-negative integer' },
       { status: 400 }
     )
   }
@@ -58,6 +64,7 @@ export async function PATCH(request: Request) {
       price_amount,
       stripe_price_id,
       is_active,
+      ...(monthly_credits !== undefined ? { monthly_credits } : {}),
       updated_at: new Date().toISOString(),
       updated_by: auth.userId,
     })

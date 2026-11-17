@@ -2,23 +2,14 @@ import Stripe from 'stripe'
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
-export type StripePlan =
-  | 'solo_monthly'
-  | 'solo_annual'
-  | 'team_monthly'
-  | 'team_annual'
+// Los planes ya no están fijos en el código: viven en la tabla plan_prices y
+// el admin los importa desde Stripe. plan_key es un identificador libre
+// (p. ej. "wow_score_monthly"); por convención termina en _monthly o _annual.
+export type StripePlan = string
 
-export const PLAN_PRICE_MAP: Record<StripePlan, string> = {
-  solo_monthly: process.env.STRIPE_PRICE_SOLO_MONTHLY!,
-  solo_annual: process.env.STRIPE_PRICE_SOLO_ANNUAL!,
-  team_monthly: process.env.STRIPE_PRICE_TEAM_MONTHLY!,
-  team_annual: process.env.STRIPE_PRICE_TEAM_ANNUAL!,
-}
-
-export const PRICE_PLAN_MAP: Record<string, StripePlan> = Object.fromEntries(
-  Object.entries(PLAN_PRICE_MAP).map(([plan, priceId]) => [priceId, plan as StripePlan])
-)
-
-export function maxMembersForPlan(plan: StripePlan): number {
-  return plan.startsWith('team') ? 5 : 1
+// ¿La llave secreta configurada es de producción? Se usa para mostrar solo los
+// precios del mismo modo (pruebas o producción) que la cuenta de Stripe activa.
+export function isStripeLiveMode(): boolean {
+  const key = process.env.STRIPE_SECRET_KEY ?? ''
+  return key.startsWith('sk_live_') || key.startsWith('rk_live_')
 }

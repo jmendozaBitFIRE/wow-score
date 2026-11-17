@@ -12,15 +12,18 @@ import {
   UserCircle,
   GearSix,
 } from '@phosphor-icons/react'
+import { teamsEnabled } from '@/lib/features'
 
-const navItems = [
+const allNavItems = [
   { label: 'Inicio',      href: '/dashboard',         icon: SquaresFour, exact: true  },
   { label: 'Analizar',    href: '/dashboard/upload',  icon: Sparkle,         exact: false },
   { label: 'Historial',   href: '/dashboard/history', icon: ClockCounterClockwise, exact: false },
-  { label: 'Equipo',      href: '/dashboard/team',    icon: UsersThree,      exact: false },
+  { label: 'Equipo',      href: '/dashboard/team',    icon: UsersThree,      exact: false, teams: true },
   { label: 'Suscripción', href: '/dashboard/subscription', icon: CreditCard,      exact: false },
   { label: 'Planes y Precios', href: '/dashboard/pricing', icon: Tag,         exact: false },
 ]
+
+const navItems = allNavItems.filter((item) => !('teams' in item) || teamsEnabled())
 
 interface SidebarNavProps {
   isAdmin?: boolean

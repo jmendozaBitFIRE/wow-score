@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { stripe, type StripePlan } from '@/lib/stripe'
+import { stripe, isStripeLiveMode } from '@/lib/stripe'
 import type Stripe from 'stripe'
 
-const VALID_PLANS: StripePlan[] = ['solo_monthly', 'solo_annual', 'team_monthly', 'team_annual']
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -17,10 +16,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = await request.json()
-  const { plan } = body as { plan: StripePlan }
+  const body = await request.json().catch(() => null)
+  const plan = (body as { plan?: unknown } | null)?.plan
 
-  if (!VALID_PLANS.includes(plan)) {
+  if (typeof plan !== 'string' || !/^[a-z0-9_]{2,60}$/.test(plan)) {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
   }
 
@@ -31,7 +30,8 @@ export async function POST(request: Request) {
     .select('stripe_price_id')
     .eq('plan_key', plan)
     .eq('is_active', true)
-    .single()
+    .eq('livemode', isStripeLiveMode())
+    .maybeSingle()
 
   if (!planPrice?.stripe_price_id) {
     return NextResponse.json({ error: 'Plan not available' }, { status: 400 })

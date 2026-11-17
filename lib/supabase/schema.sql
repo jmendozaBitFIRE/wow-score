@@ -8,7 +8,7 @@ CREATE TABLE companies (
   max_members          int         NOT NULL DEFAULT 1,
   stripe_customer_id   text,
   subscription_status  text        CHECK (subscription_status IN ('active','inactive','trialing','past_due')) DEFAULT 'inactive',
-  subscription_plan    text        CHECK (subscription_plan IN ('solo_monthly','solo_annual','team_monthly','team_annual')),
+  subscription_plan    text,       -- plan_key de plan_prices
   trial_credits        int         NOT NULL DEFAULT 0,
   monthly_credits      int         NOT NULL DEFAULT 0,
   credits_reset_at     timestamptz,
@@ -98,15 +98,15 @@ CREATE TABLE plan_prices (
   monthly_credits int           NOT NULL DEFAULT 10,
   trial_credits   int           NOT NULL DEFAULT 1,
   is_active       boolean       NOT NULL DEFAULT true,
+  livemode        boolean       NOT NULL DEFAULT false,   -- precio de Stripe en producción (true) o pruebas (false)
+  billing_interval text         NOT NULL DEFAULT 'month', -- 'month' | 'year', copiado de Stripe
   updated_at      timestamptz   DEFAULT now(),
   updated_by      uuid          REFERENCES profiles(id)
 );
 
-INSERT INTO plan_prices (plan_key, display_name, price_amount, currency, stripe_price_id, max_members, monthly_credits, trial_credits, is_active) VALUES
-  ('solo_monthly', 'Solo Mensual', 0.00, 'usd', 'price_PLACEHOLDER', 1, 10, 1, true),
-  ('solo_annual',  'Solo Anual',   0.00, 'usd', 'price_PLACEHOLDER', 1, 10, 1, true),
-  ('team_monthly', 'Team Mensual', 0.00, 'usd', 'price_PLACEHOLDER', 5, 10, 1, true),
-  ('team_annual',  'Team Anual',   0.00, 'usd', 'price_PLACEHOLDER', 5, 10, 1, true);
+-- Plan único. Los demás se importan desde Admin → Precios.
+INSERT INTO plan_prices (plan_key, display_name, price_amount, currency, stripe_price_id, max_members, monthly_credits, trial_credits, is_active, livemode, billing_interval) VALUES
+  ('wow_score_monthly', 'WOW Score', 8.00, 'usd', 'price_1UalWURz5X2GKnPhzGgxKY8U', 1, 100, 1, true, false, 'month');
 
 -- ============================================================
 -- ÍNDICES
@@ -231,6 +231,7 @@ $$;
 -- ALTER TABLE plan_prices ADD COLUMN monthly_credits int NOT NULL DEFAULT 10;
 -- ALTER TABLE plan_prices ADD COLUMN trial_credits int NOT NULL DEFAULT 1;
 -- ALTER TABLE companies ADD COLUMN trial_end timestamptz;
+-- Plan único (2026-11-17): ver supabase/migrations/20261117_plan_unico.sql
 -- ALTER TABLE evaluations ADD COLUMN provider text NOT NULL DEFAULT 'openai' CHECK (provider IN ('openai','claude'));
 -- CREATE TABLE evaluation_ratings (
 --   id             uuid        PRIMARY KEY DEFAULT gen_random_uuid(),

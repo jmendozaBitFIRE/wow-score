@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buildVisibilityOrFilter } from '@/lib/visibility'
+import { getPlanNames } from '@/lib/plans'
 import { getScriptExtension } from '@/lib/extract-text'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -33,6 +34,7 @@ export default async function DashboardPage() {
     .eq('id', profile.company_id)
     .single()
 
+  const planNames = await getPlanNames(admin)
   const orFilter = await buildVisibilityOrFilter(admin, user.id)
 
   const { data: evaluations } = await admin
@@ -98,9 +100,11 @@ export default async function DashboardPage() {
         <div className="rounded-2xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 flex flex-col justify-between shadow-sm">
           <div>
              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Plan Actual</h3>
-             <p className="text-sm text-zinc-500 mt-1 capitalize">
+             <p className="text-sm text-zinc-500 mt-1">
                {company?.subscription_status === 'active' && company?.subscription_plan
-                 ? `${company.subscription_plan.replace('_', ' ')} · Activo`
+                 ? `${planNames[company.subscription_plan] ?? company.subscription_plan} · Activo`
+                 : company?.subscription_status === 'trialing'
+                 ? 'Periodo de prueba'
                  : 'Gratuito · Inactivo'}
              </p>
           </div>

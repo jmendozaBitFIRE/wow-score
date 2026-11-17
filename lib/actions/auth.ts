@@ -133,7 +133,7 @@ export async function loginAction(
 export async function signOutAction() {
   const supabase = await createClient()
   await supabase.auth.signOut()
-  redirect('/login')
+  redirect('/')
 }
 
 // Server Actions no tienen acceso directo a la URL del request; se deriva de

@@ -7,6 +7,7 @@ import { CreditCard, CalendarBlank, CheckCircle, Warning, ArrowLeft, Receipt, Ar
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CancelButton } from './CancelButton'
+import { getPlanNames } from '@/lib/plans'
 
 export const metadata = { title: 'Gestión de Suscripción — WowScore' }
 
@@ -81,6 +82,8 @@ export default async function SubscriptionPage() {
     .single()
 
   if (!company) redirect('/dashboard')
+
+  const planNames = await getPlanNames(createAdminClient())
 
   let stripeSubscription: any = null
   let paymentMethod: any = null
@@ -170,8 +173,8 @@ export default async function SubscriptionPage() {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Plan Actual</span>
-                <h2 className="text-xl font-bold capitalize text-zinc-900 dark:text-white mt-1">
-                  {company.subscription_plan ? company.subscription_plan.replace('_', ' ') : 'Plan Gratis / Inactivo'}
+                <h2 className="text-xl font-bold text-zinc-900 dark:text-white mt-1">
+                  {company.subscription_plan ? planNames[company.subscription_plan] ?? company.subscription_plan : 'Sin plan activo'}
                 </h2>
               </div>
               <div>
@@ -370,7 +373,7 @@ export default async function SubscriptionPage() {
           href="/dashboard/pricing"
           className={cn(buttonVariants({ variant: 'default' }), 'h-11 lg:h-9 bg-flame hover:bg-flame-strong text-on-flame rounded-full px-8 py-2')}
         >
-          Ver más planes y precios
+          Ver plan y precio
         </Link>
       </div>
     </div>

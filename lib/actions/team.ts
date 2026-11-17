@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { getOrigin } from './auth'
 import { requireOwner, type Admin } from './require-owner'
+import { teamsEnabled } from '@/lib/features'
 
 export type InviteState = { error?: string; success?: string } | undefined
 
@@ -42,6 +43,7 @@ export async function inviteMemberAction(
   _prevState: InviteState,
   formData: FormData
 ): Promise<InviteState> {
+  if (!teamsEnabled()) return { error: 'Equipos no está disponible.' }
   const email = (formData.get('email') as string)?.trim().toLowerCase()
   if (!email) return { error: 'El email es requerido.' }
 
@@ -80,6 +82,7 @@ export async function inviteMemberAction(
 // CASCADE (ver schema.sql) — hay que reasignarlas al owner antes de borrar,
 // si no `deleteUser` falla con una violación de FK.
 export async function removeMemberAction(memberId: string): Promise<void> {
+  if (!teamsEnabled()) throw new Error('Equipos no está disponible.')
   const admin = createAdminClient()
   const owner = await requireOwner(admin)
   if ('error' in owner) throw new Error(owner.error)
@@ -113,6 +116,7 @@ export async function removeMemberAction(memberId: string): Promise<void> {
 // vuelve a invitar el mismo email, lo que emite un link nuevo (el anterior
 // pudo haber expirado — Supabase no ofrece un "resend" directo del link viejo).
 export async function resendInviteAction(memberId: string): Promise<void> {
+  if (!teamsEnabled()) throw new Error('Equipos no está disponible.')
   const admin = createAdminClient()
   const owner = await requireOwner(admin)
   if ('error' in owner) throw new Error(owner.error)

@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
+import { teamsEnabled } from '@/lib/features'
 
 // 'use server' solo permite exportar funciones async — este array y el tipo
 // que deriva de él no pueden ser `export` directo desde aquí.
@@ -20,6 +21,9 @@ export async function updateVisibilityAction(
   teamId?: string
 ): Promise<void> {
   if (!VISIBILITIES.includes(visibility)) {
+    throw new Error('Visibilidad no válida.')
+  }
+  if ((visibility === 'team' || visibility === 'company') && !teamsEnabled()) {
     throw new Error('Visibilidad no válida.')
   }
   if (visibility === 'team' && !teamId) {
