@@ -118,8 +118,12 @@ export default function PricingPage() {
       )}
 
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold mb-2">Plan y precio</h1>
-        <p className="text-muted-foreground">Un solo plan, todo incluido. Cancela cuando quieras.</p>
+        <h1 className="text-3xl font-bold mb-2">{plans.length > 1 ? 'Planes y precios' : 'Plan y precio'}</h1>
+        <p className="text-muted-foreground">
+          {plans.length > 1
+            ? 'Elige el plan que mejor se adapta a tu ritmo de trabajo. Cancela cuando quieras.'
+            : 'Un solo plan, todo incluido. Cancela cuando quieras.'}
+        </p>
       </div>
 
       <div className={plans.length > 1 ? 'grid md:grid-cols-2 gap-6' : 'max-w-md mx-auto'}>

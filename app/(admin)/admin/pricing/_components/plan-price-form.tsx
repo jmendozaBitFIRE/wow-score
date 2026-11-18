@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { updatePlan } from '@/lib/actions/admin'
+import { updatePlan, deletePlan } from '@/lib/actions/admin'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Check, CircleNotch } from '@phosphor-icons/react'
+import { Check, CircleNotch, Trash } from '@phosphor-icons/react'
 
 interface Plan {
   id: string
@@ -26,6 +27,22 @@ export function PlanPriceForm({ plan }: { plan: Plan }) {
   const [monthlyCredits, setMonthlyCredits] = useState(String(plan.monthly_credits))
   const [trialCredits, setTrialCredits] = useState(String(plan.trial_credits))
   const [isActive, setIsActive] = useState(plan.is_active)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [isDeleting, startDelete] = useTransition()
+  const router = useRouter()
+
+  function handleDelete() {
+    setError(null)
+    startDelete(async () => {
+      const res = await deletePlan(plan.id)
+      if (res.error) {
+        setError(res.error)
+        setConfirmDelete(false)
+      } else {
+        router.refresh()
+      }
+    })
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -123,6 +140,31 @@ export function PlanPriceForm({ plan }: { plan: Plan }) {
             'Guardar cambios'
           )}
         </Button>
+      </div>
+
+      <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800">
+        {confirmDelete ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm text-zinc-600 dark:text-zinc-300 flex-1 min-w-[12rem]">
+              ¿Eliminar este plan de la app? El precio sigue en Stripe.
+            </p>
+            <Button type="button" size="sm" variant="ghost" onClick={() => setConfirmDelete(false)} disabled={isDeleting} className="h-11 lg:h-7">
+              Cancelar
+            </Button>
+            <Button type="button" size="sm" variant="destructive" onClick={handleDelete} disabled={isDeleting} className="h-11 lg:h-7">
+              {isDeleting ? <><CircleNotch size={14} className="animate-spin mr-1.5" />Eliminando…</> : 'Sí, eliminar'}
+            </Button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            className="inline-flex min-h-11 lg:min-h-0 items-center gap-1.5 text-sm text-zinc-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 rounded focus-visible:outline-2 focus-visible:outline-primary"
+          >
+            <Trash size={14} aria-hidden />
+            Eliminar plan
+          </button>
+        )}
       </div>
     </form>
   )

@@ -57,7 +57,7 @@ function SectionBadge() {
 /**
  * SectionHeader renders the title and subtitle block.
  */
-function SectionHeader({ isInView }: { isInView: boolean }) {
+function SectionHeader({ isInView, multiple }: { isInView: boolean; multiple: boolean }) {
   return (
     <motion.div
       variants={headerContainerVariants}
@@ -71,7 +71,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
         variants={headerItemVariants}
         className="font-heading font-bold text-[clamp(32px,4.5vw,48px)] leading-[1.05] tracking-[-2px] text-paper mb-5"
       >
-        Un plan simple, <br />
+        {multiple ? 'Planes simples,' : 'Un plan simple,'} <br />
         <span className="text-flame relative inline-block">
           valor claro
           <svg
@@ -96,7 +96,9 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
         variants={headerItemVariants}
         className="text-base text-paper max-w-[500px] mx-auto leading-relaxed"
       >
-        Un solo plan, todo incluido. Cancela cuando quieras, sin letra chica.
+        {multiple
+          ? 'Elige el plan que mejor se adapta a tu ritmo de trabajo. Cancela cuando quieras, sin letra chica.'
+          : 'Un solo plan, todo incluido. Cancela cuando quieras, sin letra chica.'}
       </motion.p>
     </motion.div>
   )
@@ -187,7 +189,7 @@ export function PreciosSection() {
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(246,101,2,0.04),transparent_70%)] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
-        <SectionHeader isInView={isInView} />
+        <SectionHeader isInView={isInView} multiple={plans.length > 1} />
 
         <motion.div
           initial="hidden"

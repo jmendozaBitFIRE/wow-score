@@ -67,6 +67,34 @@ export async function updatePlan(data: {
   revalidatePath('/admin/pricing')
 }
 
+// Quita un plan del registro. El precio sigue existiendo en Stripe; solo deja
+// de estar en la app. Si hay clientes suscritos a ese plan no se permite,
+// porque el webhook lo necesita para asignarles sus evaluaciones cada mes.
+export async function deletePlan(id: string): Promise<{ error?: string }> {
+  await verifyAdmin()
+  const admin = createAdminClient()
+
+  const { data: plan } = await admin.from('plan_prices').select('plan_key').eq('id', id).maybeSingle()
+  if (!plan) return { error: 'Ese plan ya no existe.' }
+
+  const { count } = await admin
+    .from('companies')
+    .select('id', { count: 'exact', head: true })
+    .eq('subscription_plan', plan.plan_key)
+    .in('subscription_status', ['active', 'trialing', 'past_due'])
+  if (count && count > 0) {
+    return {
+      error: `No se puede eliminar: ${count} ${count === 1 ? 'cliente tiene' : 'clientes tienen'} este plan. Ocúltalo para que nadie nuevo lo contrate.`,
+    }
+  }
+
+  const { error } = await admin.from('plan_prices').delete().eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/admin/pricing')
+  return {}
+}
+
 export interface ImportableStripePrice {
   id: string
   productName: string
