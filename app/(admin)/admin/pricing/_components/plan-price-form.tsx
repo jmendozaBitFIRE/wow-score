@@ -1,70 +1,118 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { updatePlanPrice } from '@/lib/actions/admin'
+import { updatePlan, deletePlan } from '@/lib/actions/admin'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Check, CircleNotch } from '@phosphor-icons/react'
+import { Check, CircleNotch, Trash } from '@phosphor-icons/react'
 
-interface PlanPrice {
+interface Plan {
   id: string
-  plan_key: string
   display_name: string
-  price_amount: number
-  stripe_price_id: string
+  monthly_credits: number
+  trial_credits: number
   is_active: boolean
 }
 
-export function PlanPriceForm({ plan }: { plan: PlanPrice }) {
+export const adminInputClass =
+  'w-full px-3 py-2 h-11 lg:h-9 text-sm rounded-lg border dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-primary/50'
+export const adminLabelClass = 'text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide'
+
+export function PlanPriceForm({ plan }: { plan: Plan }) {
   const [isPending, startTransition] = useTransition()
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const [priceAmount, setPriceAmount] = useState(plan.price_amount)
-  const [stripePriceId, setStripePriceId] = useState(plan.stripe_price_id)
+  const [displayName, setDisplayName] = useState(plan.display_name)
+  const [monthlyCredits, setMonthlyCredits] = useState(String(plan.monthly_credits))
+  const [trialCredits, setTrialCredits] = useState(String(plan.trial_credits))
   const [isActive, setIsActive] = useState(plan.is_active)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [isDeleting, startDelete] = useTransition()
+  const router = useRouter()
+
+  function handleDelete() {
+    setError(null)
+    startDelete(async () => {
+      const res = await deletePlan(plan.id)
+      if (res.error) {
+        setError(res.error)
+        setConfirmDelete(false)
+      } else {
+        router.refresh()
+      }
+    })
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaved(false)
+    setError(null)
     startTransition(async () => {
-      await updatePlanPrice({ id: plan.id, price_amount: priceAmount, stripe_price_id: stripePriceId, is_active: isActive })
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2500)
+      try {
+        await updatePlan({
+          id: plan.id,
+          display_name: displayName,
+          monthly_credits: Number(monthlyCredits),
+          trial_credits: Number(trialCredits),
+          is_active: isActive,
+        })
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2500)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'No se pudo guardar.')
+      }
     })
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-1">
-        <label htmlFor={`price-${plan.id}`} className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
-          Precio (USD)
-        </label>
-        <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
+        <label htmlFor={`name-${plan.id}`} className={adminLabelClass}>Nombre visible</label>
+        <input
+          id={`name-${plan.id}`}
+          type="text"
+          value={displayName}
+          maxLength={60}
+          onChange={(e) => setDisplayName(e.target.value)}
+          className={adminInputClass}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <label htmlFor={`credits-${plan.id}`} className={adminLabelClass}>Evaluaciones / mes</label>
           <input
-            id={`price-${plan.id}`}
+            id={`credits-${plan.id}`}
             type="number"
-            step="0.01"
+            inputMode="numeric"
             min="0"
-            value={priceAmount}
-            onChange={(e) => setPriceAmount(parseFloat(e.target.value) || 0)}
-            className="w-full pl-7 pr-3 py-2 h-11 lg:h-9 text-sm rounded-lg border dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            step="1"
+            value={monthlyCredits}
+            onChange={(e) => setMonthlyCredits(e.target.value)}
+            className={adminInputClass}
+          />
+        </div>
+        <div className="space-y-1">
+          <label htmlFor={`trial-${plan.id}`} className={adminLabelClass}>De prueba</label>
+          <input
+            id={`trial-${plan.id}`}
+            type="number"
+            inputMode="numeric"
+            min="0"
+            step="1"
+            value={trialCredits}
+            onChange={(e) => setTrialCredits(e.target.value)}
+            className={adminInputClass}
           />
         </div>
       </div>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        Las evaluaciones se reinician a este número en cada cobro mensual; las que sobran no se acumulan.
+        Un cambio aplica desde la siguiente renovación de cada cliente.
+      </p>
 
-      <div className="space-y-1">
-        <label htmlFor={`stripe-${plan.id}`} className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
-          Stripe Price ID
-        </label>
-        <input
-          id={`stripe-${plan.id}`}
-          type="text"
-          value={stripePriceId}
-          onChange={(e) => setStripePriceId(e.target.value)}
-          placeholder="price_..."
-          className="w-full px-3 py-2 h-11 lg:h-9 text-sm font-mono rounded-lg border dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-primary/50"
-        />
-      </div>
+      {error && <p role="alert" className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
         <button
@@ -80,7 +128,7 @@ export function PlanPriceForm({ plan }: { plan: PlanPrice }) {
           >
             <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${isActive ? 'translate-x-5' : ''}`} />
           </span>
-          <span className="text-sm font-medium dark:text-zinc-300">{isActive ? 'Activo' : 'Inactivo'}</span>
+          <span className="text-sm font-medium dark:text-zinc-300">{isActive ? 'Visible en precios' : 'Oculto'}</span>
         </button>
 
         <Button type="submit" size="sm" disabled={isPending} className="h-11 lg:h-7 min-w-[120px] max-sm:flex-1">
@@ -92,6 +140,31 @@ export function PlanPriceForm({ plan }: { plan: PlanPrice }) {
             'Guardar cambios'
           )}
         </Button>
+      </div>
+
+      <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800">
+        {confirmDelete ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm text-zinc-600 dark:text-zinc-300 flex-1 min-w-[12rem]">
+              ¿Eliminar este plan de la app? El precio sigue en Stripe.
+            </p>
+            <Button type="button" size="sm" variant="ghost" onClick={() => setConfirmDelete(false)} disabled={isDeleting} className="h-11 lg:h-7">
+              Cancelar
+            </Button>
+            <Button type="button" size="sm" variant="destructive" onClick={handleDelete} disabled={isDeleting} className="h-11 lg:h-7">
+              {isDeleting ? <><CircleNotch size={14} className="animate-spin mr-1.5" />Eliminando…</> : 'Sí, eliminar'}
+            </Button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            className="inline-flex min-h-11 lg:min-h-0 items-center gap-1.5 text-sm text-zinc-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 rounded focus-visible:outline-2 focus-visible:outline-primary"
+          >
+            <Trash size={14} aria-hidden />
+            Eliminar plan
+          </button>
+        )}
       </div>
     </form>
   )

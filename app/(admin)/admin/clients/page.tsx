@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getPlanNames } from '@/lib/plans'
 import { setCompanyStatus } from '@/lib/actions/admin'
 import Link from 'next/link'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -14,15 +15,9 @@ const STATUS_LABELS: Record<string, { label: string; classes: string }> = {
   past_due: { label: 'Vencido',   classes: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
 }
 
-const PLAN_LABELS: Record<string, string> = {
-  solo_monthly: 'Solo Mensual',
-  solo_annual:  'Solo Anual',
-  team_monthly: 'Team Mensual',
-  team_annual:  'Team Anual',
-}
-
 export default async function ClientsPage() {
   const admin = createAdminClient()
+  const PLAN_LABELS = await getPlanNames(admin)
 
   const { data: companies } = await admin
     .from('companies')

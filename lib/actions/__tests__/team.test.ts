@@ -64,6 +64,8 @@ vi.mock('@/lib/supabase/admin', () => ({
 const { removeMemberAction } = await import('../team')
 
 beforeEach(() => {
+  // Equipos está apagado por defecto; estas pruebas cubren el flujo prendido.
+  process.env.NEXT_PUBLIC_TEAMS_ENABLED = 'true'
   state.sessionUser = { id: 'owner-1' }
   state.reassignedTo = null
   state.reassignError = null

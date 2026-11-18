@@ -3,44 +3,18 @@
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import type { StripePlan } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
-
-const PLANS = [
-  {
-    key: 'solo' as const,
-    name: 'Solo',
-    description: 'Para profesionales independientes.',
-    maxMembers: 1,
-    monthly: { plan: 'solo_monthly' as StripePlan, period: '/mes' },
-    annual: { plan: 'solo_annual' as StripePlan, period: '/año' },
-    features: ['1 usuario', 'Evaluaciones ilimitadas', 'Historial completo'],
-  },
-  {
-    key: 'team' as const,
-    name: 'Team',
-    description: 'Para equipos creativos.',
-    maxMembers: 5,
-    monthly: { plan: 'team_monthly' as StripePlan, period: '/mes' },
-    annual: { plan: 'team_annual' as StripePlan, period: '/año' },
-    features: ['Hasta 5 usuarios', 'Evaluaciones ilimitadas', 'Historial completo', 'Panel de equipo'],
-  },
-]
+import { planFeatures } from '@/lib/plans'
+import { usePlans, formatPlanPrice, planPeriod } from '@/components/pricing/usePlans'
 
 export default function PricingPage() {
   const toast = useToast()
-  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly')
   const [isPending, startTransition] = useTransition()
-  const [loadingPlan, setLoadingPlan] = useState<StripePlan | null>(null)
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   const router = useRouter()
+  const { plans, loaded } = usePlans()
 
-  const [prices, setPrices] = useState<Record<StripePlan, string>>({
-    solo_monthly: '$0',
-    solo_annual: '$0',
-    team_monthly: '$0',
-    team_annual: '$0',
-  })
   const [activePlan, setActivePlan] = useState<string | null>(null)
   const [activeStatus, setActiveStatus] = useState<string | null>(null)
   const [isSubscribedQuery, setIsSubscribedQuery] = useState(false)
@@ -55,28 +29,6 @@ export default function PricingPage() {
 
     async function loadPricingData() {
       const supabase = createClient()
-
-      // 1. Cargar precios sincronizados dinámicamente desde Stripe y BD
-      try {
-        const res = await fetch('/api/stripe/prices')
-        if (res.ok) {
-          const data = await res.json()
-          if (data.prices && data.prices.length > 0) {
-            const newPrices = { ...prices }
-            data.prices.forEach((p: any) => {
-              const formatted = new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: p.currency,
-                maximumFractionDigits: 0
-              }).format(Number(p.price_amount))
-              newPrices[p.plan_key as StripePlan] = `${formatted} ${p.currency.toUpperCase()}`
-            })
-            setPrices(newPrices)
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching dynamic prices:', err)
-      }
 
       // 2. Cargar estado de suscripción de la empresa del usuario
       const { data: { user } } = await supabase.auth.getUser()
@@ -105,7 +57,7 @@ export default function PricingPage() {
     loadPricingData()
   }, [])
 
-  async function handleSubscribe(plan: StripePlan) {
+  async function handleSubscribe(plan: string) {
     setLoadingPlan(plan)
     startTransition(async () => {
       try {
@@ -153,7 +105,7 @@ export default function PricingPage() {
             </div>
             <div>
               <p className="font-semibold text-sm text-zinc-900 dark:text-white">Suscripción Activa</p>
-              <p className="text-xs text-muted-foreground">Tienes contratado el plan <span className="font-bold capitalize text-foreground">{activePlan.replace('_', ' ')}</span>.</p>
+              <p className="text-xs text-muted-foreground">Tienes contratado el plan <span className="font-bold text-foreground">{plans.find((p) => p.plan_key === activePlan)?.display_name ?? 'WOW Score'}</span>.</p>
             </div>
           </div>
           <button
@@ -166,49 +118,26 @@ export default function PricingPage() {
       )}
 
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold mb-2">Planes y precios</h1>
-        <p className="text-muted-foreground">Elige el plan que se adapta a tu equipo</p>
-
-        {/* Toggle mensual / anual */}
-        <div className="inline-flex items-center gap-2 mt-6 rounded-full border p-1 bg-muted">
-          <button
-            onClick={() => setBilling('monthly')}
-            className={`min-h-11 sm:min-h-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              billing === 'monthly'
-                ? 'bg-background shadow text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Mensual
-          </button>
-          <button
-            onClick={() => setBilling('annual')}
-            className={`min-h-11 sm:min-h-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              billing === 'annual'
-                ? 'bg-background shadow text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Anual
-            <span className="ml-1.5 text-xs font-semibold text-flame-text">−17%</span>
-          </button>
-        </div>
+        <h1 className="text-3xl font-bold mb-2">{plans.length > 1 ? 'Planes y precios' : 'Plan y precio'}</h1>
+        <p className="text-muted-foreground">
+          {plans.length > 1
+            ? 'Elige el plan que mejor se adapta a tu ritmo de trabajo. Cancela cuando quieras.'
+            : 'Un solo plan, todo incluido. Cancela cuando quieras.'}
+        </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {PLANS.map((plan) => {
-          const option = plan[billing]
-          const priceDisplay = prices[option.plan]
-          const isCurrentActive = activePlan === option.plan && activeStatus === 'active'
-          const isLoading = isPending && loadingPlan === option.plan
+      <div className={plans.length > 1 ? 'grid md:grid-cols-2 gap-6' : 'max-w-md mx-auto'}>
+        {plans.map((plan) => {
+          const isCurrentActive = activePlan === plan.plan_key && (activeStatus === 'active' || activeStatus === 'trialing')
+          const isLoading = isPending && loadingPlan === plan.plan_key
 
           return (
             <div
-              key={plan.key}
+              key={plan.plan_key}
               className={`rounded-xl border p-8 flex flex-col gap-6 relative transition ${
                 isCurrentActive
                   ? 'border-flame bg-flame/5 shadow-lg shadow-flame/5 ring-1 ring-flame'
-                  : 'bg-card'
+                  : 'bg-card border-flame/40'
               }`}
             >
               {isCurrentActive && (
@@ -218,23 +147,26 @@ export default function PricingPage() {
               )}
 
               <div>
-                <h2 className="text-xl font-semibold">{plan.name}</h2>
-                <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
+                <h2 className="text-xl font-semibold">{plan.display_name}</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Para validar cada pieza antes de lanzarla
+                </p>
               </div>
 
-              <div className="flex items-end gap-1">
-                <span className="text-4xl font-bold">{priceDisplay}</span>
-                <span className="text-muted-foreground mb-1">{option.period}</span>
+              <div className="flex items-end gap-1.5">
+                <span className="text-4xl font-bold tabular-nums">{formatPlanPrice(plan)}</span>
+                <span className="text-muted-foreground mb-1">USD {planPeriod(plan)}</span>
               </div>
 
               <ul className="space-y-2 flex-1">
-                {plan.features.map((f) => (
+                {planFeatures(plan.monthly_credits).map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4 text-flame-text shrink-0"
                       viewBox="0 0 20 20"
                       fill="currentColor"
+                      aria-hidden
                     >
                       <path
                         fillRule="evenodd"
@@ -248,16 +180,23 @@ export default function PricingPage() {
               </ul>
 
               <Button
-                onClick={() => handleSubscribe(option.plan)}
-                disabled={isPending || isCurrentActive}
-                className={`w-full h-11 lg:h-8 ${
+                onClick={() => handleSubscribe(plan.plan_key)}
+                disabled={isPending || isCurrentActive || !loaded}
+                className={`w-full h-11 lg:h-9 ${
                   isCurrentActive
                     ? 'bg-zinc-100 text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400'
                     : ''
                 }`}
               >
-                {isLoading ? 'Redirigiendo…' : isCurrentActive ? 'Plan actual' : 'Suscribirse'}
+                {isLoading ? 'Redirigiendo…' : isCurrentActive ? 'Plan actual' : 'Suscribirme'}
               </Button>
+
+              {!isCurrentActive && (
+                <p className="text-xs text-muted-foreground text-center -mt-2">
+                  Incluye 5 días de prueba con {plan.trial_credits} {plan.trial_credits === 1 ? 'evaluación gratis' : 'evaluaciones gratis'}.
+                  El cobro se hace solo al terminar la prueba, y puedes pagar antes si quieres.
+                </p>
+              )}
             </div>
           )
         })}

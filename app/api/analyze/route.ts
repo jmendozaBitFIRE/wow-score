@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAnnualPlan } from '@/lib/plans'
 import {
   WOW_FORMULAS, GLOSARIO, calcTargetFitScore, calcWTM, calcWowFinal,
   type Medio, type Objetivo, type Genero, type Edad, type NSE,
@@ -143,7 +144,7 @@ export async function POST(request: Request) {
 
   if (
     company.subscription_status === 'active' &&
-    company.subscription_plan?.includes('annual') &&
+    isAnnualPlan(company.subscription_plan) &&
     currentResetAt
   ) {
     const resetDate = new Date(currentResetAt)

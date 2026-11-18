@@ -44,10 +44,7 @@ cp .env.local.example .env.local
 | `STRIPE_SECRET_KEY` | Stripe Dashboard → Developers → API keys → Secret |
 | `STRIPE_WEBHOOK_SECRET` | Ver sección Stripe Webhook más abajo |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe Dashboard → Developers → API keys → Publishable |
-| `STRIPE_PRICE_SOLO_MONTHLY` | Stripe Dashboard → Products → precio mensual Solo |
-| `STRIPE_PRICE_SOLO_ANNUAL` | Stripe Dashboard → Products → precio anual Solo |
-| `STRIPE_PRICE_TEAM_MONTHLY` | Stripe Dashboard → Products → precio mensual Team |
-| `STRIPE_PRICE_TEAM_ANNUAL` | Stripe Dashboard → Products → precio anual Team |
+| `NEXT_PUBLIC_TEAMS_ENABLED` | Opcional. `true` vuelve a prender Equipo (invitaciones, miembros, compartir con equipo/compañía). Apagado por defecto. |
 | `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` en desarrollo |
 
 > **Nota:** `NEXT_PUBLIC_APP_URL` no está en el `.env.local` original pero es
@@ -82,16 +79,16 @@ En Supabase → Storage → New bucket:
 
 ## 4. Stripe
 
-### 4.1 Crear los 4 productos/precios
+### 4.1 Crear el precio y registrarlo
 
-En Stripe Dashboard → Products → Add product:
+Los precios ya no van en variables de entorno. En Stripe Dashboard → Products,
+crea el producto con un precio recurrente (hoy: 8 USD al mes). Luego en la app
+entra a **Admin → Precios → Buscar precios en Stripe**, elige el precio, ponle
+nombre y cuántas evaluaciones da al mes, y regístralo.
 
-| Producto | Precio | Billing | Price ID para `.env.local` |
-|---|---|---|---|
-| Solo | $19 | Monthly | `STRIPE_PRICE_SOLO_MONTHLY` |
-| Solo | $190 | Annual | `STRIPE_PRICE_SOLO_ANNUAL` |
-| Team | $49 | Monthly | `STRIPE_PRICE_TEAM_MONTHLY` |
-| Team | $490 | Annual | `STRIPE_PRICE_TEAM_ANNUAL` |
+La app solo muestra los precios del mismo modo que `STRIPE_SECRET_KEY`
+(`sk_test_` → pruebas, `sk_live_` → producción). Al pasar a producción, cambia
+la llave y vuelve a importar el precio de producción desde el admin.
 
 ### 4.2 Webhook local con Stripe CLI
 

@@ -93,6 +93,8 @@ function formData(fields: Record<string, string>): FormData {
 }
 
 beforeEach(() => {
+  // Equipos está apagado por defecto; estas pruebas cubren el flujo prendido.
+  process.env.NEXT_PUBLIC_TEAMS_ENABLED = 'true'
   state.sessionUser = { id: 'user-1' }
   state.teamInsertError = null
   state.insertedTeam = null
@@ -176,5 +178,15 @@ describe('toggleTeamMemberAction', () => {
   it('quita al miembro cuando add=false', async () => {
     await toggleTeamMemberAction('team-1', 'member-1', false)
     expect(state.deletedTeamMember).toEqual({ teamId: 'team-1', profileId: 'member-1' })
+  })
+})
+
+describe('con equipos apagado', () => {
+  it('createTeamAction no crea nada', async () => {
+    process.env.NEXT_PUBLIC_TEAMS_ENABLED = 'false'
+    const fd = new FormData()
+    fd.set('name', 'Diseño')
+    const res = await createTeamAction(undefined, fd)
+    expect(res).toEqual({ error: 'Equipos no está disponible.' })
   })
 })

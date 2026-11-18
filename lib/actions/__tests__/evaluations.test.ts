@@ -61,6 +61,8 @@ beforeEach(() => {
   state.updateError = null
   state.updatedWith = null
   state.updatedId = null
+  // Estas pruebas cubren el flujo con equipos prendido.
+  process.env.NEXT_PUBLIC_TEAMS_ENABLED = 'true'
 })
 
 describe('updateVisibilityAction', () => {
@@ -111,5 +113,14 @@ describe('updateVisibilityAction', () => {
   it('comparte con el equipo cuando pertenece a la misma compañía', async () => {
     await updateVisibilityAction('eval-1', 'team', 'team-1')
     expect(state.updatedWith).toEqual({ visibility: 'team', shared_team_id: 'team-1' })
+  })
+
+  it('con equipos apagado solo acepta privado y público', async () => {
+    process.env.NEXT_PUBLIC_TEAMS_ENABLED = 'false'
+    await expect(updateVisibilityAction('eval-1', 'team', 'team-1')).rejects.toThrow(/no válida/i)
+    await expect(updateVisibilityAction('eval-1', 'company')).rejects.toThrow(/no válida/i)
+    expect(state.updatedWith).toBeNull()
+    await updateVisibilityAction('eval-1', 'public')
+    expect(state.updatedWith).toEqual({ visibility: 'public', shared_team_id: null })
   })
 })

@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { requireOwner } from './require-owner'
+import { teamsEnabled } from '@/lib/features'
 
 export type TeamState = { error?: string; success?: string } | undefined
 
@@ -10,6 +11,7 @@ export async function createTeamAction(
   _prevState: TeamState,
   formData: FormData
 ): Promise<TeamState> {
+  if (!teamsEnabled()) return { error: 'Equipos no está disponible.' }
   const name = (formData.get('name') as string)?.trim()
   if (!name) return { error: 'El nombre del equipo es requerido.' }
 
@@ -29,6 +31,7 @@ export async function createTeamAction(
 }
 
 export async function deleteTeamAction(teamId: string): Promise<void> {
+  if (!teamsEnabled()) throw new Error('Equipos no está disponible.')
   const admin = createAdminClient()
   const owner = await requireOwner(admin)
   if ('error' in owner) throw new Error(owner.error)
@@ -48,6 +51,7 @@ export async function deleteTeamAction(teamId: string): Promise<void> {
 // el perfil pertenezcan a la compañía del owner que llama, para que nadie
 // pueda meter/sacar gente de un equipo ajeno adivinando IDs.
 export async function toggleTeamMemberAction(teamId: string, profileId: string, add: boolean): Promise<void> {
+  if (!teamsEnabled()) throw new Error('Equipos no está disponible.')
   const admin = createAdminClient()
   const owner = await requireOwner(admin)
   if ('error' in owner) throw new Error(owner.error)

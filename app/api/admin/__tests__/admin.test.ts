@@ -214,9 +214,9 @@ describe('/api/admin/pricing (PATCH)', () => {
     expect(res.status).toBe(403)
   })
 
-  it('b. retorna 400 si plan_key no es uno de los 4 válidos', async () => {
+  it('b. retorna 400 si plan_key no tiene formato de slug', async () => {
     const res = await pricingPATCH(
-      makePricingRequest({ ...VALID_PRICING_BODY, plan_key: 'enterprise_monthly' })
+      makePricingRequest({ ...VALID_PRICING_BODY, plan_key: 'Enterprise Monthly!' })
     )
     expect(res.status).toBe(400)
     const body = await res.json()
@@ -253,5 +253,15 @@ describe('/api/admin/pricing (PATCH)', () => {
     state.sessionUser = { id: 'admin-1' }
     await pricingPATCH(makePricingRequest(VALID_PRICING_BODY))
     expect(state.capturedUpdate?.updated_by).toBe('admin-1')
+  })
+
+  it('g. guarda monthly_credits cuando viene en el body', async () => {
+    await pricingPATCH(makePricingRequest({ ...VALID_PRICING_BODY, monthly_credits: 100 }))
+    expect(state.capturedUpdate?.monthly_credits).toBe(100)
+  })
+
+  it('h. retorna 400 si monthly_credits no es entero', async () => {
+    const res = await pricingPATCH(makePricingRequest({ ...VALID_PRICING_BODY, monthly_credits: 2.5 }))
+    expect(res.status).toBe(400)
   })
 })

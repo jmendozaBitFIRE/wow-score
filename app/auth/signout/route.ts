@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   }
 
   const baseUrl = new URL(request.url).origin
-  return NextResponse.redirect(`${baseUrl}/login`, {
+  return NextResponse.redirect(`${baseUrl}/`, {
     status: 302,
   })
 }

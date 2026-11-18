@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Lightning, Flask, Eye, Buildings, ClockCounterClockwise, ShieldCheck, type Icon } from '@phosphor-icons/react'
+import { Lightning, Flask, Eye, ShareNetwork, ClockCounterClockwise, ShieldCheck, type Icon } from '@phosphor-icons/react'
 
 // ── TYPES ────────────────────────────────────────────────────────────────────
 interface Ventaja {
@@ -38,10 +38,10 @@ const VENTAJAS: Ventaja[] = [
   },
   {
     id: 4,
-    icon: Buildings,
-    title: 'Para equipos y agencias',
+    icon: ShareNetwork,
+    title: 'Compártelo en un clic',
     description:
-      'Multiusuario por empresa. Historial compartido. Todos en la misma página creativa.',
+      'Convierte cualquier diagnóstico en un enlace público y envíalo a tu cliente, jefe o equipo. Sin cuentas ni capturas de pantalla.',
   },
   {
     id: 5,

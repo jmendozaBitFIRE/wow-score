@@ -1,42 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useRef, useState, useEffect } from 'react'
+import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Check } from '@phosphor-icons/react'
-import type { StripePlan } from '@/lib/stripe'
-
-// ── TYPES ────────────────────────────────────────────────────────────────────
-interface PriceData {
-  plan_key: string
-  price_amount: number
-  currency: string
-}
-
-// ── CONSTANTS ────────────────────────────────────────────────────────────────
-const SOLO_FEATURES = [
-  '1 usuario',
-  'Análisis ilimitados',
-  'Historial de 90 días',
-  'Todos los medios y objetivos',
-  'Exportar resultados',
-]
-
-const TEAM_FEATURES = [
-  'Hasta 5 usuarios',
-  'Historial ilimitado',
-  'Dashboard compartido',
-  'Prioridad en soporte',
-  'Todo lo del plan anterior',
-]
-
-// Precios por defecto con el mismo formato que devuelve la API ($)
-const DEFAULT_PRICES: Record<StripePlan, string> = {
-  solo_monthly: '$50',
-  solo_annual: '$500',
-  team_monthly: '$150',
-  team_annual: '$1,500',
-}
+import { planFeatures } from '@/lib/plans'
+import { usePlans, formatPlanPrice, planPeriod, type PublicPlan } from '@/components/pricing/usePlans'
 
 // ── ANIMATION VARIANTS ────────────────────────────────────────────────────────
 const headerContainerVariants = {
@@ -88,7 +57,7 @@ function SectionBadge() {
 /**
  * SectionHeader renders the title and subtitle block.
  */
-function SectionHeader({ isInView }: { isInView: boolean }) {
+function SectionHeader({ isInView, multiple }: { isInView: boolean; multiple: boolean }) {
   return (
     <motion.div
       variants={headerContainerVariants}
@@ -102,7 +71,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
         variants={headerItemVariants}
         className="font-heading font-bold text-[clamp(32px,4.5vw,48px)] leading-[1.05] tracking-[-2px] text-paper mb-5"
       >
-        Planes simples, <br />
+        {multiple ? 'Planes simples,' : 'Un plan simple,'} <br />
         <span className="text-flame relative inline-block">
           valor claro
           <svg
@@ -127,7 +96,9 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
         variants={headerItemVariants}
         className="text-base text-paper max-w-[500px] mx-auto leading-relaxed"
       >
-        Cancela cuando quieras. Sin letra chica ni sorpresas ocultas.
+        {multiple
+          ? 'Elige el plan que mejor se adapta a tu ritmo de trabajo. Cancela cuando quieras, sin letra chica.'
+          : 'Un solo plan, todo incluido. Cancela cuando quieras, sin letra chica.'}
       </motion.p>
     </motion.div>
   )
@@ -146,70 +117,66 @@ function FeatureItem({ text }: { text: string }) {
 }
 
 /**
- * PriceDisplay - Componente para mostrar el precio de forma responsive
+ * PriceDisplay muestra el monto grande con su periodo.
  */
 function PriceDisplay({ price, period }: { price: string; period: string }) {
-  // Separar el símbolo de moneda del número
-  const match = price.match(/^([^\d]+)([\d,]+)$/)
-  const symbol = match ? match[1] : ''
-  const amount = match ? match[2] : price
-
   return (
     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-      {symbol && (
-        <span className="text-2xl md:text-4xl font-bold text-white">
-          {symbol}
-        </span>
-      )}
-      <span className="text-3xl md:text-5xl font-heading font-extrabold text-white whitespace-nowrap">
-        {amount}
+      <span className="text-5xl md:text-6xl font-heading font-extrabold text-white whitespace-nowrap tabular-nums">
+        {price}
       </span>
-      <span className="text-sm font-medium text-white/50">{period}</span>
+      <span className="text-sm font-medium text-white/60">USD {period}</span>
     </div>
+  )
+}
+
+/**
+ * PlanCard es la tarjeta de un plan con su precio, evaluaciones y beneficios.
+ */
+function PlanCard({ plan }: { plan: PublicPlan }) {
+  return (
+    <motion.div
+      variants={cardVariants}
+      className="relative flex flex-col bg-gradient-to-b from-flame/10 to-transparent border-2 border-flame rounded-[24px] p-8 md:p-10 shadow-[0_0_30px_rgba(246,101,2,0.15)]"
+    >
+      <p className="text-xs font-semibold text-flame tracking-wider uppercase mb-5">
+        {plan.display_name}
+      </p>
+
+      <div className="mb-3">
+        <PriceDisplay price={formatPlanPrice(plan)} period={planPeriod(plan)} />
+      </div>
+
+      <p className="text-sm font-medium text-white mb-8">
+        Para validar cada pieza antes de lanzarla
+      </p>
+
+      <div className="w-full h-px bg-white/10 mb-8" />
+
+      <ul className="flex-1 list-none p-0 m-0 mb-10">
+        {planFeatures(plan.monthly_credits).map((f) => (
+          <FeatureItem key={f} text={f} />
+        ))}
+      </ul>
+
+      <Link
+        href="/register"
+        className="block w-full text-center bg-flame hover:bg-flame-strong text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5"
+      >
+        Valida tu creatividad →
+      </Link>
+    </motion.div>
   )
 }
 
 // ── MAIN SECTION ─────────────────────────────────────────────────────────────
 
 export function PreciosSection() {
-  const [annual, setAnnual] = useState(false)
-  const [prices, setPrices] = useState<Record<StripePlan, string>>(DEFAULT_PRICES)
+  const { plans } = usePlans()
+  const trialCredits = plans[0]?.trial_credits ?? 1
 
   const sectionRef = useRef<HTMLElement>(null)
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' })
-
-  // Cargar precios desde el endpoint API en background
-  useEffect(() => {
-    async function loadPrices() {
-      try {
-        const res = await fetch('/api/stripe/prices')
-        if (res.ok) {
-          const data = await res.json()
-          if (data.prices && data.prices.length > 0) {
-            const newPrices = { ...DEFAULT_PRICES }
-            data.prices.forEach((p: PriceData) => {
-              const formatted = new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: p.currency,
-                currencyDisplay: 'narrowSymbol',
-                maximumFractionDigits: 0,
-              }).format(Number(p.price_amount))
-
-              newPrices[p.plan_key as StripePlan] = formatted
-            })
-            setPrices(newPrices)
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching prices:', err)
-      }
-    }
-
-    loadPrices()
-  }, [])
-
-  const soloPrice = annual ? prices.solo_annual : prices.solo_monthly
-  const teamPrice = annual ? prices.team_annual : prices.team_monthly
 
   return (
     <section
@@ -222,133 +189,31 @@ export function PreciosSection() {
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(246,101,2,0.04),transparent_70%)] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
-        <SectionHeader isInView={isInView} />
+        <SectionHeader isInView={isInView} multiple={plans.length > 1} />
 
-        {/* Toggle mensual / anual */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ delay: 0.3 }}
-          className="flex justify-center mb-16"
-        >
-          <div className="inline-flex items-center bg-white/5 border border-white/10 rounded-full p-1.5 relative">
-            {['Mensual', 'Anual'].map((label) => {
-              const isAnual = label === 'Anual'
-              const active = annual === isAnual
-              return (
-                <button
-                  key={label}
-                  onClick={() => setAnnual(isAnual)}
-                  className={`relative flex min-h-11 items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition duration-300 z-10 ${
-                    active ? 'text-ink' : 'text-white hover:text-white'
-                  }`}
-                >
-                  {active && (
-                    <motion.div
-                      layoutId="pricing-toggle"
-                      className="absolute inset-0 bg-white rounded-full -z-10 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
-                      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    />
-                  )}
-                  {label}
-                  {isAnual && (
-                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full transition-colors ${active ? 'bg-flame text-on-flame' : 'bg-white/10 text-white'}`}>
-                      -20%
-                    </span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </motion.div>
-
-        {/* Cards */}
         <motion.div
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
-          transition={{ staggerChildren: 0.15, delayChildren: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-6 mb-12"
+          transition={{ staggerChildren: 0.15, delayChildren: 0.3 }}
+          className={
+            plans.length > 1
+              ? 'grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-6 mb-12'
+              : 'max-w-md mx-auto mb-12'
+          }
         >
-          {/* Card Solo */}
-          <motion.div
-            variants={cardVariants}
-            className="flex flex-col bg-white/[0.02] border border-white/10 rounded-[24px] p-8 md:p-10 transition-colors duration-300 hover:bg-white/[0.04] hover:border-white/20"
-          >
-            <p className="text-xs font-semibold text-white tracking-wider uppercase mb-5">
-              Para creativos independientes
-            </p>
-
-            <div className="mb-2">
-              <PriceDisplay price={soloPrice} period="/mes" />
-            </div>
-
-            <p className="text-sm font-medium text-white mb-8 h-10">
-              1 usuario · Análisis ilimitados · Historial completo
-            </p>
-
-            <div className="w-full h-px bg-white/10 mb-8" />
-
-            <ul className="flex-1 list-none p-0 m-0 mb-10">
-              {SOLO_FEATURES.map((f) => (
-                <FeatureItem key={f} text={f} />
-              ))}
-            </ul>
-
-            <Link
-              href="/register"
-              className="block w-full text-center bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-sm px-6 py-4 rounded-xl transition duration-200"
-            >
-              Valida tu creatividad →
-            </Link>
-          </motion.div>
-
-          {/* Card Team */}
-          <motion.div
-            variants={cardVariants}
-            className="relative flex flex-col bg-gradient-to-b from-flame/10 to-transparent border-2 border-flame rounded-[24px] p-8 md:p-10 shadow-[0_0_30px_rgba(246,101,2,0.15)]"
-          >
-            {/* Badge Más popular */}
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-flame to-flame-strong text-on-flame text-[11px] font-bold tracking-wider uppercase px-4 py-1.5 rounded-full shadow-[0_4px_12px_rgba(246,101,2,0.3)]">
-              Más popular
-            </div>
-
-            <p className="text-xs font-semibold text-flame tracking-wider uppercase mb-5">
-              Para agencias y equipos
-            </p>
-
-            <div className="mb-2">
-              <PriceDisplay price={teamPrice} period="/mes" />
-            </div>
-
-            <p className="text-sm font-medium text-white mb-8 h-10">
-              Hasta 5 usuarios · Todo lo del plan anterior
-            </p>
-
-            <div className="w-full h-px bg-white/10 mb-8" />
-
-            <ul className="flex-1 list-none p-0 m-0 mb-10">
-              {TEAM_FEATURES.map((f) => (
-                <FeatureItem key={f} text={f} />
-              ))}
-            </ul>
-
-            <Link
-              href="/register"
-              className="block w-full text-center bg-flame hover:bg-flame-strong text-on-flame font-bold tracking-[0.01em] text-sm px-6 py-4 rounded-xl transition duration-200 shadow-[0_4px_14px_rgba(246,101,2,0.15)] hover:shadow-[0_8px_24px_rgba(246,101,2,0.25)] hover:-translate-y-0.5"
-            >
-              Mi equipo necesita esto →
-            </Link>
-          </motion.div>
+          {plans.map((plan) => (
+            <PlanCard key={plan.plan_key} plan={plan} />
+          ))}
         </motion.div>
 
         {/* Nota inferior */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ delay: 0.7 }}
-          className="text-center text-sm font-medium text-paper flex items-center justify-center gap-2"
+          transition={{ delay: 0.6 }}
+          className="text-center text-sm font-medium text-paper text-balance"
         >
-          <span>💳</span> Sin tarjeta de crédito para empezar · Pago seguro con Stripe
+          Pruébalo 5 días con {trialCredits} {trialCredits === 1 ? 'evaluación gratis' : 'evaluaciones gratis'} · Pago seguro con Stripe
         </motion.p>
       </div>
     </section>

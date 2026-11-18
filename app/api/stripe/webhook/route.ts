@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import type Stripe from 'stripe'
-import { stripe, PRICE_PLAN_MAP, maxMembersForPlan, type StripePlan } from '@/lib/stripe'
+import { stripe } from '@/lib/stripe'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { findPlan, isAnnualPlan, type PlanRow } from '@/lib/plans'
 
 // Stripe necesita el body sin parsear para validar la firma
 export const dynamic = 'force-dynamic'
@@ -9,13 +10,13 @@ export const dynamic = 'force-dynamic'
 async function updateCompanySubscription(
   customerId: string,
   status: string,
-  plan?: StripePlan,
+  plan?: PlanRow | null,
   extraUpdates?: Record<string, unknown>
 ) {
   const update: Record<string, unknown> = { subscription_status: status, ...extraUpdates }
   if (plan) {
-    update.subscription_plan = plan
-    update.max_members = maxMembersForPlan(plan)
+    update.subscription_plan = plan.plan_key
+    update.max_members = plan.max_members
   }
 
   const { error } = await createAdminClient()
@@ -28,13 +29,12 @@ async function updateCompanySubscription(
   }
 }
 
-function resolvePlan(subscription: Stripe.Subscription): StripePlan | undefined {
-  // Intentar desde metadata primero, luego desde el price ID
-  const metaPlan = subscription.metadata?.plan as StripePlan | undefined
-  if (metaPlan) return metaPlan
-
-  const priceId = subscription.items.data[0]?.price?.id
-  return priceId ? PRICE_PLAN_MAP[priceId] : undefined
+// Intentar desde metadata primero, luego desde el price ID registrado en plan_prices.
+function resolvePlan(subscription: Stripe.Subscription): Promise<PlanRow | null> {
+  return findPlan(createAdminClient(), {
+    planKey: subscription.metadata?.plan,
+    priceId: subscription.items.data[0]?.price?.id,
+  })
 }
 
 export async function POST(request: Request) {
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     case 'customer.subscription.updated': {
       const sub = event.data.object as Stripe.Subscription
       const customerId = sub.customer as string
-      const plan = resolvePlan(sub)
+      const plan = await resolvePlan(sub)
 
       const stripeStatus = sub.status // 'active' | 'trialing' | 'past_due' | ...
       const dbStatus =
@@ -81,16 +81,7 @@ export async function POST(request: Request) {
       }
 
       if (event.type === 'customer.subscription.created' && dbStatus === 'trialing') {
-        let trialToAssign = 1
-        if (plan) {
-          const { data: planData } = await createAdminClient()
-            .from('plan_prices')
-            .select('trial_credits')
-            .eq('plan_key', plan)
-            .single()
-          if (planData) trialToAssign = planData.trial_credits
-        }
-        extraUpdates.trial_credits = trialToAssign
+        extraUpdates.trial_credits = plan?.trial_credits ?? 1
       }
 
       await updateCompanySubscription(customerId, dbStatus, plan, extraUpdates)
@@ -124,9 +115,13 @@ export async function POST(request: Request) {
           : invoice.customer?.id
 
       if (customerId) {
-        const subId = (invoice as any).subscription
-        let isAnnual = false
-        let planKey = ''
+        // Desde la API 2025-03-31 la suscripción vive en invoice.parent; antes
+        // estaba en invoice.subscription. Leer ambos para no perder el plan.
+        const parentSub = invoice.parent?.subscription_details?.subscription
+        const subId =
+          (typeof parentSub === 'string' ? parentSub : parentSub?.id) ??
+          (invoice as unknown as { subscription?: string | null }).subscription
+        let plan: PlanRow | null = null
         if (typeof subId === 'string') {
           try {
             const sub = await stripe.subscriptions.retrieve(subId)
@@ -136,29 +131,17 @@ export async function POST(request: Request) {
               return NextResponse.json({ received: true, ignored: 'trial_invoice' })
             }
 
-            const plan = resolvePlan(sub)
-            if (plan) {
-              planKey = plan
-              if (plan.includes('annual')) isAnnual = true
-            }
+            plan = await resolvePlan(sub)
           } catch (e) {
             console.error('[webhook] Error retrieving subscription for invoice.paid:', e)
           }
         }
 
-        let creditsToAssign = 10
-        if (planKey) {
-          const { data: planData } = await createAdminClient()
-            .from('plan_prices')
-            .select('monthly_credits')
-            .eq('plan_key', planKey)
-            .single()
-          if (planData) creditsToAssign = planData.monthly_credits
-        }
-
+        // Cada cobro reinicia los créditos al número del plan (no se acumulan).
+        const creditsToAssign = plan?.monthly_credits ?? 10
         const extraUpdates: Record<string, unknown> = { monthly_credits: creditsToAssign }
-        
-        if (isAnnual) {
+
+        if (plan && (plan.billing_interval === 'year' || isAnnualPlan(plan.plan_key))) {
           const nextMonth = new Date()
           nextMonth.setMonth(nextMonth.getMonth() + 1)
           extraUpdates.credits_reset_at = nextMonth.toISOString()
