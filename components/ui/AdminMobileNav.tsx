@@ -53,7 +53,7 @@ export function AdminMobileNav({ userInitial, fullName }: { userInitial: string;
     <>
       <header className="no-print lg:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-white px-4 py-3 dark:bg-zinc-950 dark:border-zinc-800">
         <Link href="/admin/clients" className="flex items-center gap-2">
-          <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" priority />
+          <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="h-7 w-auto" priority />
           <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
         </Link>
         <button
@@ -81,7 +81,7 @@ export function AdminMobileNav({ userInitial, fullName }: { userInitial: string;
           >
             <div className="flex items-center justify-between p-4 border-b dark:border-zinc-800 mb-4">
               <Link href="/admin/clients" onClick={() => setOpen(false)} className="flex items-center gap-2">
-                <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
+                <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="h-7 w-auto" />
                 <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
               </Link>
               <button

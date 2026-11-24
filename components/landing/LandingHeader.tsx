@@ -50,10 +50,10 @@ export function LandingHeader() {
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-90 transition-all duration-300">
             <Image
-              src="/logo-full.png" sizes="100px"
+              src="/logo-on-dark.svg"
               alt="WowScore"
-              width={1025}
-              height={503}
+              width={702}
+              height={279}
               priority
               className={`w-auto transition-all duration-300 ${scrolled ? 'h-8' : 'h-11'}`}
             />
