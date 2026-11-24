@@ -83,8 +83,8 @@ export function AdminSidebar(props: AdminSidebarProps) {
   return (
     <aside className="no-print hidden lg:flex w-64 shrink-0 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex-col">
       <div className="p-6">
-        <Link href="/admin/clients" className="flex items-center gap-2">
-          <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="h-7 w-auto" />
+        <Link href="/admin/clients" className="flex w-32 flex-col items-center gap-2">
+          <Image src="/logo-boxed.svg" alt="WowScore" width={752} height={368} className="w-32 h-auto" />
           <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
         </Link>
       </div>

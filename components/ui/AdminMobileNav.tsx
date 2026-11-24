@@ -80,8 +80,8 @@ export function AdminMobileNav({ userInitial, fullName }: { userInitial: string;
             className="absolute inset-y-0 left-0 flex h-dvh w-72 max-w-[85vw] flex-col bg-white dark:bg-zinc-950"
           >
             <div className="flex items-center justify-between p-4 border-b dark:border-zinc-800 mb-4">
-              <Link href="/admin/clients" onClick={() => setOpen(false)} className="flex items-center gap-2">
-                <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="h-7 w-auto" />
+              <Link href="/admin/clients" onClick={() => setOpen(false)} className="flex w-36 flex-col items-center gap-2">
+                <Image src="/logo-boxed.svg" alt="WowScore" width={752} height={368} className="w-36 h-auto" />
                 <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
               </Link>
               <button

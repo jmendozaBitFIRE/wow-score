@@ -98,7 +98,7 @@ export function MobileNav({ isAdmin, userEmail, userName = '' }: MobileNavProps)
                 onClick={() => setOpen(false)}
                 className="flex items-center"
               >
-                <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="h-7 w-auto" />
+                <Image src="/logo-boxed.svg" alt="WowScore" width={752} height={368} className="w-36 h-auto" />
               </Link>
               <button
                 ref={closeRef}
