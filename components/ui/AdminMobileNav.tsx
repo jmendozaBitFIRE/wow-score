@@ -79,9 +79,9 @@ export function AdminMobileNav({ userInitial, fullName }: { userInitial: string;
             aria-label="Menú de administración"
             className="absolute inset-y-0 left-0 flex h-dvh w-72 max-w-[85vw] flex-col bg-white dark:bg-zinc-950"
           >
-            <div className="flex items-center justify-between p-4 border-b dark:border-zinc-800 mb-4">
+            <div className="relative flex items-center justify-center p-4 border-b dark:border-zinc-800 mb-4">
               <Link href="/admin/clients" onClick={() => setOpen(false)} className="flex w-36 flex-col items-center gap-2">
-                <Image src="/logo-boxed.svg" alt="WowScore" width={752} height={368} className="w-36 h-auto" />
+                <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="w-36 h-auto" />
                 <span className="font-bold text-sm text-muted-foreground uppercase tracking-wide">Admin</span>
               </Link>
               <button
@@ -89,7 +89,7 @@ export function AdminMobileNav({ userInitial, fullName }: { userInitial: string;
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Cerrar menú"
-                className="flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+                className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
               >
                 <X size={22} />
               </button>

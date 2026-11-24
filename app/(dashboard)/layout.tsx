@@ -29,7 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <aside className="no-print hidden lg:flex w-64 border-r bg-white dark:bg-zinc-950 dark:border-zinc-800 flex-col">
         <div className="p-6">
           <Link href="/dashboard" className="flex items-center">
-            <Image src="/logo-boxed.svg" alt="WowScore" width={752} height={368} className="w-32 h-auto" priority />
+            <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="w-32 h-auto" priority />
           </Link>
         </div>
 
