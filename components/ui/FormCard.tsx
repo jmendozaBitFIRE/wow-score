@@ -20,12 +20,12 @@ export function FormCard({ title, subtitle, children }: FormCardProps) {
         {/* Brand mark */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <Image
-            src="/logo-full.png" sizes="100px"
+            src="/logo-on-light.svg"
             alt="WowScore"
-            width={1025}
-            height={503}
+            width={702}
+            height={279}
             priority
-            style={{ height: '36px', width: 'auto', margin: '0 auto' }}
+            style={{ width: '200px', height: 'auto', margin: '0 auto' }}
           />
         </div>
 

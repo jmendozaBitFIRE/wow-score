@@ -62,7 +62,7 @@ export function MobileNav({ isAdmin, userEmail, userName = '' }: MobileNavProps)
       {/* Top bar — solo móvil/tablet, oculta en desktop (lg:) donde vive el sidebar fijo */}
       <header className="no-print lg:hidden sticky top-0 z-40 flex items-center justify-between gap-2 border-b bg-white px-4 py-3 dark:bg-zinc-950 dark:border-zinc-800">
         <Link href="/dashboard" className="flex items-center">
-          <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" priority />
+          <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="h-7 w-auto" priority />
         </Link>
         <button
           ref={openerRef}
@@ -92,20 +92,20 @@ export function MobileNav({ isAdmin, userEmail, userName = '' }: MobileNavProps)
             aria-label="Menú de navegación"
             className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white dark:bg-zinc-950"
           >
-            <div className="flex items-center justify-between p-4 border-b dark:border-zinc-800">
+            <div className="relative flex items-center justify-center p-4 border-b dark:border-zinc-800">
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
                 className="flex items-center"
               >
-                <Image src="/logo-full.png" sizes="100px" alt="WowScore" width={1025} height={503} className="h-7 w-auto" />
+                <Image src="/logo-on-light.svg" alt="WowScore" width={702} height={279} className="w-36 h-auto" />
               </Link>
               <button
                 ref={closeRef}
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Cerrar menú"
-                className="flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+                className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
               >
                 <X size={22} />
               </button>
