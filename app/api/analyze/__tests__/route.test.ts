@@ -7,7 +7,7 @@ import { POST } from '../route'
 // ─────────────────────────────────────────────────────────────
 const state = vi.hoisted(() => ({
   sessionUser: { id: 'user-1' } as { id: string } | null,
-  profile: { company_id: 'company-1' } as { company_id: string } | null,
+  profile: { company_id: 'company-1' } as { company_id: string; is_admin?: boolean } | null,
   company: {
     id: 'company-1',
     subscription_status: 'active',
@@ -21,7 +21,10 @@ const state = vi.hoisted(() => ({
     score: 80,
     breakdown: { insight: 8, claridad: 8, stopping: 8, simplicidad: 8, pert: 8, adapt: 8, emocion: 8, recordacion: 8, estetica: 8, relevancia: 8 },
     targetFit: { tono: 10, codigo_visual: 10, legibilidad: 10, motivador_psicologico: 10, relevancia_cultural: 10 },
-    raw: { wow_score: 80, dimensiones: {}, target_fit: {}, fortalezas: ['a', 'b', 'c'], oportunidades: ['x', 'y', 'z'], veredicto: 'ok openai' },
+    raw: { wow_score: 80, dimensiones: {}, target_fit: {}, fortalezas: ['a', 'b', 'c'], oportunidades: ['x', 'y', 'z'], veredicto: 'ok openai', sugerencia_alternativa: 'prueba openai' },
+    costUsd: 0.01,
+    inputTokens: 100,
+    outputTokens: 50,
   },
   claudeResult: {
     score: 90,
@@ -33,6 +36,9 @@ const state = vi.hoisted(() => ({
   callClaudeCalls: 0,
   openaiThrowsInvalidResponse: false,
   claudeThrowsInvalidResponse: false,
+  generateAlternativeImageCalls: 0,
+  altImageThrows: false,
+  altUploadError: null as string | null,
 }))
 
 // ─────────────────────────────────────────────────────────────
@@ -93,6 +99,8 @@ vi.mock('@/lib/supabase/admin', () => ({
       from: () => ({
         createSignedUrl: () =>
           Promise.resolve({ data: { signedUrl: 'https://signed.example/img.png' }, error: null }),
+        upload: () =>
+          Promise.resolve({ data: null, error: state.altUploadError ? { message: state.altUploadError } : null }),
       }),
     },
   }),
@@ -126,6 +134,13 @@ vi.mock('@/lib/ai-providers', () => {
         return Promise.reject(new InvalidModelResponseError('respuesta no-json de claude'))
       }
       return Promise.resolve(state.claudeResult)
+    },
+    generateAlternativeImage: () => {
+      state.generateAlternativeImageCalls++
+      if (state.altImageThrows) {
+        return Promise.reject(new Error('fallo generando imagen'))
+      }
+      return Promise.resolve({ base64: Buffer.from('fake-png').toString('base64'), costUsd: 0.04 })
     },
   }
 })
@@ -166,6 +181,9 @@ beforeEach(() => {
   state.callClaudeCalls = 0
   state.openaiThrowsInvalidResponse = false
   state.claudeThrowsInvalidResponse = false
+  state.generateAlternativeImageCalls = 0
+  state.altImageThrows = false
+  state.altUploadError = null
 })
 
 afterEach(() => {
@@ -241,5 +259,53 @@ describe('POST /api/analyze — InvalidModelResponseError', () => {
 
     const body = await res.json()
     expect(body.error).toBe('El análisis falló, intenta de nuevo.')
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// POST /api/analyze — imagen de la sugerencia alternativa
+// ─────────────────────────────────────────────────────────────
+describe('POST /api/analyze — imagen de sugerencia alternativa', () => {
+  it('genera y sube la imagen para una pieza visual, y suma su costo al total (admin)', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1) // openai
+    state.profile = { company_id: 'company-1', is_admin: true }
+
+    const res = await POST(makeRequest(VALID_BODY))
+    expect(res.status).toBe(200)
+
+    const body = await res.json()
+    expect(state.generateAlternativeImageCalls).toBe(1)
+    expect(body.sugerencia_alternativa_imagen_path).toMatch(/^company-1\/user-1\/alt-\d+\.png$/)
+    expect(state.insertedEvaluation?.feedback_json).toMatchObject({
+      sugerencia_alternativa_imagen_path: body.sugerencia_alternativa_imagen_path,
+    })
+    // costo texto (0.01) + costo imagen (0.04)
+    expect(body.cost_usd).toBeCloseTo(0.05)
+    expect(state.insertedEvaluation?.cost_usd).toBeCloseTo(0.05)
+  })
+
+  it('si la generación de la imagen falla, el análisis sigue adelante sin ella', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1)
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    state.altImageThrows = true
+
+    const res = await POST(makeRequest(VALID_BODY))
+    expect(res.status).toBe(200)
+
+    const body = await res.json()
+    expect(body.sugerencia_alternativa_imagen_path).toBeNull()
+    expect(state.insertedEvaluation?.feedback_json).toMatchObject({ sugerencia_alternativa_imagen_path: null })
+  })
+
+  it('si la subida a storage falla, se guarda sin imagen pero el análisis no se rompe', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1)
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    state.altUploadError = 'bucket error'
+
+    const res = await POST(makeRequest(VALID_BODY))
+    expect(res.status).toBe(200)
+
+    const body = await res.json()
+    expect(body.sugerencia_alternativa_imagen_path).toBeNull()
   })
 })

@@ -3,9 +3,16 @@ import { isStripeLiveMode } from '@/lib/stripe'
 import { PlanPriceForm } from './_components/plan-price-form'
 import { ImportStripePrices } from './_components/import-stripe-prices'
 import { Tag } from '@phosphor-icons/react/ssr'
+import { ProductTour } from '@/components/tour/ProductTour'
 
 export const metadata = { title: 'Precios — Admin WowScore' }
 export const dynamic = 'force-dynamic'
+
+const TOUR_STEPS = [
+  { selector: '[data-tour="admin-pricing-title"]', title: 'Precios', description: 'Administra qué planes de Stripe se muestran a los clientes, en la landing y en Planes y Precios.' },
+  { selector: '[data-tour="admin-pricing-import"]', title: 'Importar desde Stripe', description: 'Trae un precio ya creado en Stripe para poder mostrarlo y editarlo aquí.' },
+  { selector: '[data-tour="admin-pricing-plans"]', title: 'Planes', description: 'Cada tarjeta es un plan: su precio viene de Stripe, y aquí ajustas nombre, créditos y si está activo.' },
+]
 
 function formatPrice(amount: number, currency: string, interval: string) {
   const formatted = new Intl.NumberFormat('es-MX', {
@@ -31,18 +38,23 @@ export default async function PricingAdminPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Precios</h1>
-        <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-          Los planes visibles aparecen en la landing y en Planes y Precios. El monto se toma de Stripe.
-        </p>
-        <p className="mt-3 inline-flex items-center gap-2 text-xs font-semibold rounded-full px-3 py-1 border border-zinc-200 dark:border-zinc-800">
-          <span aria-hidden className={`h-2 w-2 rounded-full ${liveMode ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-          Stripe en {liveMode ? 'producción' : 'modo de pruebas'}
-        </p>
+      <div data-tour="admin-pricing-title" className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Precios</h1>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-1">
+            Los planes visibles aparecen en la landing y en Planes y Precios. El monto se toma de Stripe.
+          </p>
+          <p className="mt-3 inline-flex items-center gap-2 text-xs font-semibold rounded-full px-3 py-1 border border-zinc-200 dark:border-zinc-800">
+            <span aria-hidden className={`h-2 w-2 rounded-full ${liveMode ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+            Stripe en {liveMode ? 'producción' : 'modo de pruebas'}
+          </p>
+        </div>
+        <ProductTour tourId="admin-pricing" steps={TOUR_STEPS} />
       </div>
 
-      <ImportStripePrices liveMode={liveMode} />
+      <div data-tour="admin-pricing-import">
+        <ImportStripePrices liveMode={liveMode} />
+      </div>
 
       {!current.length && (
         <div className="rounded-xl border border-dashed p-12 text-center space-y-3">
@@ -53,7 +65,7 @@ export default async function PricingAdminPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <div data-tour="admin-pricing-plans" className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {current.map((plan) => (
           <div
             key={plan.id}

@@ -200,6 +200,34 @@ export async function callOpenAI(systemPrompt: string, input: CreativeInput): Pr
   }
 }
 
+// DALL·E 3 estándar 1024×1024 tiene precio fijo por imagen — más simple de
+// trackear que el pricing por tokens de gpt-image-1. Solo Claude no genera
+// imágenes, así que esto siempre usa el cliente de OpenAI sin importar qué
+// proveedor hizo el análisis de texto.
+const DALLE3_COST_PER_IMAGE_USD = 0.04
+
+export interface ImageGenResult {
+  base64: string
+  costUsd: number
+}
+
+// Genera la imagen de la sugerencia alternativa a partir de su descripción
+// textual. Solo tiene sentido para piezas visuales — un guion ya reescribe
+// el texto alternativo completo, no hay nada que "ver".
+export async function generateAlternativeImage(prompt: string): Promise<ImageGenResult> {
+  const result = await openai.images.generate({
+    model: 'dall-e-3',
+    prompt: prompt.slice(0, 4000),
+    n: 1,
+    size: '1024x1024',
+    quality: 'standard',
+    response_format: 'b64_json',
+  })
+  const base64 = result.data?.[0]?.b64_json
+  if (!base64) throw new Error('OpenAI no devolvió una imagen.')
+  return { base64, costUsd: DALLE3_COST_PER_IMAGE_USD }
+}
+
 export async function callClaude(systemPrompt: string, input: CreativeInput): Promise<AIProviderResult> {
   const { parsed, inputTokens, outputTokens } = await callWithJsonRetry(systemPrompt, async (prompt) => {
     const response = await anthropic.messages.create({

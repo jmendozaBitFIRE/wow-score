@@ -9,6 +9,14 @@ import Image from 'next/image'
 import { Plus, ArrowRight, ClockCounterClockwise, Sparkle, ImageBroken, FileText } from '@phosphor-icons/react/ssr'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { ProductTour } from '@/components/tour/ProductTour'
+
+const TOUR_STEPS = [
+  { selector: '[data-tour="home-welcome"]', title: 'Tu panel de control', description: 'Aquí ves un resumen rápido de tu cuenta: tu plan actual y tus análisis más recientes.' },
+  { selector: '[data-tour="home-cta-analyze"]', title: 'Analiza una pieza nueva', description: 'El punto de partida para evaluar un anuncio: sube una imagen o un guion y obtén su WOW Score.' },
+  { selector: '[data-tour="home-plan-card"]', title: 'Tu plan actual', description: 'Aquí ves el estado de tu suscripción. Desde "Gestionar plan" puedes ver facturas, cambiar de plan o cancelar.' },
+  { selector: '[data-tour="home-recent"]', title: 'Análisis recientes', description: 'Tus últimos resultados. Haz clic en cualquiera para ver el detalle completo, o en "Ver todo" para el historial.' },
+]
 
 export const metadata = { title: 'Dashboard — WowScore' }
 
@@ -69,16 +77,20 @@ export default async function DashboardPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">¡Hola, {profile.full_name.split(' ')[0]}!</h1>
-        <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-          Bienvenido de nuevo a tu panel de control de WowScore.
-        </p>
+      <div data-tour="home-welcome" className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">¡Hola, {profile.full_name.split(' ')[0]}!</h1>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-1">
+            Bienvenido de nuevo a tu panel de control de WowScore.
+          </p>
+        </div>
+        <ProductTour tourId="dashboard-home" steps={TOUR_STEPS} />
       </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div 
+        <div
+          data-tour="home-cta-analyze"
           className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl p-6 sm:p-8 text-on-flame shadow-lg shadow-flame/20"
           style={{ background: 'var(--gradient-brand)' }}
         >
@@ -97,7 +109,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 flex flex-col justify-between shadow-sm">
+        <div data-tour="home-plan-card" className="rounded-2xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 flex flex-col justify-between shadow-sm">
           <div>
              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Plan Actual</h3>
              <p className="text-sm text-zinc-500 mt-1">
@@ -118,7 +130,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="space-y-4">
+      <div data-tour="home-recent" className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-semibold">Análisis recientes</h3>
           <Link href="/dashboard/history" className={cn(buttonVariants({ variant: 'ghost' }), 'text-flame-text hover:text-ink hover:bg-flame/10 flex items-center gap-1 text-sm')}>

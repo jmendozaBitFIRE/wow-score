@@ -7,6 +7,13 @@ import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/toast'
 import { planFeatures } from '@/lib/plans'
 import { usePlans, formatPlanPrice, planPeriod } from '@/components/pricing/usePlans'
+import { ProductTour } from '@/components/tour/ProductTour'
+
+const TOUR_STEPS = [
+  { selector: '[data-tour="pricing-title"]', title: 'Planes y precios', description: 'Compara los planes disponibles y suscríbete al que mejor se ajuste a tu volumen de análisis.' },
+  { selector: '[data-tour="pricing-plans"]', title: 'Elige tu plan', description: 'Cada tarjeta muestra el precio, los créditos mensuales incluidos y el periodo de prueba gratis.' },
+  { selector: '[data-tour="pricing-manage-link"]', title: 'Suscripción existente', description: 'Si ya tienes un plan activo, desde aquí vas directo a gestionarlo (facturas, método de pago, cancelación).' },
+]
 
 export default function PricingPage() {
   const toast = useToast()
@@ -117,16 +124,19 @@ export default function PricingPage() {
         </div>
       )}
 
-      <div className="text-center mb-10">
+      <div data-tour="pricing-title" className="text-center mb-10 relative">
         <h1 className="text-3xl font-bold mb-2">{plans.length > 1 ? 'Planes y precios' : 'Plan y precio'}</h1>
         <p className="text-muted-foreground">
           {plans.length > 1
             ? 'Elige el plan que mejor se adapta a tu ritmo de trabajo. Cancela cuando quieras.'
             : 'Un solo plan, todo incluido. Cancela cuando quieras.'}
         </p>
+        <div className="flex justify-center mt-3">
+          <ProductTour tourId="dashboard-pricing" steps={TOUR_STEPS} />
+        </div>
       </div>
 
-      <div className={plans.length > 1 ? 'grid md:grid-cols-2 gap-6' : 'max-w-md mx-auto'}>
+      <div data-tour="pricing-plans" className={plans.length > 1 ? 'grid md:grid-cols-2 gap-6' : 'max-w-md mx-auto'}>
         {plans.map((plan) => {
           const isCurrentActive = activePlan === plan.plan_key && (activeStatus === 'active' || activeStatus === 'trialing')
           const isLoading = isPending && loadingPlan === plan.plan_key
@@ -203,7 +213,7 @@ export default function PricingPage() {
       </div>
 
       {/* Enlace a la pantalla de gestión local para owners con suscripción activa */}
-      <div className="mt-10 text-center">
+      <div data-tour="pricing-manage-link" className="mt-10 text-center">
         <button
           onClick={handlePortal}
           className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors"

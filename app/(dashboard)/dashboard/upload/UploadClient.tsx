@@ -9,7 +9,14 @@ import { RatingWidget } from '@/components/dashboard/RatingWidget'
 import { DownloadPdfButton } from '@/components/dashboard/DownloadPdfButton'
 import { CreativePreview } from '@/components/dashboard/CreativePreview'
 import { EvaluationResultCard } from '@/components/dashboard/EvaluationResultCard'
+import { ProductTour } from '@/components/tour/ProductTour'
 import type { Medio, Objetivo, Genero, Edad, NSE } from '@/lib/wow-formulas'
+
+const TOUR_STEPS = [
+  { selector: '[data-tour="upload-title"]', title: 'Analizar creatividad', description: 'Aquí subes una pieza publicitaria para obtener su WOW Score con la fórmula oficial.' },
+  { selector: '[data-tour="upload-credits-badge"]', title: 'Tus créditos', description: 'Cuántos análisis te quedan disponibles en este ciclo o en tu periodo de prueba.' },
+  { selector: '[data-tour="upload-dropzone"]', title: 'Sube tu pieza', description: 'Arrastra una imagen o un guion (PDF/DOC/DOCX/TXT), o haz clic para elegir un archivo. Después eliges medio, objetivo y el target al que va dirigido.' },
+]
 
 // ── Opciones de los dropdowns ───────────────────────────────
 const MEDIOS: { value: Medio; label: string }[] = [
@@ -61,6 +68,7 @@ interface AnalyzeResult {
   oportunidades: string[]
   veredicto: string
   sugerencia_alternativa?: string
+  sugerencia_alternativa_imagen_path?: string | null
   // Solo presentes en la respuesta cuando quien analiza es admin (ver /api/analyze).
   tokens?: { input: number; output: number }
   cost_usd?: number | null
@@ -311,11 +319,14 @@ export function UploadClient({
   // ── Render ────────────────────────────────────────────────
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6">
-      <div className="reveal reveal-1">
-        <h1 className="text-2xl font-semibold mb-1">Analizar creatividad</h1>
-        <p className="text-sm text-muted-foreground">
-          Sube una pieza publicitaria, elige el medio y el objetivo, y obtén el WOW Score.
-        </p>
+      <div data-tour="upload-title" className="reveal reveal-1 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold mb-1">Analizar creatividad</h1>
+          <p className="text-sm text-muted-foreground">
+            Sube una pieza publicitaria, elige el medio y el objetivo, y obtén el WOW Score.
+          </p>
+        </div>
+        <ProductTour tourId="dashboard-upload" steps={TOUR_STEPS} />
       </div>
 
       {/* ── Mensaje de suscripción requerida ── */}
@@ -387,7 +398,7 @@ export function UploadClient({
       {/* ── Contadores de Créditos ── */}
       {hasActiveOrTrial && !hasNoCredits && (
         <div className="flex justify-center mb-4 reveal reveal-1">
-          <div className="bg-muted px-4 py-1.5 rounded-full text-xs font-medium text-muted-foreground flex items-center gap-2 border shadow-sm">
+          <div data-tour="upload-credits-badge" className="bg-muted px-4 py-1.5 rounded-full text-xs font-medium text-muted-foreground flex items-center gap-2 border shadow-sm">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -403,6 +414,7 @@ export function UploadClient({
       {/* ── Zona de drop (solo cuando no hay preview) ── */}
       {hasActiveOrTrial && !hasNoCredits && !preview && (
         <div
+          data-tour="upload-dropzone"
           onDrop={handleDrop}
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
           onDragLeave={() => setIsDragging(false)}
@@ -601,6 +613,9 @@ export function UploadClient({
             oportunidades={state.result.oportunidades}
             veredicto={state.result.veredicto}
             sugerenciaAlternativa={state.result.sugerencia_alternativa}
+            sugerenciaAlternativaImagenUrl={state.result.sugerencia_alternativa_imagen_path
+              ? `/api/image?path=${encodeURIComponent(state.result.sugerencia_alternativa_imagen_path)}`
+              : null}
             costInfo={state.result.tokens
               ? { inputTokens: state.result.tokens.input, outputTokens: state.result.tokens.output, costUsd: state.result.cost_usd ?? null }
               : null}

@@ -80,6 +80,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
     oportunidades?: string[]
     target_fit?: { score?: number }
     sugerencia_alternativa?: string
+    sugerencia_alternativa_imagen_path?: string | null
     tokens?: { input: number; output: number }
   } | null
 
@@ -126,6 +127,9 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         veredicto={feedback?.veredicto}
         targetFitScore={feedback?.target_fit?.score}
         sugerenciaAlternativa={feedback?.sugerencia_alternativa}
+        sugerenciaAlternativaImagenUrl={feedback?.sugerencia_alternativa_imagen_path
+          ? `/api/image?path=${encodeURIComponent(feedback.sugerencia_alternativa_imagen_path)}`
+          : null}
         costInfo={profile.is_admin && feedback?.tokens
           ? { inputTokens: feedback.tokens.input, outputTokens: feedback.tokens.output, costUsd: evaluation.cost_usd }
           : null}

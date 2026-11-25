@@ -8,8 +8,18 @@ import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CancelButton } from './CancelButton'
 import { getPlanNames } from '@/lib/plans'
+import { ProductTour } from '@/components/tour/ProductTour'
 
 export const metadata = { title: 'Gestión de Suscripción — WowScore' }
+
+const TOUR_STEPS = [
+  { selector: '[data-tour="sub-member-info"]', title: 'Suscripción de tu empresa', description: 'Solo el propietario de la cuenta administra el plan y la facturación — contáctalo si necesitas hacer cambios.' },
+  { selector: '[data-tour="sub-title"]', title: 'Gestión de suscripción', description: 'Aquí ves y administras el plan de pago de tu empresa en WowScore.' },
+  { selector: '[data-tour="sub-plan-card"]', title: 'Tu plan', description: 'El plan contratado, su estado y los créditos de análisis que te quedan en este ciclo.' },
+  { selector: '[data-tour="sub-payment-card"]', title: 'Método de pago', description: 'La tarjeta con la que se cobra tu suscripción.' },
+  { selector: '[data-tour="sub-invoices"]', title: 'Historial de facturas', description: 'Tus cobros anteriores, con enlace al recibo de cada uno.' },
+  { selector: '[data-tour="sub-view-plans"]', title: 'Cambiar de plan', description: 'Desde aquí puedes comparar planes y actualizar tu suscripción.' },
+]
 
 function formatStripeDate(timestamp: any): string {
   if (!timestamp) return 'No disponible'
@@ -58,7 +68,7 @@ export default async function SubscriptionPage() {
       .single()
 
     return (
-      <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
+      <div data-tour="sub-member-info" className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
         <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 text-flame-text flex items-center justify-center">
           <CreditCard size={24} />
         </div>
@@ -70,6 +80,7 @@ export default async function SubscriptionPage() {
         <Link href="/dashboard" className={cn(buttonVariants({ variant: 'outline' }), 'rounded-full')}>
           Volver al dashboard
         </Link>
+        <ProductTour tourId="dashboard-subscription" steps={TOUR_STEPS} />
       </div>
     )
   }
@@ -144,8 +155,9 @@ export default async function SubscriptionPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
       {/* Volver */}
-      <div className="flex items-center justify-between">
+      <div data-tour="sub-title" className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Gestión de Suscripción</h1>
+        <ProductTour tourId="dashboard-subscription" steps={TOUR_STEPS} />
       </div>
 
       {errorMsg && (
@@ -158,7 +170,7 @@ export default async function SubscriptionPage() {
       {/* Tarjeta de Resumen */}
       <div className="grid md:grid-cols-3 gap-6">
         {/* Información del Plan */}
-        <div className="md:col-span-2 rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 flex flex-col justify-between shadow-sm">
+        <div data-tour="sub-plan-card" className="md:col-span-2 rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 flex flex-col justify-between shadow-sm">
           <div className="space-y-4">
             {company.subscription_status === 'trialing' && (
               <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 text-flame-text text-sm flex gap-3 items-start shadow-sm">
@@ -263,7 +275,7 @@ export default async function SubscriptionPage() {
         </div>
 
         {/* Método de Pago */}
-        <div className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 flex flex-col justify-between shadow-sm">
+        <div data-tour="sub-payment-card" className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 flex flex-col justify-between shadow-sm">
           <div className="space-y-4">
             <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Método de Pago</span>
             {paymentMethod && paymentMethod.card ? (
@@ -295,7 +307,7 @@ export default async function SubscriptionPage() {
       </div>
 
       {/* Historial de Facturas */}
-      <div className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 shadow-sm">
+      <div data-tour="sub-invoices" className="rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 p-6 space-y-6 shadow-sm">
         <div className="flex items-center gap-2">
           <Receipt size={18} className="text-zinc-400" />
           <h3 className="font-bold text-lg text-zinc-900 dark:text-white">Historial de Facturas</h3>
@@ -368,7 +380,7 @@ export default async function SubscriptionPage() {
       </div>
 
       {/* Botón Ver más planes y precios */}
-      <div className="flex justify-center pt-4">
+      <div data-tour="sub-view-plans" className="flex justify-center pt-4">
         <Link
           href="/dashboard/pricing"
           className={cn(buttonVariants({ variant: 'default' }), 'h-11 lg:h-9 bg-flame hover:bg-flame-strong text-on-flame rounded-full px-8 py-2')}

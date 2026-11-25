@@ -10,6 +10,14 @@ import { TeamCard } from '@/components/dashboard/TeamCard'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { teamsEnabled } from '@/lib/features'
+import { ProductTour } from '@/components/tour/ProductTour'
+
+const TOUR_STEPS = [
+  { selector: '[data-tour="team-title"]', title: 'Equipo', description: 'Administra quién tiene acceso a tu cuenta de WowScore y cuántos miembros caben en tu plan.' },
+  { selector: '[data-tour="team-members"]', title: 'Miembros', description: 'Las personas con acceso a tu empresa. "Pendiente" significa que aún no confirmaron su cuenta.' },
+  { selector: '[data-tour="team-invite"]', title: 'Invitar miembro', description: 'Agrega a alguien nuevo por correo. Si llegaste al límite de tu plan, aquí te ofrecemos ampliarlo.' },
+  { selector: '[data-tour="team-teams-section"]', title: 'Equipos internos', description: 'Agrupa miembros en equipos para compartir análisis solo entre ellos, en vez de con toda la empresa.' },
+]
 
 export const metadata = { title: 'Equipo — WowScore' }
 
@@ -86,17 +94,20 @@ export default async function TeamPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12 space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold mb-1 flex items-center gap-2">
-          <Users size={22} className="text-flame-text" />
-          Equipo
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {rows.length} de {company.max_members} miembro{company.max_members === 1 ? '' : 's'} de tu plan.
-        </p>
+      <div data-tour="team-title" className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold mb-1 flex items-center gap-2">
+            <Users size={22} className="text-flame-text" />
+            Equipo
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {rows.length} de {company.max_members} miembro{company.max_members === 1 ? '' : 's'} de tu plan.
+          </p>
+        </div>
+        <ProductTour tourId="dashboard-team" steps={TOUR_STEPS} />
       </div>
 
-      <div className="rounded-xl border bg-card divide-y">
+      <div data-tour="team-members" className="rounded-xl border bg-card divide-y">
         {rows.map((m) => {
           const isPending = pendingIds.has(m.id)
           return (
@@ -126,7 +137,7 @@ export default async function TeamPage() {
       </div>
 
       {profile.role === 'owner' && (
-        <div className="rounded-xl border bg-card p-4 space-y-3">
+        <div data-tour="team-invite" className="rounded-xl border bg-card p-4 space-y-3">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Invitar miembro</p>
           {atLimit ? (
             <div className="text-sm text-muted-foreground space-y-2">
@@ -141,7 +152,7 @@ export default async function TeamPage() {
         </div>
       )}
 
-      <div className="space-y-3">
+      <div data-tour="team-teams-section" className="space-y-3">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <UsersThree size={18} className="text-flame-text" />
           Equipos

@@ -6,7 +6,10 @@ import {
   WOW_FORMULAS, GLOSARIO, calcTargetFitScore, calcWTM, calcWowFinal,
   type Medio, type Objetivo, type Genero, type Edad, type NSE,
 } from '@/lib/wow-formulas'
-import { callOpenAI, callClaude, InvalidModelResponseError, type AIProviderResult, type CreativeInput } from '@/lib/ai-providers'
+import {
+  callOpenAI, callClaude, generateAlternativeImage, InvalidModelResponseError,
+  type AIProviderResult, type CreativeInput,
+} from '@/lib/ai-providers'
 import { getScriptExtension, extractScriptText } from '@/lib/extract-text'
 
 const MEDIOS: Medio[] = ['TV', 'Radio', 'OOH', 'DOOH', 'Digital', 'Impresos', 'Cine']
@@ -306,6 +309,33 @@ export async function POST(request: Request) {
   const wtm = calcWTM(targetFitScore)
   const wowFinal = calcWowFinal(wowBaseScore, wtm)
 
+  // ── 7.5 Generar imagen de la sugerencia alternativa ───────
+  // Solo para piezas visuales — un guion ya reescribe el texto alternativo
+  // completo, no hay nada que generar. Si la generación falla, el análisis
+  // principal sigue adelante sin imagen (no es un paso crítico del flujo).
+  let altImagePath: string | null = null
+  let altImageCostUsd = 0
+  if (input.kind !== 'text') {
+    try {
+      const img = await generateAlternativeImage(result.raw.sugerencia_alternativa)
+      const path = `${company.id}/${user.id}/alt-${Date.now()}.png`
+      const { error: altUploadError } = await createAdminClient()
+        .storage
+        .from('ad-images')
+        .upload(path, Buffer.from(img.base64, 'base64'), { contentType: 'image/png', upsert: false })
+
+      if (altUploadError) {
+        console.error('[analyze] alt image upload error:', altUploadError.message)
+      } else {
+        altImagePath = path
+        altImageCostUsd = img.costUsd
+      }
+    } catch (err) {
+      console.error('[analyze] alt image generation failed:', err instanceof Error ? err.message : err)
+    }
+  }
+  const totalCostUsd = result.costUsd != null ? result.costUsd + altImageCostUsd : null
+
   // ── 8. Guardar en evaluations ─────────────────────────────
   const { data: evaluation, error: dbError } = await createAdminClient()
     .from('evaluations')
@@ -316,7 +346,7 @@ export async function POST(request: Request) {
       medio,
       objetivo,
       provider,
-      cost_usd: result.costUsd,
+      cost_usd: totalCostUsd,
       score_overall: Math.round(wowFinal),
       scores_detail: result.breakdown,
       feedback_json: {
@@ -324,6 +354,7 @@ export async function POST(request: Request) {
         fortalezas: result.raw.fortalezas,
         oportunidades: result.raw.oportunidades,
         sugerencia_alternativa: result.raw.sugerencia_alternativa,
+        sugerencia_alternativa_imagen_path: altImagePath,
         genero,
         edad,
         nse,
@@ -370,9 +401,10 @@ export async function POST(request: Request) {
     oportunidades: result.raw.oportunidades,
     veredicto: result.raw.veredicto,
     sugerencia_alternativa: result.raw.sugerencia_alternativa,
+    sugerencia_alternativa_imagen_path: altImagePath,
     // Costo/tokens: solo se exponen a admins — es información operativa interna.
     ...(profile.is_admin
-      ? { tokens: { input: result.inputTokens, output: result.outputTokens }, cost_usd: result.costUsd }
+      ? { tokens: { input: result.inputTokens, output: result.outputTokens }, cost_usd: totalCostUsd }
       : {}),
     image_url,
     created_at: evaluation?.created_at ?? new Date().toISOString(),

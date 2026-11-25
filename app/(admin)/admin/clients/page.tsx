@@ -5,8 +5,14 @@ import Link from 'next/link'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Buildings, ArrowSquareOut } from '@phosphor-icons/react/ssr'
+import { ProductTour } from '@/components/tour/ProductTour'
 
 export const metadata = { title: 'Clientes — Admin WowScore' }
+
+const TOUR_STEPS = [
+  { selector: '[data-tour="admin-clients-title"]', title: 'Clientes', description: 'El listado de todas las empresas registradas en WowScore, con su plan y estado de suscripción.' },
+  { selector: '[data-tour="admin-clients-list"]', title: 'Activar o desactivar', description: 'Desde aquí puedes activar o desactivar el acceso de una empresa, o entrar a "Ver detalle" para administrarla.' },
+]
 
 const STATUS_LABELS: Record<string, { label: string; classes: string }> = {
   active:   { label: 'Activo',    classes: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
@@ -26,15 +32,18 @@ export default async function ClientsPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Clientes</h1>
-        <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-          {companies?.length ?? 0} empresas registradas
-        </p>
+      <div data-tour="admin-clients-title" className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Clientes</h1>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-1">
+            {companies?.length ?? 0} empresas registradas
+          </p>
+        </div>
+        <ProductTour tourId="admin-clients" steps={TOUR_STEPS} />
       </div>
 
       {/* Hasta xl: tarjetas (1 columna en móvil, 2 en tablet). Con el sidebar de 256px la tabla de 6 columnas solo cabe desde xl */}
-      <ul className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+      <ul data-tour="admin-clients-list" className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-3">
         {!companies?.length && (
           <li className="md:col-span-2 rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 px-4 py-10 text-center text-zinc-500">
             <Buildings className="mx-auto mb-2 text-zinc-300" size={32} />
@@ -95,7 +104,7 @@ export default async function ClientsPage() {
         })}
       </ul>
 
-      <div className="hidden xl:block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden">
+      <div data-tour="admin-clients-list" className="hidden xl:block rounded-xl border bg-white dark:bg-zinc-950 dark:border-zinc-800 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">

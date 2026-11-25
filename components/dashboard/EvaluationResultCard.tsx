@@ -35,6 +35,8 @@ interface EvaluationResultCardProps {
   veredicto?: string | null
   targetFitScore?: number | null
   sugerenciaAlternativa?: string | null
+  // Solo aplica a piezas visuales — un guion no genera imagen (ver /api/analyze).
+  sugerenciaAlternativaImagenUrl?: string | null
   // Solo lo pasan las páginas que ya verificaron que quien ve el resultado es
   // admin — es información operativa interna, no debe llegar a clientes.
   costInfo?: { inputTokens: number; outputTokens: number; costUsd: number | null } | null
@@ -45,7 +47,7 @@ interface EvaluationResultCardProps {
 // /dashboard/upload.
 export function EvaluationResultCard({
   imageSrc, isTextCreative, medio, objetivo, score, dimensiones, fortalezas, oportunidades, veredicto, targetFitScore,
-  sugerenciaAlternativa, costInfo,
+  sugerenciaAlternativa, sugerenciaAlternativaImagenUrl, costInfo,
 }: EvaluationResultCardProps) {
   return (
     <>
@@ -145,11 +147,22 @@ export function EvaluationResultCard({
 
       {/* Sugerencia alternativa */}
       {sugerenciaAlternativa && (
-        <div className="rounded-xl border bg-card p-4 space-y-1 reveal reveal-5">
+        <div className="rounded-xl border bg-card p-4 space-y-3 reveal reveal-5">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Sugerencia alternativa
           </p>
           <p className="text-sm leading-relaxed">{sugerenciaAlternativa}</p>
+          {sugerenciaAlternativaImagenUrl && (
+            <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+              <Image
+                src={sugerenciaAlternativaImagenUrl}
+                alt="Propuesta visual alternativa generada por IA"
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+          )}
         </div>
       )}
 

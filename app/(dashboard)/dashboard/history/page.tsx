@@ -6,7 +6,13 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buildVisibilityOrFilter } from '@/lib/visibility'
 import { getScriptExtension } from '@/lib/extract-text'
+import { ProductTour } from '@/components/tour/ProductTour'
 import type { Visibility } from '@/lib/actions/evaluations'
+
+const TOUR_STEPS = [
+  { selector: '[data-tour="history-title"]', title: 'Historial de análisis', description: 'Todos tus análisis y los que tu equipo compartió contigo, ordenados del más reciente al más antiguo.' },
+  { selector: '[data-tour="history-list"]', title: 'Cada resultado', description: 'El ícono indica con quién se compartió (privado, equipo, compañía o público). Haz clic en cualquier tarjeta para ver el detalle completo.' },
+]
 
 export const metadata = { title: 'Historial — WowScore' }
 
@@ -109,22 +115,25 @@ export default async function HistoryPage() {
   // ── 5. Render ─────────────────────────────────────────────
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
-      <div className="mb-8 reveal reveal-1">
-        <h1 className="text-2xl font-semibold mb-1">Historial de análisis</h1>
-        <p className="text-sm text-muted-foreground">
-          Tus análisis y los que tu equipo compartió · {rowsWithImages.length} resultado{rowsWithImages.length !== 1 ? 's' : ''}
-        </p>
+      <div data-tour="history-title" className="mb-8 reveal reveal-1 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold mb-1">Historial de análisis</h1>
+          <p className="text-sm text-muted-foreground">
+            Tus análisis y los que tu equipo compartió · {rowsWithImages.length} resultado{rowsWithImages.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+        <ProductTour tourId="dashboard-history" steps={TOUR_STEPS} />
       </div>
 
       {rowsWithImages.length === 0 ? (
-        <div className="rounded-xl border border-dashed flex flex-col items-center justify-center py-20 text-center reveal reveal-2">
+        <div data-tour="history-list" className="rounded-xl border border-dashed flex flex-col items-center justify-center py-20 text-center reveal reveal-2">
           <p className="text-muted-foreground text-sm">Aún no hay evaluaciones registradas.</p>
           <p className="text-muted-foreground text-xs mt-1">
             Sube una pieza en <span className="font-medium">Analizar creatividad</span> para comenzar.
           </p>
         </div>
       ) : (
-        <div className="space-y-3 reveal reveal-2">
+        <div data-tour="history-list" className="space-y-3 reveal reveal-2">
           {rowsWithImages.map((ev) => (
             <Link
               key={ev.id}
