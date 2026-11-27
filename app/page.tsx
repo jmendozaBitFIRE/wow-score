@@ -5,6 +5,7 @@ import { MediosSection }       from '@/components/landing/MediosSection'
 import { PreciosSection }      from '@/components/landing/PreciosSection'
 import { ContactoSection }       from '@/components/landing/ContactoSection'
 import { LandingPageShell } from '@/components/landing/LandingPageShell'
+import { TutorialVideoModal, TutorialVideoSection } from '@/components/landing/tutorial/TutorialVideo'
 
 export const metadata = {
   title: '¿Tu publicidad realmente impacta? — WOW Score',
@@ -19,8 +20,10 @@ export default function LandingPage() {
       <ComoFuncionaSection />
       <VentajasSection />
       <MediosSection />
+      <TutorialVideoSection />
       <PreciosSection />
       <ContactoSection />
+      <TutorialVideoModal autoOpen />
     </LandingPageShell>
   )
 }
